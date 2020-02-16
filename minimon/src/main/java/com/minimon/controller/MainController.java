@@ -28,16 +28,16 @@ public class MainController {
 	private Logger logger = LoggerFactory.getLogger(MainController.class);
 
 	
-
 	
 	/**
 	 * 
 	 * 메인 화면 접근
 	 * 
 	 */
-	@RequestMapping("/")
+	@RequestMapping("/minimon/index")
 	public ModelAndView main(@RequestParam Map<String, Object> map) {
 		ModelAndView mav = new ModelAndView("view/index");
+		logger.debug("ENTER");
         return mav;
 	}
 	
