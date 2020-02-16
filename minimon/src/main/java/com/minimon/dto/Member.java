@@ -1,7 +1,5 @@
 package com.minimon.dto;
 
-import java.util.List;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,7 +24,6 @@ public class Member {
 	
 	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
 	@JoinColumn(name="uid")
-	private List<MemberRole> roles;
 
 	public Long getId() {
 		return id;
@@ -51,14 +48,5 @@ public class Member {
 	public void setUpw(String upw) {
 		this.upw = upw;
 	}
-
-	public List<MemberRole> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(List<MemberRole> roles) {
-		this.roles = roles;
-	}
-	
 	
 }
