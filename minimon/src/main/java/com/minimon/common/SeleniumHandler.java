@@ -1,15 +1,23 @@
 package com.minimon.common;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
+import org.apache.commons.collections4.map.CaseInsensitiveMap;
+import org.json.JSONObject;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.logging.LogEntries;
+import org.openqa.selenium.logging.LogEntry;
 import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.logging.LoggingPreferences;
 import org.openqa.selenium.remote.CapabilityType;
@@ -19,6 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.minimon.exceptionHandler.MyException;
+import com.minimon.exceptionHandler.MyExceptionHandler;
+
 
 /**
  * 
@@ -86,6 +96,7 @@ public class SeleniumHandler {
 	 * 
 	 */
 	public EventFiringWebDriver setUp(String driverPath) throws Exception { 
+		
 		WebDriver driver2 = null;
 		
 		EventFiringWebDriver driver = null;
@@ -226,12 +237,10 @@ public class SeleniumHandler {
 	 *  
 	 *  @author 백현우
 	 *  
-	 *  
 	 *  @param 	현재 주소
 	 *  
 	 *  
-	 *  @return 소스 호출 결과 반환
-	 * 	@throws MyException 모든 Exception을 ExceptionHandler에서 처리 에러코드 13
+	 * 	@throws 에러코드 13
 	 * 
 	 */
 	public String setSource(WebDriver driver) throws Exception {
@@ -249,41 +258,266 @@ public class SeleniumHandler {
 	}
 	
 
+	
+
 	/**
 	 * 
-	 *  UTC 형태의 데이터를 GMT 밀리세컨즈로 변환
+	 *  리소스의 Message 추출 
 	 *  
 	 *  
 	 *  @author 백현우
 	 *  
 	 *  
-	 *  @param 	input 가공 데이터
-	 *  
-	 *  @return 가공 결과 반환
-	 *  
+	 * 	@throws 에러코드 14
+	 * 
 	 */
-	@SuppressWarnings("deprecation")
-	public static long convertUTCtoGMT(Double input) {
-	    String format = "yyyy/MM/dd HH:mm:ss.SSS";
-	    
-	    SimpleDateFormat sdf = new SimpleDateFormat(format);
-	    
-	    // GMT 시간
-	    String retime = sdf.format(input*1000);
-	    
-	    // SPLIT time, mills
-	    String[] str = retime.split("\\.");
-	    
-	    // get Date of split time exclude mills
-	    Date date = new Date(str[0]);
-	    
-	    // convert mills
-	    long mills = date.getTime();
-	    
-	    // include mills
-	    mills = mills+Long.parseLong(str[1]);
-	    
-	    return mills;
+	public JSONObject getResourceMessage(LogEntry entry) throws Exception {
+		
+		try {
+
+
+			JSONObject json = new JSONObject(entry.getMessage());
+		
+			return json.getJSONObject("message");
+			
+		}catch(Exception e) {
+
+			throw new MyException("CLASS : " + className + " - METHOD : " + new Object(){}.getClass().getEnclosingMethod().getName() 
+									+ " - TYPE = [Function]/  Function - " 
+									+  e.getStackTrace()[0].getMethodName(), className, 14);
+			
+		}
 	}
+	
+
+	/**
+	 * 
+	 * 
+	 *  log 분석 
+	 *  
+	 *  
+	 *  @author 	백현우
+	 *  
+	 *  @param 		log 	분석할 log
+	 *  
+	 * 	@throws 	에러코드 15
+	 * 
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> analyzeLog(LogEntries logs, String url, String currentURL, double totalLoadTime) throws MyException {
+		String method = new Object(){}.getClass().getEnclosingMethod().getName();
+
+		double totalPayLoad = 0.0;
+		
+		double ResourceloadTime = 0.0;
+		
+		// insert될 Map의 첫번째
+		Map<String, Object> originUrlData = new HashMap<String, Object>();
+
+		// 리소스의 insert될 Data의 하위 : URL 별 Map
+	    Map<String, Object> resourcesData = new HashMap<String, Object>();
+		
+		try {
+
+			
+			/* 
+			 * RESOURCE LOOP & GET RESOURCES DATA
+			 */
+			int resourceCnt = 0;
+			for (Iterator<LogEntry> it = logs.iterator(); it.hasNext(); resourceCnt++)
+				resourcesData.put(""+resourceCnt, getResourceDatas(getResourceMessage(it.next()), resourceCnt));
+				
+	            // totalPayLoad += payLoad;
+			
+			/*
+			 * if(status >= 200 && status < 400) {
+			 * 
+			 * 
+			 * 
+			 * long[] lltime = new long[requestTimeArr.size()];
+			 * 
+			 * for(int i=0; i<requestTimeArr.size(); i++) { lltime[i] =
+			 * requestTimeArr.get(i); }
+			 * 
+			 * long[] rrtime = new long[loadTimeArrTime.size()]; for(int i=0;
+			 * i<loadTimeArrTime.size(); i++) { rrtime[i] = loadTimeArrTime.get(i); }
+			 * 
+			 * Arrays.sort(lltime); Arrays.sort(rrtime);
+			 * 
+			 * 
+			 * long startTime = lltime[0]; long endTime = rrtime[rrtime.length-1];
+			 * 
+			 * originUrlData.put("startTime", startTime); originUrlData.put("endTime",
+			 * endTime);
+			 * 
+			 * originUrlData.put("resourceLoadTime", endTime-startTime);
+			 * 
+			 * }
+			 * 
+			 * 
+			 * resourcesData = getTimeoutResource(resourcesData, logs, url, cnt);
+			 * 
+			 * if(status >= 200 && status < 400) {
+			 * 
+			 * 
+			 * totalPayLoad = Math.ceil(totalPayLoad); }else { status = 404;
+			 * 
+			 * totalLoadTime = -2;
+			 * 
+			 * totalPayLoad = -2; }
+			 * 
+			 * 
+			 * originUrlData.put("url", url); originUrlData.put("header", header);
+			 * originUrlData.put("status", status); originUrlData.put("totalLoadTime",
+			 * totalLoadTime); originUrlData.put("totalPayLoad", totalPayLoad);
+			 * originUrlData.put("source", source); originUrlData.put("resourcesData",
+			 * resourcesData);
+			 */
+			logger.debug("WebDriver - Log 분석 완료");
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+			throw new MyException("CLASS : " + className + " - METHOD : " + new Object(){}.getClass().getEnclosingMethod().getName() 
+					+ " - TYPE = [Function]/  Function - " 
+					+  e.getStackTrace()[0].getMethodName(), className, 15);
+			
+		}			
+		return originUrlData;
+	}
+
+
+	
+
+	/**
+	 * 
+	 *  리소스의 DATA 분석 및 반환
+	 *  
+	 *  
+	 *  @author 백현우
+	 *  
+	 *  
+	 * 	@throws 에러코드 16
+	 * 
+	 */
+	public Map<String, Object> getResourceDatas(JSONObject message, int resourceCnt) throws Exception {
+        Map<String, Object> detailMap = new HashMap<String, Object>();
+		
+		try {
+
+			/*
+			 * DATA CONVERT & CHECK
+			 */
+	        String methodName = message.getString("method");
+
+			if (methodName == null && methodName.equals("Network.responseReceived") == false) return detailMap; 
+				
+			
+			/*
+			 * SET DATAS
+			 */
+			JSONObject params = message.getJSONObject("params");
+
+			JSONObject response = params.getJSONObject("response");
+			
+			JSONObject headersObj = response.getJSONObject("headers");
+			
+	        Map<String,Object> headers = new CaseInsensitiveMap<String,Object>();
+	        
+	        headers.putAll(headersObj.toMap());
+	        
+
+
+	        /*
+	         * GET PAYLOAD
+	         */
+			double payLoad = headers.containsKey("content-length") ? Double.parseDouble(headers.get("content-length").toString()) : 0;
+
+	        /*
+	         * GET TYPE
+	         */
+			String type = headers.containsKey("content-type") ? headers.get("content-length").toString() : "";
+			
+
+	        /*
+	         * GET STATUS
+	         */
+	        int detailStatus = response.getInt("status");
+			
+
+	        /*
+	         * RESOURCE URL
+	         */
+			String resourceUrl = response.getString("url");
+		
+			if(!response.isNull("timing")) {
+				
+				/*
+				 * SET DATA PARAMS : timing
+				 */
+				JSONObject timing = response.getJSONObject("timing");
+			
+				Double requestTime = timing.getDouble("requestTime");
+				
+				Double timestamp = params.getDouble("timestamp");
+				
+		        detailMap.put("timestamp", CommonUtils.convertUTCtoGMT(timestamp));
+
+		        
+				Double loTimed = 0.0;
+				
+				for (Iterator<String> itt = timing.keys(); itt.hasNext();) {
+					
+					String key = itt.next();
+					
+					if(timing.getDouble(key) > 0) 
+						loTimed += timing.getDouble(key);
+					
+			        detailMap.put(key, timing.getDouble(key));
+				}
+				
+				Long lol = CommonUtils.convertUTCtoGMT(requestTime);
+
+				loTimed = Math.ceil(loTimed-requestTime);
+				
+		        detailMap.put("loadTime", loTimed.longValue());
+
+		        detailMap.put("requestTime", lol);
+
+		        detailMap.put("endTime", lol+loTimed.longValue());
+				/*
+				 * if (currentURL.equals(messageUrl)) { status = response.getInt("status");
+				 * header = response.getJSONObject("headers")+"";
+				 * 
+				 * }
+				 */
+		        
+			}
+			
+			
+			/*
+			 * SAVE DATA
+			 */
+			detailMap.put("payLoad", payLoad);
+
+			detailMap.put("type", type);
+	        
+	        detailMap.put("detailStatus", detailStatus);
+	        
+	        detailMap.put("url", resourceUrl);
+			
+			detailMap.put("cnt", resourceCnt);
+			
+			return detailMap;
+			
+		}catch(Exception e) {
+
+			throw new MyException("CLASS : " + className + " - METHOD : " + new Object(){}.getClass().getEnclosingMethod().getName() 
+									+ " - TYPE = [Function]/  Function - " 
+									+  e.getStackTrace()[0].getMethodName(), className, 16);
+			
+		}
+	}
+	
+	
 	
 }

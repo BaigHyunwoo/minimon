@@ -36,8 +36,13 @@ public class MainController {
 	 */
 	@RequestMapping("/minimon/index")
 	public ModelAndView main(@RequestParam Map<String, Object> map) {
+		
+		// Call Mon List 
+		
+		
+		
 		ModelAndView mav = new ModelAndView("view/index");
-		logger.debug("ENTER");
+		logger.debug("INDEX APGE ACCESS");
         return mav;
 	}
 	
