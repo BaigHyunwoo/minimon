@@ -1,10 +1,18 @@
 package com.minimon.common;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.minimon.controller.MainController;
@@ -38,7 +46,7 @@ public class ExecuteTool {
 	 * 
 	 * 	@exception			핸들러로 처리	CODE 11
 	 */
-	@Scheduled(fixedDelay=1000)
+	@Scheduled(fixedDelay=5000)
 	public void execute() throws Exception {
 		
 		EventFiringWebDriver driver = null;
@@ -49,24 +57,33 @@ public class ExecuteTool {
 			String[] urls = {"https://www.naver.com" , "https://www.daum.net" };
 			
 			SeleniumHandler selenium = new SeleniumHandler();
-			driver = selenium.setUp(DRIVERPATH);
+			ClassPathResource cpr = new ClassPathResource(DRIVERPATH);
+			driver = selenium.setUp(cpr.getFile().getPath());
 			
-			for(String url : urls) 	
-				selenium.analyzeLog(selenium.getLog(url, driver), url, driver.getCurrentUrl(), selenium.connectUrl(url, driver, 5));
-			
-			
+			for(String url : urls) 	{
+				selenium.connectUrl(url, driver, 5000);
+				logger.debug(selenium.analyzeLog(
+						selenium.getLog(url, driver), 
+						url, 
+						driver.getCurrentUrl(),
+						selenium.getTotalLoadTime()
+				).toString());
+			}
 			
 			logger.debug("Monitoring Execute Complete");
 			
            
          
 		}catch(Exception e) {
-
-			if(driver != null) driver.close();
+			e.printStackTrace();
 
 			throw new MyException("CLASS : " + className + " - METHOD : " +  new Object(){}.getClass().getEnclosingMethod().getName()  + " "
-					+ "- TYPE = [Function]/  Function - " + e.getStackTrace()[0].getMethodName() , className, 11);
+					+ "- TYPE = [Function]/  Function - execute", className, 11);
          
+		}finally {
+			
+			if(driver != null) driver.quit();
+			
 		}
       
 	}
