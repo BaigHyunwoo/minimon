@@ -1,4 +1,4 @@
-package com.minimon.dto;
+package com.minimon.entity;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;

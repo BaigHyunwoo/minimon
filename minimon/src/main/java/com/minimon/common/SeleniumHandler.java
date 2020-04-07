@@ -94,18 +94,19 @@ public class SeleniumHandler {
 	public EventFiringWebDriver setUp(String driverPath) throws Exception { 
 		
 		EventFiringWebDriver driver = null;
-		
 		String driverName = "webdriver.chrome.driver";
 		
 		try {
 			
 			// 크롬 드라이버 파일 경로설정 
 			System.setProperty(driverName, driverPath); 
+			
 			LoggingPreferences logPrefs = new LoggingPreferences();
 			logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
 			
 			ChromeOptions options = new ChromeOptions();
-			options.addArguments("headless");   // 브라우저를 띄우지 않고 테스트
+			options.setExperimentalOption("w3c", false);
+			//options.addArguments("headless");
 			options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
 			driver = new EventFiringWebDriver(new ChromeDriver(options));
 			
@@ -152,6 +153,8 @@ public class SeleniumHandler {
 			driver.navigate().to(url);
 			totalLoadTime = event.returnLoadTime(); 
 			
+			logger.debug("totalLoadTime : "+ totalLoadTime);
+			
 		}catch(TimeoutException e1) {
 			e1.printStackTrace();
 			
@@ -188,10 +191,9 @@ public class SeleniumHandler {
 		
 		try {
 
-			logs =  driver.manage().logs().get("performance");
+			logs =  driver.manage().logs().get(LogType.PERFORMANCE);
 
 			logger.debug("WebDriver - Log 호출 완료");
-			
 			
 		}catch(TimeoutException ex) {
 			
@@ -284,14 +286,9 @@ public class SeleniumHandler {
 	 * 	@throws 	에러코드 15
 	 * 
 	 */
-	public Map<String, Object> analyzeLog(LogEntries logs, String url, String currentURL, double totalLoadTime) throws MyException {
-		String method = new Object(){}.getClass().getEnclosingMethod().getName();
-
+	public Map<String, Object> expectionLog(LogEntries logs, String url, String currentURL, double totalLoadTime) throws MyException {
+		Map<String, Object> returnData = new HashMap<String, Object>();
 		double totalPayLoad = 0.0;
-		double ResourceloadTime = 0.0;
-		
-		Map<String, Object> originUrlData = new HashMap<String, Object>();
-	    Map<String, Object> resourcesData = new HashMap<String, Object>();
 		
 		try {
 
@@ -299,53 +296,15 @@ public class SeleniumHandler {
 			/* 
 			 * RESOURCE LOOP & GET RESOURCES DATA
 			 */
-//			int resourceCnt = 0;
-//			for (Iterator<LogEntry> it = logs.iterator(); it.hasNext(); resourceCnt++)
-//				resourcesData.put(""+resourceCnt, getResourceDatas(getResourceMessage(it.next()), resourceCnt));
-//				
-//            totalPayLoad += payLoad;
-//			
-//			if(status >= 200 && status < 400) {
-//			 
-//			long[] lltime = new long[requestTimeArr.size()];
-//			  
-//			for(int i=0; i<requestTimeArr.size(); i++) { lltime[i] =
-//			requestTimeArr.get(i); }
-//			 
-//			long[] rrtime = new long[loadTimeArrTime.size()]; for(int i=0;
-//			i<loadTimeArrTime.size(); i++) { rrtime[i] = loadTimeArrTime.get(i); }
-//			 
-//			Arrays.sort(lltime); Arrays.sort(rrtime);
-//			
-//			
-//			long startTime = lltime[0]; long endTime = rrtime[rrtime.length-1];
-//			
-//			originUrlData.put("startTime", startTime); originUrlData.put("endTime",
-//			endTime);
-//			
-//			originUrlData.put("resourceLoadTime", endTime-startTime);
-//			 
-//			}
-//			 
-//			 
-//			resourcesData = getTimeoutResource(resourcesData, logs, url, cnt);
-//			
-//			if(status >= 200 && status < 400) {
-//			 
-//			
-//			totalPayLoad = Math.ceil(totalPayLoad); }else { status = 404;
-//			
-//			totalLoadTime = -2;
-//			
-//			totalPayLoad = -2; }
-//			
-//			
-//			originUrlData.put("url", url); originUrlData.put("header", header);
-//			originUrlData.put("status", status); originUrlData.put("totalLoadTime",
-//			totalLoadTime); originUrlData.put("totalPayLoad", totalPayLoad);
-//			originUrlData.put("source", source); originUrlData.put("resourcesData",
-//			resourcesData);
-			 
+			int resourceCnt = 0;
+			for (Iterator<LogEntry> it = logs.iterator(); it.hasNext(); resourceCnt++) {
+				totalPayLoad += getTotalPayLoad(getResourceMessage(it.next()), resourceCnt);
+			}
+
+			returnData.put("totalPayLoad", totalPayLoad);
+			returnData.put("totalLoadTime", this.totalLoadTime);
+			
+			System.out.println(returnData);
 			logger.debug("WebDriver - Log 분석 완료");
 			
 		}catch(Exception e) {
@@ -355,7 +314,7 @@ public class SeleniumHandler {
 					+  e.getStackTrace()[0].getMethodName(), className, 15);
 			
 		}			
-		return originUrlData;
+		return returnData;
 	}
 
 
@@ -372,19 +331,19 @@ public class SeleniumHandler {
 	 * 	@throws 에러코드 16
 	 * 
 	 */
-	public Map<String, Object> getResourceDatas(JSONObject message, int resourceCnt) throws Exception {
-        Map<String, Object> detailMap = new HashMap<String, Object>();
+	public double getTotalPayLoad(JSONObject message, int resourceCnt) throws Exception {
+		double payLoad = 0.0;
 		
 		try {
 
 			/*
 			 * DATA CONVERT & CHECK
 			 */
+			//System.out.println(message);
 	        String methodName = message.getString("method");
 
-			if (methodName == null && methodName.equals("Network.responseReceived") == false) return detailMap; 
+			if (methodName != null && methodName.equals("Network.responseReceived") == false) return payLoad; 
 				
-			
 			/*
 			 * SET DATAS
 			 */
@@ -397,89 +356,13 @@ public class SeleniumHandler {
 	        Map<String,Object> headers = new CaseInsensitiveMap<String,Object>();
 	        
 	        headers.putAll(headersObj.toMap());
-	        
 
 	        /*
 	         * GET PAYLOAD
 	         */
-			double payLoad = headers.containsKey("content-length") ? Double.parseDouble(headers.get("content-length").toString()) : 0;
-
-	        /*
-	         * GET TYPE
-	         */
-			String type = headers.containsKey("content-type") ? headers.get("content-length").toString() : "";
+			payLoad = headers.containsKey("content-length") ? Double.parseDouble(headers.get("content-length").toString()) : 0;
 			
-
-	        /*
-	         * GET STATUS
-	         */
-	        int detailStatus = response.getInt("status");
-			
-
-	        /*
-	         * RESOURCE URL
-	         */
-			String resourceUrl = response.getString("url");
-		
-			if(!response.isNull("timing")) {
-				
-				/*
-				 * SET DATA PARAMS : timing
-				 */
-				JSONObject timing = response.getJSONObject("timing");
-			
-				Double requestTime = timing.getDouble("requestTime");
-				
-				Double timestamp = params.getDouble("timestamp");
-				
-		        detailMap.put("timestamp", CommonUtils.convertUTCtoGMT(timestamp));
-
-		        
-				Double loTimed = 0.0;
-				
-				for (Iterator<String> itt = timing.keys(); itt.hasNext();) {
-					
-					String key = itt.next();
-					
-					if(timing.getDouble(key) > 0) 
-						loTimed += timing.getDouble(key);
-					
-			        detailMap.put(key, timing.getDouble(key));
-				}
-				
-				Long lol = CommonUtils.convertUTCtoGMT(requestTime);
-
-				loTimed = Math.ceil(loTimed-requestTime);
-				
-		        detailMap.put("loadTime", loTimed.longValue());
-
-		        detailMap.put("requestTime", lol);
-
-		        detailMap.put("endTime", lol+loTimed.longValue());
-				/*
-				 * if (currentURL.equals(messageUrl)) { status = response.getInt("status");
-				 * header = response.getJSONObject("headers")+"";
-				 * 
-				 * }
-				 */
-		        
-			}
-			
-			
-			/*
-			 * SAVE DATA
-			 */
-			detailMap.put("payLoad", payLoad);
-
-			detailMap.put("type", type);
-	        
-	        detailMap.put("detailStatus", detailStatus);
-	        
-	        detailMap.put("url", resourceUrl);
-			
-			detailMap.put("cnt", resourceCnt);
-			
-			return detailMap;
+			return payLoad;
 			
 		}catch(Exception e) {
 			e.printStackTrace();

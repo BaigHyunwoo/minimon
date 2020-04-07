@@ -1,18 +1,11 @@
 package com.minimon.common;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.minimon.controller.MainController;
@@ -54,15 +47,15 @@ public class ExecuteTool {
 		try{
         
 			// Call List
-			String[] urls = {"https://www.naver.com" , "https://www.daum.net" };
+			String[] urls = {"https://www.naver.com"};
 			
 			SeleniumHandler selenium = new SeleniumHandler();
 			ClassPathResource cpr = new ClassPathResource(DRIVERPATH);
 			driver = selenium.setUp(cpr.getFile().getPath());
 			
 			for(String url : urls) 	{
-				selenium.connectUrl(url, driver, 5000);
-				logger.debug(selenium.analyzeLog(
+				selenium.connectUrl(url, driver, 5);
+				logger.debug(selenium.expectionLog(
 						selenium.getLog(url, driver), 
 						url, 
 						driver.getCurrentUrl(),
