@@ -139,7 +139,7 @@ public class SeleniumHandler {
 	 *  @param url 접근 할 URL
 	 *  
 	 */
-	public void connectUrl(String url, EventFiringWebDriver driver, int timeout) throws Exception {
+	public double connectUrl(String url, EventFiringWebDriver driver, int timeout) throws Exception {
 
 		// 타임아웃 셋팅
 		driver.manage().timeouts().pageLoadTimeout(timeout, TimeUnit.SECONDS); 
@@ -168,6 +168,8 @@ public class SeleniumHandler {
 			logger.debug("Error - Unknown ERROR");
 			
 		}
+		
+		return totalLoadTime;
 	}
 
 	

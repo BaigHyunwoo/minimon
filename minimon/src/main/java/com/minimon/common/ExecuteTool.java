@@ -26,10 +26,6 @@ import com.minimon.repository.TblModuleInfoRepository;
 @RestController
 @EnableScheduling
 public class ExecuteTool {
-
-    @Autowired
-    TblModuleInfoRepository tblModuleInfoRepository;
-    
 	private String className = this.getClass().toString();
 	
 	private Logger logger = LoggerFactory.getLogger(MainController.class);
@@ -50,8 +46,6 @@ public class ExecuteTool {
 		EventFiringWebDriver driver = null;
 		
 		try{
-        
-			System.out.println(tblModuleInfoRepository.count());
 			
 			// Call List
 			String[] urls = {"https://www.naver.com"};
@@ -61,13 +55,16 @@ public class ExecuteTool {
 			driver = selenium.setUp(cpr.getFile().getPath());
 			
 			for(String url : urls) 	{
-				selenium.connectUrl(url, driver, 5);
+				double totalLoadTime = selenium.connectUrl(url, driver, 5);
+				
+				logger.debug("totalLoadTime "+totalLoadTime);
 				logger.debug(selenium.expectionLog(
 						selenium.getLog(url, driver), 
 						url, 
 						driver.getCurrentUrl(),
-						selenium.getTotalLoadTime()
+						totalLoadTime
 				).toString());
+				
 			}
 			
 			logger.debug("Monitoring Execute Complete");
