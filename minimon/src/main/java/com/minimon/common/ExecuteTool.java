@@ -3,6 +3,7 @@ package com.minimon.common;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.minimon.controller.MainController;
 import com.minimon.exceptionHandler.MyException;
+import com.minimon.repository.TblModuleInfoRepository;
 
 
 /**
@@ -25,6 +27,9 @@ import com.minimon.exceptionHandler.MyException;
 @EnableScheduling
 public class ExecuteTool {
 
+    @Autowired
+    TblModuleInfoRepository tblModuleInfoRepository;
+    
 	private String className = this.getClass().toString();
 	
 	private Logger logger = LoggerFactory.getLogger(MainController.class);
@@ -46,6 +51,8 @@ public class ExecuteTool {
 		
 		try{
         
+			System.out.println(tblModuleInfoRepository.count());
+			
 			// Call List
 			String[] urls = {"https://www.naver.com"};
 			
