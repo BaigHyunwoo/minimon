@@ -1,17 +1,20 @@
 package com.minimon.common;
 
-import org.openqa.selenium.support.events.EventFiringWebDriver;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.minimon.controller.MainController;
+import com.minimon.entity.TblMonUrl;
 import com.minimon.exceptionHandler.MyException;
-import com.minimon.repository.TblModuleInfoRepository;
+import com.minimon.repository.TblMonUrlRepository;
+import com.minimon.service.UrlService;
 
 
 /**
@@ -26,11 +29,17 @@ import com.minimon.repository.TblModuleInfoRepository;
 @RestController
 @EnableScheduling
 public class ExecuteTool {
-	private String className = this.getClass().toString();
+
+	@Autowired
+	TblMonUrlRepository tblMonUrlRepository;
+	
+	@Autowired
+	UrlService urlService;
 	
 	private Logger logger = LoggerFactory.getLogger(MainController.class);
+
+	private String className = this.getClass().toString();
 	
-	private String DRIVERPATH = "/setting/chromedriver.exe";
 	
 	/**
 	 * 
@@ -40,48 +49,36 @@ public class ExecuteTool {
 	 * 
 	 * 	@exception			핸들러로 처리	CODE 11
 	 */
-	@Scheduled(fixedDelay=5000)
+	//@Scheduled(fixedDelay=5000)
 	public void execute() throws Exception {
-		
-		EventFiringWebDriver driver = null;
-		
-		try{
+		try {
 			
-			// Call List
-			String[] urls = {"https://www.naver.com"};
+			List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
 			
-			SeleniumHandler selenium = new SeleniumHandler();
-			ClassPathResource cpr = new ClassPathResource(DRIVERPATH);
-			driver = selenium.setUp(cpr.getFile().getPath());
+			/*
+			 * API
+			 */
 			
-			for(String url : urls) 	{
-				double totalLoadTime = selenium.connectUrl(url, driver, 5);
-				
-				logger.debug("totalLoadTime "+totalLoadTime);
-				logger.debug(selenium.expectionLog(
-						selenium.getLog(url, driver), 
-						url, 
-						driver.getCurrentUrl(),
-						totalLoadTime
-				).toString());
-				
-			}
+			/*
+			 * URL
+			 */
+			List<TblMonUrl> urls = tblMonUrlRepository.findAll();
+			resultList.add(urlService.checkUrls(urls));
+			
+			/*
+			 * Trasacntion
+			 */
 			
 			logger.debug("Monitoring Execute Complete");
-			
-           
-         
+	
 		}catch(Exception e) {
 			e.printStackTrace();
-
+	
 			throw new MyException("CLASS : " + className + " - METHOD : " +  new Object(){}.getClass().getEnclosingMethod().getName()  + " "
 					+ "- TYPE = [Function]/  Function - execute", className, 11);
-         
-		}finally {
-			
-			if(driver != null) driver.quit();
-			
+	     
 		}
-      
+		
 	}
+
 }

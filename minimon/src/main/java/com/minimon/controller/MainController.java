@@ -1,13 +1,17 @@
 package com.minimon.controller;
 
+import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.minimon.entity.TblMonUrl;
+import com.minimon.repository.TblMonUrlRepository;
 
 
 
@@ -23,10 +27,8 @@ import org.springframework.web.servlet.ModelAndView;
 @RestController
 public class MainController {
 	
-	private String className = this.getClass().toString();
-	
-	private Logger logger = LoggerFactory.getLogger(MainController.class);
-
+	@Autowired
+	TblMonUrlRepository tblMonUrlRepository;
 	
 	
 	/**
@@ -34,15 +36,16 @@ public class MainController {
 	 * 메인 화면 접근
 	 * 
 	 */
-	@RequestMapping("/minimon/index")
+    @RequestMapping(path = "/main/index", method= RequestMethod.GET)
 	public ModelAndView main(@RequestParam Map<String, Object> map) {
 		
 		// Call Mon List 
-		
+		List<TblMonUrl> resultList = tblMonUrlRepository.findAll();
 		
 		
 		ModelAndView mav = new ModelAndView("view/index");
-		logger.debug("INDEX APGE ACCESS");
+		mav.addObject("resultList", resultList);
+		mav.addObject("status", 200);
         return mav;
 	}
 	

@@ -41,8 +41,20 @@ public class SeleniumHandler {
 	private static final Logger logger = LoggerFactory.getLogger(SeleniumHandler.class.getName());
 
 	private double totalLoadTime = -1;
+
+	private double totalPayLoad = 0.0;
 	
-    public double getTotalLoadTime() {
+	private int status = 200;
+	
+    public int getStatus() {
+		return status;
+	}
+
+	public double getTotalPayLoad() {
+		return totalPayLoad;
+	}
+
+	public double getTotalLoadTime() {
 		return totalLoadTime;
 	}
 
@@ -188,7 +200,7 @@ public class SeleniumHandler {
 	 * 	@throws 에러코드 12
 	 * 
 	 */
-	public LogEntries getLog(String url, EventFiringWebDriver driver) throws Exception {
+	public LogEntries getLog(EventFiringWebDriver driver) throws Exception {
 		LogEntries logs = null;
 		
 		try {
@@ -199,7 +211,6 @@ public class SeleniumHandler {
 			
 		}catch(TimeoutException ex) {
 			
-			logger.debug(url + " : LOG CALL Timeout : "+url);
 			return logs;
 			
 		}catch(Exception e) {
@@ -288,9 +299,8 @@ public class SeleniumHandler {
 	 * 	@throws 	에러코드 15
 	 * 
 	 */
-	public Map<String, Object> expectionLog(LogEntries logs, String url, String currentURL, double totalLoadTime) throws MyException {
+	public Map<String, Object> expectionLog(LogEntries logs, String currentURL) throws MyException {
 		Map<String, Object> returnData = new HashMap<String, Object>();
-		double totalPayLoad = 0.0;
 		
 		try {
 
@@ -300,10 +310,12 @@ public class SeleniumHandler {
 			 */
 			int resourceCnt = 0;
 			for (Iterator<LogEntry> it = logs.iterator(); it.hasNext(); resourceCnt++) {
-				totalPayLoad += getTotalPayLoad(getResourceMessage(it.next()), resourceCnt);
+				setLogData(getResourceMessage(it.next()), resourceCnt, currentURL);
 			}
 
-			returnData.put("totalPayLoad", totalPayLoad);
+			returnData.put("url", currentURL);
+			returnData.put("status", this.status);
+			returnData.put("totalPayLoad", this.totalPayLoad);
 			returnData.put("totalLoadTime", this.totalLoadTime);
 			
 			System.out.println(returnData);
@@ -333,21 +345,22 @@ public class SeleniumHandler {
 	 * 	@throws 에러코드 16
 	 * 
 	 */
-	public double getTotalPayLoad(JSONObject message, int resourceCnt) throws Exception {
-		double payLoad = 0.0;
+	public void setLogData(JSONObject message, int resourceCnt, String currentURL) throws Exception {
 		
 		try {
 
 			/*
 			 * DATA CONVERT & CHECK
 			 */
-			//System.out.println(message);
 	        String methodName = message.getString("method");
-
-			if (methodName != null && methodName.equals("Network.responseReceived") == false) return payLoad; 
+	        
+	        /*
+	         * Log Exists Check 
+	         */
+			if (methodName != null && methodName.equals("Network.responseReceived") == false) return; 
 				
 			/*
-			 * SET DATAS
+			 * GET DATAS
 			 */
 			JSONObject params = message.getJSONObject("params");
 
@@ -360,12 +373,15 @@ public class SeleniumHandler {
 	        headers.putAll(headersObj.toMap());
 
 	        /*
-	         * GET PAYLOAD
+	         * SET PAYLOAD
 	         */
-			payLoad = headers.containsKey("content-length") ? Double.parseDouble(headers.get("content-length").toString()) : 0;
+			this.totalPayLoad += headers.containsKey("content-length") ? Double.parseDouble(headers.get("content-length").toString()) : 0;
 			
-			return payLoad;
-			
+			/*
+			 * SET STATUS
+			 */
+			this.status = currentURL.equals((String)response.get("url")) == true ? response.getInt("status") : this.status;
+	        
 		}catch(Exception e) {
 			e.printStackTrace();
 
