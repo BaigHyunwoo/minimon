@@ -50,8 +50,7 @@ function monInit(){
 	/* URL 모달  off */
 	$('body').on('hide.bs.modal','#saveUrlModal', function (e) {
 		
-		$('#cuid').val("");
-		$('#cpwd').val("");
+		$("#saveUrlForm").trigger('reset');
 		
 	});
 	
@@ -74,10 +73,11 @@ function monInit(){
 						$('#errorCreate').submit();
 					}else{
 						if(data.result == "success") { 
-							console.log(data);
 							$("#saveUrlForm [name='loadTime']").val(data.data.totalLoadTime);
 							$("#saveUrlForm [name='payLoad']").val(data.data.totalPayLoad);
 							$("#saveUrlForm [name='status']").val(data.data.status);
+							$("#urlCheck").attr('cd', url);
+							alert('검사 완료');
 
 						}
 					}
@@ -85,16 +85,44 @@ function monInit(){
 			});
 		}
 	});
+
+	$('body').on('click', '#deleteUrl', function(){
+		$.ajax({
+			type : 'DELETE',
+			url : '/url/'+$("#saveUrlForm [name='seq']").val(),
+			dataType : 'json',
+			success : function(data) {
+				var errorCode = data.errorCode;
+				if(typeof errorCode != "undefined"){
+					$('#errorCode').val(errorCode);
+					$('#errorCreate').submit();
+				}else{
+					if(data.result == "success") { 
+						alert('삭제 완료');
+						window.location.reload();
+					}
+				}
+			}
+		});
+	});
 	
 	$('body').on('click', '#saveUrl', function(){
-		var method = 'POST';
-		if($("#saveUrlForm [name='seq']").val() != '') method = 'PUT';
-		console.log($("#saveUrlForm").serialize());
+
+		if($("#urlCheck").attr('cd') != $("#saveUrlForm [name='url']").val()) {
+			alert('URL 검사를 진행해주세요.');
+			return;
+		}
 		
-		/* URL 리스트 출력 */
+		var method = 'POST';
+		var url = '/url';
+		if($("#saveUrlForm [name='seq']").val() != '') {
+			method = 'PUT';
+			url = '/url/'+$("#saveUrlForm [name='seq']").val();
+		}
+		
 		$.ajax({
 			type : method,
-			url : '/url',
+			url : url,
 			data : $("#saveUrlForm").serialize(),
 			dataType : 'json',
 			success : function(data) {
@@ -105,11 +133,79 @@ function monInit(){
 				}else{
 					if(data.result == "success") { 
 
-						console.log(data);
+						$("#saveUrlModal").hide();
+						alert("저장 완료");
+						window.location.reload();
 
 					}
 				}
 			}
 		});
 	});
+
+	
+	$('body').on('click', '.urlEditBtn', function(){
+		
+		/* URL 출력 */
+		$.ajax({
+			type : 'GET',
+			url : '/url/'+$(this).attr('cd'),
+			dataType : 'json',
+			success : function(data) {
+				var errorCode = data.errorCode;
+				if(typeof errorCode != "undefined"){
+					$('#errorCode').val(errorCode);
+					$('#errorCreate').submit();
+				}else{
+					if(data.result == "success") { 
+
+						$("#saveUrlForm [name='seq']").val(data.data.seq);
+						$("#saveUrlForm [name='url']").val(data.data.url);
+						$("#saveUrlForm [name='title']").val(data.data.title);
+						$("#saveUrlForm [name='timeout']").val(data.data.timeout);
+						$("#saveUrlForm [name='timer']").val(data.data.timer);
+						$("#saveUrlForm [name='loadTimePer']").val(data.data.loadTimePer);
+						$("#saveUrlForm [name='payLoadPer']").val(data.data.payLoadPer);
+						$("#saveUrlForm [name='useable']").each(function(){
+							if($(this).val() == data.data.useable) $(this).attr('checked','true');
+							else  $(this).removeAttr('checked');
+						});
+						$("#saveUrlForm [name='status']").val(data.data.status);
+						$("#saveUrlForm [name='loadTime']").val(data.data.loadTime);
+						$("#saveUrlForm [name='payLoad']").val(data.data.payLoad);
+						$("#urlCheck").attr('cd', data.data.url);
+						$('#saveUrlModal').modal('show');
+						
+					}
+				}
+			}
+		});
+	});
+	
+
+	
+	$('body').on('click', '.urlExecuteBtn', function(){
+		
+		$.ajax({
+			type : 'GET',
+			url : '/urlExecute/'+$(this).attr('cd'),
+			dataType : 'json',
+			success : function(data) {
+				var errorCode = data.errorCode;
+				if(typeof errorCode != "undefined"){
+					$('#errorCode').val(errorCode);
+					$('#errorCreate').submit();
+				}else{
+					if(data.result == "success") { 
+
+						alert("실행 완료");
+						
+					}
+				}
+			}
+		});
+	});
+
+	
+	
 }

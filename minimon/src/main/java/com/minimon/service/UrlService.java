@@ -45,7 +45,7 @@ public class UrlService {
 			
 			for(TblMonUrl url : urls) 	{
 				Map<String, Object> logData = executeUrl(url.getUrl());
-				checkData = errorCheckUrl(url, logData);
+				checkData.put(url.getUrl(), errorCheckUrl(url, logData));
 			}
 			
 		}catch(Exception e) {
@@ -118,7 +118,28 @@ public class UrlService {
 		Map<String, Object> checkData = new HashMap<String, Object>();
 		
 		try {
+
+			/*
+			 * SET DATA
+			 */
+			int status = Integer.parseInt(""+logData.get("status"));
+			double totalLoadTime = Double.parseDouble(""+logData.get("totalLoadTime"));
+			double totalPayLoad = Double.parseDouble(""+logData.get("totalPayLoad"));
 			
+			
+			/*
+			 * CHECK
+			 */
+			if(url.getStatus() == status) checkData.put("status", "SUCCESS");
+			else checkData.put("status", "ERR");
+			
+			if(totalLoadTime <= getPerData(url.getLoadTime(), url.getLoadTimePer(), 1)) checkData.put("loadTime", "SUCCESS");
+			else checkData.put("loadTime", "ERR");
+
+			if(getPerData(url.getPayLoad(), url.getPayLoadPer(), 2) <= totalPayLoad 
+					&& totalPayLoad <=getPerData(url.getPayLoad(), url.getPayLoadPer(), 1)) checkData.put("status", "SUCCESS");
+			else checkData.put("payLoad", "ERR");
+
 		}catch(Exception e) {
 			e.printStackTrace();
 
@@ -128,6 +149,24 @@ public class UrlService {
 		}
 		
 		return checkData;
+	}
+
+	/**
+	 * 
+	 * 	PERCENT 적용 데이터 반환
+	 * 
+	 * 	@param 	type 1 : +
+	 * 			type 2 : -
+	 * 
+	 */
+	public double getPerData(double data, int per, int type) {
+		if(type == 1) {
+			return data+(data/100*per);
+		}
+		else {
+			return data-(data/100*per);
+		}
+		
 	}
 	
 }

@@ -318,7 +318,6 @@ public class SeleniumHandler {
 			returnData.put("totalPayLoad", this.totalPayLoad);
 			returnData.put("totalLoadTime", this.totalLoadTime);
 			
-			System.out.println(returnData);
 			logger.debug("WebDriver - Log 분석 완료");
 			
 		}catch(Exception e) {

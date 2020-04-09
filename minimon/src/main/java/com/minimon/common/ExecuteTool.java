@@ -69,6 +69,10 @@ public class ExecuteTool {
 			 * Trasacntion
 			 */
 			
+			/*
+			 * status check and sending e-mail
+			 */
+			
 			logger.debug("Monitoring Execute Complete");
 	
 		}catch(Exception e) {

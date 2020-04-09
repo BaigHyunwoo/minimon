@@ -36,6 +36,26 @@ public class UrlController {
 	@Autowired
 	TblMonUrlRepository tblMonUrlRepository;
 
+	/**
+	 * 
+	 * URL DTO Set
+	 * 
+	 */
+	private TblMonUrl setTblMonUrl(TblMonUrl tblMonUrl, Map<String, Object> param) {
+		tblMonUrl.setTitle(""+param.get("title"));
+		tblMonUrl.setUrl(""+param.get("url"));
+		tblMonUrl.setTimer(Integer.parseInt(""+param.get("timer")));
+		tblMonUrl.setTimeout(Integer.parseInt(""+param.get("timeout")));
+		tblMonUrl.setUseable(Integer.parseInt(""+param.get("useable")));
+		tblMonUrl.setLoadTime(Double.parseDouble(""+param.get("loadTime")));
+		tblMonUrl.setLoadTimePer(Integer.parseInt(""+param.get("loadTimePer")));
+		tblMonUrl.setPayLoad(Double.parseDouble(""+param.get("payLoad")));
+		tblMonUrl.setPayLoadPer(Integer.parseInt(""+param.get("payLoadPer")));
+		tblMonUrl.setStatus(Integer.parseInt(""+param.get("status")));
+		tblMonUrl.setUptDate(new Date());
+		if(tblMonUrl.getRegDate() == null) tblMonUrl.setRegDate(new Date());
+		return tblMonUrl;
+	}
 	
 	/**
 	 * 
@@ -74,12 +94,7 @@ public class UrlController {
 
     	try {
 
-    		TblMonUrl tblMonUrl = setTblMonUrl(new TblMonUrl(), param);
-    		
-    		tblMonUrl.setRegDate(new Date());
-    		tblMonUrl.setUptDate(new Date());
-			tblMonUrlRepository.save(tblMonUrl);
-			result.put("seq", tblMonUrl.getSeq());
+			tblMonUrlRepository.save(setTblMonUrl(new TblMonUrl(), param));
 			result.put("result", "success");
 			
 		} catch (Exception e) {
@@ -91,10 +106,6 @@ public class UrlController {
         return result;
 	}
 
-	private TblMonUrl setTblMonUrl(TblMonUrl tblMonUrl, Map<String, Object> param) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	/**
 	 * 
@@ -134,11 +145,52 @@ public class UrlController {
     	
     	try {
 
-    		TblMonUrl existsData = tblMonUrlRepository.findBySeq(seq);
+    		TblMonUrl existsUrl = tblMonUrlRepository.findBySeq(seq);
     		
-    		if(existsData != null) tblMonUrlRepository.save(tblMonUrl);
+    		if(existsUrl != null) {
+    			
+    			tblMonUrlRepository.save(setTblMonUrl(existsUrl, param));
+    			
+    		}
     		
-    		result.put("data", tblMonUrl);
+    		result.put("data", seq);
+    		result.put("result", "success");
+    		
+    		
+    	} catch (Exception e) {
+    		
+			e.printStackTrace();
+			
+		}
+		
+        return result;
+	}
+
+    
+
+
+
+
+	/**
+	 * 
+	 * URL 삭제
+	 * 
+	 */
+    @RequestMapping(path = "/url/{seq}", method= RequestMethod.DELETE)
+	public HashMap<String, Object> delete(@PathVariable("seq") int seq) {
+    	HashMap<String, Object> result = new HashMap<String, Object>();
+    	
+    	try {
+
+    		TblMonUrl existsUrl = tblMonUrlRepository.findBySeq(seq);
+    		
+    		if(existsUrl != null) {
+    			
+    			tblMonUrlRepository.delete(existsUrl);
+    			
+    		}
+    		
+    		result.put("data", seq);
     		result.put("result", "success");
     		
     		
@@ -174,4 +226,41 @@ public class UrlController {
 		
         return result;
 	}
+    
+
+
+	/**
+	 * 
+	 * URL  검사 실행
+	 * 
+	 */
+    @RequestMapping(path = "/urlExecute/{seq}", method= RequestMethod.GET)
+	public HashMap<String, Object> urlExecute(@PathVariable("seq") int seq) {
+    	HashMap<String, Object> result = new HashMap<String, Object>();
+    	
+    	try {
+
+    		TblMonUrl existsUrl = tblMonUrlRepository.findBySeq(seq);
+    		
+    		if(existsUrl != null) {
+
+				Map<String, Object> logData = urlService.executeUrl(existsUrl.getUrl());
+				result.put(existsUrl.getUrl(), urlService.errorCheckUrl(existsUrl, logData));
+    			
+    		}
+    		
+    		result.put("data", seq);
+    		result.put("result", "success");
+    		
+    		
+    	} catch (Exception e) {
+    		
+			e.printStackTrace();
+			
+		}
+		
+        return result;
+	}
+
+    
 }

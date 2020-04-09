@@ -44,18 +44,23 @@
 							<th class="text-align-center" style="width:100px">URL</th>
 							<th class="text-align-center" style="width:33px">Timer</th>
 							<th class="text-align-center" style="width:33px">Useable</th>
-							<th class="text-align-center" style="width:70px">Excute</th>
+							<th class="text-align-center" style="width:70px">Execute</th>
 							<th class="text-align-center" style="width:70px">Edit</th>
 						</tr>
 					</thead>
 					<tbody id="topKeywordList"> 
 						<tr th:each="result: ${resultList}">
-							<td th:text="result.seq"></td>
-							<td th:text="result.title"></td>
-							<td th:text="result.url"></td>
-							<td th:text="result.timer"></td>
-							<td th:text="result.useable"></td>
-							<td th:text="result.uptDate"></td>
+							<td th:text="${result.seq}"></td>
+							<td th:text="${result.title}"></td>
+							<td th:text="${result.url}"></td>
+							<td th:text="${result.timer}"></td>
+							<td th:text="${result.useable}"></td>
+							<td>
+			 		 	  		<input th:attr="cd=${result.seq}" class='btn btn-success urlExecuteBtn loginBtn' type="button" value="실행" />
+			 		 	  	</td>
+							<td>
+			 		 	  		<input th:attr="cd=${result.seq}" class='btn btn-success urlEditBtn loginBtn' type="button" value="수정" />
+			 		 	  	</td>
 						</tr>
 					</tbody>
 				</table>
@@ -113,12 +118,15 @@
 					</thead>
 					<tbody id="topKeywordList"> 
 						<tr th:each="result: ${resultList}">
-							<td th:text="result.seq"></td>
-							<td th:text="result.title"></td>
-							<td th:text="result.url"></td>
-							<td th:text="result.timer"></td>
-							<td th:text="result.useable"></td>
-							<td th:text="result.uptDate"></td>
+							<td th:text="${result.seq}"></td>
+							<td th:text="${result.title}"></td>
+							<td th:text="${result.url}"></td>
+							<td th:text="${result.timer}"></td>
+							<td th:text="${result.useable}"></td>
+							<td th:text="${result.uptDate}"></td>
+							<td>
+			 		 	  		<input cd='${result.seq}' class='btn btn-success urlEditBtn loginBtn' type="button" value="수정" />
+			 		 	  	</td>
 						</tr>
 					</tbody>
 				</table>
@@ -154,7 +162,10 @@
 			 		 	</p>
 						<p>Timeout <input name="timeout" type="number" class='loginInput' value="30" /></p>
 						<p>Timer <input name="timer" type="number" class='loginInput' value="5" /></p>
-						<p>Useable <input name="Useable" type="radio" value="1" class='loginInput'/><input name="Useable" type="radio" value="0" class='loginInput'/></p>
+						<p>Useable 
+							<input name="useable" type="radio" value="1" checked class='loginInput'/>
+							<input name="useable" type="radio" value="0" class='loginInput'/>
+						</p>
 		 		 	  	<input id='urlCheck' class='btn btn-success loginBtn' type="button" value="검사" />
 					</div>
 	
@@ -162,19 +173,20 @@
 						<strong>검사 정보 설정</strong>
 						<p>
 							LoadTime 
-							<input name="loadTime" type="text" class='loginInput' readOnly autocomplete="off" style='width:100px;  margin-left: 8px;' />
-							&emsp;+-<input type="number" name="loadTimePer" value="5" style='width:30px;'>%
+							<input name="loadTime" type="text" class='loginInput' readOnly autocomplete="off" style='width:100px;  margin-left: 8px;' />ms
+							&emsp;+<input type="number" name="loadTimePer" value="5" style='width:40px;'>%
 						</p>
 						<p>
 							PayLoad 
-							<input name="payLoad" type="text" class='loginInput' readOnly autocomplete="off" style='width:100px;  margin-left: 8px;' />
-							&emsp;+-<input type="number" name="payLoadPer" value="5" style='width:30px;'>%
+							<input name="payLoad" type="text" class='loginInput' readOnly autocomplete="off" style='width:100px;  margin-left: 8px;' />bytes
+							&emsp;+-<input type="number" name="payLoadPer" value="5" style='width:40px;'>%
 						</p>
 						<p>Status <input name="status" type="test" class='loginInput' value="200" /></p>
 					</div>
 					
 					<div class="mgt15 text-right resource-btz">
 						<button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+						<button type="button" id="deleteUrl" class="btn btn btn-success" >삭제</button>
 						<button type="button" id="saveUrl" class="btn btn btn-success" >저장</button>
 					</div>
 				</form>
