@@ -1,19 +1,25 @@
 package com.minimon.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-@Table(name="yanadoo.dbo.tbl_mon_url")
-public class TblMonUrl {
+@Table(name="yanadoo.dbo.tbl_mon_api")
+public class TblMonApi {
 
 	/*
 	 * Setting Info
@@ -49,7 +55,16 @@ public class TblMonUrl {
     
     @NotNull
     private Date uptDate;
-    
+
+    @NotNull
+	private String method;					// http method
+	
+    @NotNull
+	private String data_type;				// 요청 데이터 타입
+
+    @OneToMany( fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "tbl_mon_api_seq")
+    private List<TblMonApiParam> apiParams = new ArrayList<TblMonApiParam>();
     
     /*
      * Origin Data Info
@@ -62,8 +77,45 @@ public class TblMonUrl {
 
     @NotNull
     private double payLoad;
-    
-    
+
+	private String response;				// 검사-데이터 : 데이터
+	
+	public void addApiParam(TblMonApiParam tblMonApiParam) {
+		this.apiParams.add(tblMonApiParam);
+	}
+	
+	public List<TblMonApiParam> getApiParams() {
+		return apiParams;
+	}
+
+	public void setApiParams(List<TblMonApiParam> apiParams) {
+		this.apiParams = apiParams;
+	}
+
+	public String getMethod() {
+		return method;
+	}
+
+	public void setMethod(String method) {
+		this.method = method;
+	}
+
+	public String getData_type() {
+		return data_type;
+	}
+
+	public void setData_type(String data_type) {
+		this.data_type = data_type;
+	}
+
+	public String getResponse() {
+		return response;
+	}
+
+	public void setResponse(String response) {
+		this.response = response;
+	}
+
 	public void setUrl(String url) {
 		this.url = url;
 	}

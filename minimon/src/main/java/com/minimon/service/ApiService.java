@@ -17,7 +17,7 @@ import com.minimon.exceptionHandler.MyException;
 import com.minimon.repository.TblMonUrlRepository;
 
 @Service
-public class UrlService {
+public class ApiService {
 
 	@Autowired
 	TblMonUrlRepository tblMonUrlRepository;
@@ -26,7 +26,7 @@ public class UrlService {
 	
 	private String DRIVERPATH = "/setting/chromedriver.exe";
 
-	private Logger logger = LoggerFactory.getLogger(UrlService.class);
+	private Logger logger = LoggerFactory.getLogger(ApiService.class);
 	
 	
 	

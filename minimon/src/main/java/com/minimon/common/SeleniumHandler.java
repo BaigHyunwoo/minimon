@@ -118,7 +118,7 @@ public class SeleniumHandler {
 			
 			ChromeOptions options = new ChromeOptions();
 			options.setExperimentalOption("w3c", false);
-			//options.addArguments("headless");
+			options.addArguments("headless");
 			options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
 			driver = new EventFiringWebDriver(new ChromeDriver(options));
 			
