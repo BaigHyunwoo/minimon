@@ -8,7 +8,7 @@
 	<title>Monitoring System</title>
 
 	<!-- jquery -->
-	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
@@ -251,7 +251,7 @@
 								<option value='POST'>POST</option>
 								<option value='PUT'>PUT</option>
 								<option value='DELETE'>DELETE</option>
-								<option value='FETCH'>FETCH</option>
+								<option value='PATCH'>PATCH</option>
 							</select>
 							
 							<label>Data-Type</label>
@@ -270,20 +270,16 @@
 							</div> 
 							-->
 							
-							<label>Params <a href="#" class="add_api_param badge badge-primary badge-pill">new</a></label>
+							<label>Params <a href="#" class="add_api_param badge badge-pill">new</a></label>
 							<ul class="list-group api_params">
-							  <li class="list-group-item d-flex justify-content-between align-items-center">
-							  		Key <input type="text" class="form-control" name="param_key" value="">
-									Value <input type="text" class="form-control" name="param_value" value="">
-									<a href="#" class="del_api_param badge badge-primary badge-pill">X</a>
-							  </li>
+							  
 							</ul>
 			 		 	  	<input id='apiCheck' class='btn btn-success' type="button" value="검사" />
 					    </li>
 					    <li class="list-group-item">
 					    	<label>LoadTime</label>
 							<div class="input-group">
-							  <input name="loadTime" type="text" class='form-control' readOnly autocomplete="off"/>
+							  <input name="loadTime" type="text" class='form-control' readOnly autocomplete="off" value="0" />
 							  <div class="input-group-append">
 							    <span class="input-group-text">Ms</span>
 							  	<input type="number" name="loadTimePer" value="5" class="form-control" style="width: 70px;">
@@ -293,7 +289,7 @@
 							
 					    	<label>PayLoad</label>
 							<div class="input-group">
-							  <input name="payLoad" type="text" class='form-control' readOnly autocomplete="off"/>
+							  <input name="payLoad" type="text" class='form-control' readOnly autocomplete="off" value="0" />
 							  <div class="input-group-append">
 							    <span class="input-group-text">Byte</span>
 							  	<input type="number" name="payLoadPer" value="5" class="form-control" style="width: 70px;">
@@ -307,6 +303,13 @@
 								<button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
 								<button type="button" id="deleteApi" class="btn btn btn-success" >삭제</button>
 								<button type="button" id="saveApi" class="btn btn btn-success" >저장</button>
+							</div>
+							<label>Response</label> 
+							<input name="response" type="hidden" class='form-control' value="200" />
+							<div class="card" style="width: 18rem;">
+							  <div class="card-body">
+							    <p class="card-text" id="api_response"></p>
+							  </div>
 							</div>
 					    </li>
 					  </ul>

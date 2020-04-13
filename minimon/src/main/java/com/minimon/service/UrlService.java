@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
+import com.minimon.common.CommonUtils;
 import com.minimon.common.SeleniumHandler;
 import com.minimon.entity.TblMonUrl;
 import com.minimon.exceptionHandler.MyException;
@@ -134,14 +135,14 @@ public class UrlService {
 				result = "ERR";
 			}
 			
-			if(totalLoadTime <= getPerData(url.getLoadTime(), url.getLoadTimePer(), 1)) checkData.put("loadTime", "SUCCESS");
+			if(totalLoadTime <= CommonUtils.getPerData(url.getLoadTime(), url.getLoadTimePer(), 1)) checkData.put("loadTime", "SUCCESS");
 			else {
 				checkData.put("loadTime", "ERR");
 				result = "ERR";
 			}
 
-			if(getPerData(url.getPayLoad(), url.getPayLoadPer(), 2) <= totalPayLoad 
-					&& totalPayLoad <=getPerData(url.getPayLoad(), url.getPayLoadPer(), 1)) checkData.put("status", "SUCCESS");
+			if(CommonUtils.getPerData(url.getPayLoad(), url.getPayLoadPer(), 2) <= totalPayLoad 
+					&& totalPayLoad <= CommonUtils.getPerData(url.getPayLoad(), url.getPayLoadPer(), 1)) checkData.put("status", "SUCCESS");
 			else {
 				checkData.put("payLoad", "ERR");
 				result = "ERR";
@@ -171,22 +172,5 @@ public class UrlService {
 		return checkData;
 	}
 
-	/**
-	 * 
-	 * 	PERCENT 적용 데이터 반환
-	 * 
-	 * 	@param 	type 1 : +
-	 * 			type 2 : -
-	 * 
-	 */
-	public double getPerData(double data, int per, int type) {
-		if(type == 1) {
-			return data+(data/100*per);
-		}
-		else {
-			return data-(data/100*per);
-		}
-		
-	}
 	
 }

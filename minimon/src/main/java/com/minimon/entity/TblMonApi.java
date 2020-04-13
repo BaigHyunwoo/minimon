@@ -62,7 +62,7 @@ public class TblMonApi {
     @NotNull
 	private String data_type;				// 요청 데이터 타입
 
-    @OneToMany( fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "tbl_mon_api_seq")
     private List<TblMonApiParam> apiParams = new ArrayList<TblMonApiParam>();
     

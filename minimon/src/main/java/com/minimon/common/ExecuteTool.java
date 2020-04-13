@@ -8,12 +8,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.minimon.controller.MainController;
+import com.minimon.entity.TblMonApi;
 import com.minimon.entity.TblMonUrl;
 import com.minimon.exceptionHandler.MyException;
+import com.minimon.repository.TblMonApiRepository;
 import com.minimon.repository.TblMonUrlRepository;
+import com.minimon.service.ApiService;
 import com.minimon.service.EmailService;
 import com.minimon.service.UrlService;
 
@@ -33,9 +37,15 @@ public class ExecuteTool {
 
 	@Autowired
 	TblMonUrlRepository tblMonUrlRepository;
+
+	@Autowired
+	TblMonApiRepository tblMonApiRepository;
 	
 	@Autowired
 	UrlService urlService;
+	
+	@Autowired
+	ApiService apiService;
 
 	@Autowired
 	EmailService emailService;
@@ -62,6 +72,8 @@ public class ExecuteTool {
 			/*
 			 * API
 			 */
+			List<TblMonApi> apis = tblMonApiRepository.findByUseable(1);
+			resultList.add(apiService.checkApis(apis));
 			
 			/*
 			 * URL

@@ -219,7 +219,7 @@ public class UrlController {
 
     	try {
 
-    		result.put("data", urlService.executeUrl(""+data.get("url"), Integer.parseInt(""+data.get("url"))));
+    		result.put("data", urlService.executeUrl(""+data.get("url"), Integer.parseInt(""+data.get("timeout"))));
     		result.put("result", "success");
 			
 		} catch (Exception e) {

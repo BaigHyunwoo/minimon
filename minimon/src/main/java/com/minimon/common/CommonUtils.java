@@ -2,6 +2,10 @@ package com.minimon.common;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class CommonUtils {
 
@@ -65,4 +69,70 @@ public class CommonUtils {
 	    
 	    return sdf.format(input);
 	}
+	
+	
+	/**
+	 * 
+	 * 	JSON STRING TO MAP
+	 * 
+	 */
+	public static Map<String, String> jsonStringToMap(String inputString) throws Exception{
+    	ObjectMapper mapper = new ObjectMapper();
+        Map<String, String> result = null;
+        
+		try {
+			
+			result = mapper.readValue(inputString, new TypeReference<Map<String, String>>(){});
+			
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+			
+		}
+ 
+        return result;
+    }
+	
+
+	/**
+	 * 
+	 * 	PERCENT 적용 데이터 반환
+	 * 
+	 * 	@param 	type 1 : +
+	 * 			type 2 : -
+	 * 
+	 */
+	public static double getPerData(double data, int per, int type) {
+		if(type == 1) {
+			return data+(data/100*per);
+		}
+		else {
+			return data-(data/100*per);
+		}
+		
+	}
+	
+
+
+	/**
+	 * 
+	 * 	GET BYTE OF STRING
+	 * 
+	 */
+	public static long getByteLength(String str) {
+
+		long strLength = 0;
+		char tempChar[] = new char[str.length()];
+		for (int i = 0; i < tempChar.length; i++) {
+
+			tempChar[i] = str.charAt(i);
+			if (tempChar[i] < 128) {
+				strLength++;
+			} else {
+				strLength += 2;
+			}
+		}
+		return strLength;
+	}
+	
 }

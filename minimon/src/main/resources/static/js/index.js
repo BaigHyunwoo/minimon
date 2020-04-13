@@ -60,7 +60,8 @@ function monInit(){
 	});
 
 	$('body').on('hide.bs.modal','#saveApiModal', function (e) {
-		
+
+		$(".del_api_param").trigger("click");
 		$("#saveApiForm").trigger('reset');
 		
 	});
@@ -233,7 +234,6 @@ function monInit(){
 					$('#errorCreate').submit();
 				}else{
 					if(data.result == "success") { 
-
 						$("#saveApiForm [name='seq']").val(data.data.seq);
 						$("#saveApiForm [name='url']").val(data.data.url);
 						$("#saveApiForm [name='title']").val(data.data.title);
@@ -245,11 +245,29 @@ function monInit(){
 							if($(this).val() == data.data.useable) $(this).attr('checked','true');
 							else  $(this).removeAttr('checked');
 						});
+						$("#saveApiForm [name='method']").val(data.data.method);
 						$("#saveApiForm [name='status']").val(data.data.status);
 						$("#saveApiForm [name='loadTime']").val(data.data.loadTime);
 						$("#saveApiForm [name='payLoad']").val(data.data.payLoad);
 						$("#apiCheck").attr('cd', data.data.url);
+						$("#api_response").text(data.data.response);
+						$("#saveApiForm [name='response']").val(data.data.response);
+						
+						var apiParams = (data.data.apiParams);
+						$.each(apiParams, function(i){
+							key = apiParams[i]["param_key"];
+							value = apiParams[i]["param_value"];
+							var api_param = 
+								'<li class="list-group-item d-flex justify-content-between align-items-center param">'
+								+'Key <input type="text" class="form-control param_key" name="param_key" value="'+key+'">'
+								+'Value <input type="text" class="form-control param_value" name="param_value" value="'+value+'">'
+								+'<a href="#" class="del_api_param badge badge-pill">X</a></li>';
+							$(".api_params").append(api_param);
+						});
+						
+						
 						$('#saveApiModal').modal('show');
+						
 						
 					}
 				}
@@ -260,7 +278,7 @@ function monInit(){
 	
 	$('body').on('click', '#saveApi', function(){
 
-		if($("#apiCheck").attr('cd') != $("#saveapiForm [name='url']").val()) {
+		if($("#apiCheck").attr('cd') != $("#saveApiForm [name='url']").val()) {
 			alert('API 검사를 진행해주세요.');
 			return;
 		}
@@ -275,7 +293,7 @@ function monInit(){
 		$.ajax({
 			type : method,
 			url : url,
-			data : $("#saveApiForm").serialize(),
+			data : getApiSaveData(),
 			dataType : 'json',
 			success : function(data) {
 				var errorCode = data.errorCode;
@@ -317,16 +335,16 @@ function monInit(){
 	
 
 	$('body').on('click', '#apiCheck', function(){
-		
 		var url = $("#saveApiForm [name='url']").val();
 		if(url == '') {
 			alert('URL을 입력해주세요');
 		}
 		else{
+			
 			$.ajax({
 				type : 'POST',
 				url : '/apiCheck',
-				data : { url : url, timeout : $("#saveApiForm [name='timeout']").val()},
+				data : getApiSaveData(),
 				dataType : 'json',
 				success : function(data) {
 					var errorCode = data.errorCode;
@@ -335,9 +353,12 @@ function monInit(){
 						$('#errorCreate').submit();
 					}else{
 						if(data.result == "success") { 
-							$("#saveApiForm [name='loadTime']").val(data.data.totalLoadTime);
-							$("#saveApiForm [name='payLoad']").val(data.data.totalPayLoad);
+							$("#saveApiForm [name='loadTime']").val(data.data.loadTime);
+							$("#saveApiForm [name='payLoad']").val(data.data.payLoad);
 							$("#saveApiForm [name='status']").val(data.data.status);
+							$("#api_response").text(data.data.response);
+							$("#saveApiForm [name='response']").val(data.data.response);
+							$("#apiCheck").attr('cd', url);
 							alert('검사 완료');
 
 						}
@@ -372,9 +393,9 @@ function monInit(){
 	
 	$('body').on('click', '.add_api_param', function(){
 		var api_param = 
-			'<li class="list-group-item d-flex justify-content-between align-items-center">'
-			+'Key <input type="text" class="form-control" name="param_key" value="">Value <input type="text" class="form-control" name="param_value" value="">'
-			+'<a href="#" class="del_api_param badge badge-primary badge-pill">X</a></li>';
+			'<li class="list-group-item d-flex justify-content-between align-items-center param">'
+			+'Key <input type="text" class="form-control param_key" name="param_key" value="">Value <input type="text" class="form-control param_value" name="param_value" value="">'
+			+'<a href="#" class="del_api_param badge badge-pill">X</a></li>';
 		$(".api_params").append(api_param);
 	});
 
@@ -383,5 +404,27 @@ function monInit(){
 		$(this).parent().remove();
 	});
 	
+	
+	function getApiSaveData(){
+		var keys = new Array();
+		var values = new Array();
+
+		$(".param").each(function(){
+			var key = $(this).find('.param_key').val();
+			var value = $(this).find('.param_value').val();
+			if(key != ''){
+				keys.push(key);
+				values.push(value);
+			}
+		});
+
+		var data = $("#saveApiForm").serializeArray();
+		if(keys.length > 0){
+			data.push({name: "keys", value: JSON.stringify(keys)});
+			data.push({name: "values", value: JSON.stringify(values)});
+		}
+		
+		return data;
+	}
 	
 }
