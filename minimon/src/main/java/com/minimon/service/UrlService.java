@@ -8,7 +8,6 @@ import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import com.minimon.common.CommonUtils;
@@ -25,8 +24,6 @@ public class UrlService {
 
 	private String className = this.getClass().toString();
 	
-	private String DRIVERPATH = "/setting/chromedriver.exe";
-
 	private Logger logger = LoggerFactory.getLogger(UrlService.class);
 	
 	
@@ -78,8 +75,7 @@ public class UrlService {
 		try {
 			
 			SeleniumHandler selenium = new SeleniumHandler();
-			ClassPathResource cpr = new ClassPathResource(DRIVERPATH);
-			driver = selenium.setUp(cpr.getFile().getPath());
+			driver = selenium.setUp();
 	
 			selenium.connectUrl(url, driver, timeout);
 			logData = selenium.expectionLog(

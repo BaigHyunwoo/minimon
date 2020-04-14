@@ -65,6 +65,19 @@ function monInit(){
 		$("#saveApiForm").trigger('reset');
 		
 	});
+
+
+	$('body').on('click' , '#createTransactionBtn' , function(){
+		
+		$('#saveTransactionModal').modal('show');
+		
+	});
+
+	$('body').on('hide.bs.modal','#saveTransactionModal', function (e) {
+
+		$("#saveTransactionModal").trigger('reset');
+		
+	});
 	
 	$('body').on('click', '#urlCheck', function(){
 		
@@ -333,6 +346,10 @@ function monInit(){
 		});
 	});
 	
+	
+	$( "#api_method" ).select(function() {
+	  alert( "Handler for .select() called." );
+	});
 
 	$('body').on('click', '#apiCheck', function(){
 		var url = $("#saveApiForm [name='url']").val();
@@ -391,6 +408,7 @@ function monInit(){
 	});
 
 	
+	
 	$('body').on('click', '.add_api_param', function(){
 		var api_param = 
 			'<li class="list-group-item d-flex justify-content-between align-items-center param">'
@@ -426,5 +444,61 @@ function monInit(){
 		
 		return data;
 	}
+	
+	
+
+
+	$('body').on('click', '#transactionCheck', function(){
+		var transactionFile = $("#saveTransactionForm [name='transactionFile']").val();
+		if(transactionFile == '') {
+			alert('transactionFile를 첨부해주세요');
+		}
+		else{
+
+			var file = $("#saveTransactionForm [name=transactionFile]")[0].files[0];
+			
+		    var formData = new FormData();
+		    formData.append("transactionFile", file);
+
+			$.ajax({
+				type : 'POST',
+				url : '/uploadTransactionFile',                 
+				data : formData,
+				processData: false,
+                contentType: false,
+	            enctype: 'multipart/form-data',
+				success : function(data) {
+					var errorCode = data.errorCode;
+					if(typeof errorCode != "undefined"){
+						$('#errorCode').val(errorCode);
+						$('#errorCreate').submit();
+					}else{
+						if(data.result == "success") { 
+							
+							$.ajax({
+								type : 'POST',
+								url : '/transactionCheck',
+								data : $("#saveTransactionForm").serialize(),
+								success : function(data) {
+									var errorCode = data.errorCode;
+									if(typeof errorCode != "undefined"){
+										$('#errorCode').val(errorCode);
+										$('#errorCreate').submit();
+									}else{
+										if(data.result == "success") { 
+											$("#transactionCheck").attr('cd', transactionFile);
+											alert('검사 완료');
+
+										}
+									}
+								}
+							});
+						}
+					}
+				}
+			});
+			
+		}
+	});
 	
 }

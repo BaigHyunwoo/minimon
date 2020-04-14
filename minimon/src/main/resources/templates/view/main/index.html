@@ -117,7 +117,6 @@
 						<tr style="height:32px;">
 							<th class="text-align-center" style="width:33px">Seq</th>
 							<th class="text-align-center" style="width:100px">Title</th>
-							<th class="text-align-center" style="width:100px">URL</th>
 							<th class="text-align-center" style="width:33px">Timer</th>
 							<th class="text-align-center" style="width:33px">Useable</th>
 							<th class="text-align-center" style="width:70px">Excute</th>
@@ -128,12 +127,11 @@
 						<tr th:each="result: ${transactionList}">
 							<td th:text="${result.seq}"></td>
 							<td th:text="${result.title}"></td>
-							<td th:text="${result.url}"></td>
 							<td th:text="${result.timer}"></td>
 							<td th:text="${result.useable}"></td>
 							<td th:text="${result.uptDate}"></td>
 							<td>
-			 		 	  		<input cd='${result.seq}' class='btn btn-success urlEditBtn loginBtn' type="button" value="수정" />
+			 		 	  		<input cd='${result.seq}' class='btn btn-success transactionEditBtn loginBtn' type="button" value="수정" />
 			 		 	  	</td>
 						</tr>
 					</tbody>
@@ -188,7 +186,7 @@
 							<input name="payLoad" type="text" class='loginInput' readOnly autocomplete="off" style='width:100px;  margin-left: 8px;' />bytes
 							&emsp;+-<input type="number" name="payLoadPer" value="5" style='width:40px;'>%
 						
-						<label>Status <input name="status" type="test" class='loginInput' value="200" />
+						<label>Status <input name="status" type="test" class='loginInput' value="200" readOnly />
 					</div>
 					
 					<div class="mgt15 text-right resource-btz">
@@ -246,7 +244,7 @@
 							</div>
 							
 							<label>Method</label>
-							<select name="method" class="form-control form-control-sm">
+							<select id="api_method" name="method" class="form-control form-control-sm">
 								<option value='GET'>GET</option>
 								<option value='POST'>POST</option>
 								<option value='PUT'>PUT</option>
@@ -305,11 +303,91 @@
 								<button type="button" id="saveApi" class="btn btn btn-success" >저장</button>
 							</div>
 							<label>Response</label> 
-							<input name="response" type="hidden" class='form-control' value="200" />
+							<input name="response" type="hidden" class='form-control' value="200" readOnly />
 							<div class="card" style="width: 18rem;">
 							  <div class="card-body">
 							    <p class="card-text" id="api_response"></p>
 							  </div>
+							</div>
+					    </li>
+					  </ul>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<!-- Transaction 등록 모달 -->
+<div class="modal fade" id="saveTransactionModal" aria-hidden="true">
+	<div class="modal-dialog resource-kanban-box" role="document" style="width:96%; max-width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="">TRANSACTION</h5>
+				<button type="button" class="close btn btn-default" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				
+				<form action="/api" id="saveTransactionForm" name="saveTransactionForm" class="form-group">
+					<div class="card" style="width: 100%;">
+					  <ul class="list-group list-group-flush">
+					    <li class="list-group-item">
+					    	<input type="hidden" name="seq" value="">
+							<label>Title</label>
+							<input name="title" type="text" class='form-control' autocomplete="off" />
+							
+							<label>Timeout</label> 
+							<input name="timeout" type="number" class='form-control' value="30"/>
+							
+							<label>Timer</label> 
+							<input name="timer" type="number" class='form-control' value="5"/>
+							
+							<label>Useable</label> 
+							<div class="form-check">
+							  <input class="form-check-input" type="radio" name="transaction_useable" id="transaction_useable_on" value="1" checked>
+							  <label class="form-check-label" for="transaction_useable_on">
+							    사용
+							  </label>
+							</div>
+							<div class="form-check">
+							  <input class="form-check-input" type="radio" name="transaction_useable" id="transaction_useable_off" value="0">
+							  <label class="form-check-label" for="transaction_useable_off">
+							   미사용
+							  </label>
+							</div>
+							
+							<label>Transaction File</label>
+							<div class="input-group mb-3">
+							  <div class="">
+							  	<form id="fileUploadForm" name="fileUploadForm" method="POST" enctype="multipart/form-data">
+							    	<input type="file" name="transactionFile" id="transactionFile">
+							  	</form>
+							  </div>
+							</div>
+							
+			 		 	  	<input id='transactionCheck' class='btn btn-success' type="button" value="검사" />
+					    </li>
+					    <li class="list-group-item">
+					    	<label>LoadTime</label>
+							<div class="input-group">
+							  <input name="loadTime" type="text" class='form-control' readOnly autocomplete="off" value="0" />
+							  <div class="input-group-append">
+							    <span class="input-group-text">Ms</span>
+							  	<input type="number" name="loadTimePer" value="5" class="form-control" style="width: 70px;">
+							    <span class="input-group-text">%</span>
+							  </div>
+							</div>
+							
+							<label>Status</label> 
+							<input name="status" type="text" class='form-control' value="200" readOnly />
+							
+							<div class="mgt15 text-right resource-btz">
+								<button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+								<button type="button" id="deleteApi" class="btn btn btn-success" >삭제</button>
+								<button type="button" id="saveApi" class="btn btn btn-success" >저장</button>
 							</div>
 					    </li>
 					  </ul>
@@ -325,6 +403,7 @@
 $(document).ready(function() {
 	
 	monInit();
+	
 });
 </script>
 </html>

@@ -3,13 +3,17 @@ package com.minimon.common;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.json.JSONObject;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.logging.LogEntries;
@@ -21,6 +25,7 @@ import org.openqa.selenium.support.events.AbstractWebDriverEventListener;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
 
 import com.minimon.exceptionHandler.MyException;
 
@@ -46,6 +51,10 @@ public class SeleniumHandler {
 	
 	private int status = 200;
 	
+	private EventFiringWebDriver driver;
+	private Map<String, Object> vars;
+	JavascriptExecutor js;
+	
     public int getStatus() {
 		return status;
 	}
@@ -58,6 +67,22 @@ public class SeleniumHandler {
 		return totalLoadTime;
 	}
 
+
+	@SuppressWarnings("unchecked")
+	public String waitForWindow(int timeout) {
+	  try {
+	    Thread.sleep(timeout);
+	  } catch (InterruptedException e) {
+	    e.printStackTrace();
+	  }
+	  Set<String> whNow = driver.getWindowHandles();
+	  Set<String> whThen = (Set<String>) vars.get("window_handles");
+	  if (whNow.size() > whThen.size()) {
+	    whNow.removeAll(whThen);
+	  }
+	  return whNow.iterator().next();
+	}
+	
 	/**
      * 
      *  Selenium loadTime Checker
@@ -96,14 +121,12 @@ public class SeleniumHandler {
 	 *  @author 백현우
 	 *  
 	 *  
-	 *  @param driverPath 드라이버의 위치
-	 *  
 	 *  
 	 *  @return driver 구동
 	 * 	@throws 에러코드 11
 	 * 
 	 */
-	public EventFiringWebDriver setUp(String driverPath) throws Exception { 
+	public EventFiringWebDriver setUp() throws Exception { 
 		
 		EventFiringWebDriver driver = null;
 		String driverName = "webdriver.chrome.driver";
@@ -111,7 +134,8 @@ public class SeleniumHandler {
 		try {
 			
 			// 크롬 드라이버 파일 경로설정 
-			System.setProperty(driverName, driverPath); 
+			ClassPathResource cpr = new ClassPathResource("/setting/chromedriver.exe");
+			System.setProperty(driverName, cpr.getFile().getPath()); 
 			
 			LoggingPreferences logPrefs = new LoggingPreferences();
 			logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
@@ -121,7 +145,9 @@ public class SeleniumHandler {
 			options.addArguments("headless");
 			options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
 			driver = new EventFiringWebDriver(new ChromeDriver(options));
-			
+		    js = (JavascriptExecutor) driver;
+		    vars = new HashMap<String, Object>();
+		    
 			logger.debug("WebDriver - 연결 완료");
 			
 
@@ -391,6 +417,119 @@ public class SeleniumHandler {
 		}
 	}
 	
+
+
+	/**
+	 * 
+	 *  Selenium 액션 실행
+	 *  
+	 *  
+	 *  @author 백현우
+	 *  
+	 *  
+	 * 	@throws 에러코드 17
+	 * 
+	 */
+	public String executeAction(SeleniumHandler selenium, EventFiringWebDriver driver, String action, String selector_type, String selector_value, String value) throws Exception{
+		
+		String result = "";
+		
+		WebElement element = null;
+		
+		try {
+			
+			if(action.equals("get") == true) {
+
+				selenium.connectUrl(value, driver, 5000);
+				
+			}else if(action.equals("size") == true){
+				
+			    driver.manage().window().maximize();
+			    
+			}else if(action.equals("window_handles") == true) {
+				
+			    vars.put("window_handles", driver.getWindowHandles());
+			    
+			}else if(action.equals("wait") == true) {
+				
+			    vars.put(selector_value, waitForWindow(2000));
+			    
+			}else if(action.equals("switch") == true) {
+				
+			    driver.switchTo().window(vars.get(selector_value).toString());
+			    
+			}else if(action.equals("click") == true) {
+				
+				element = getSelector(driver, selector_type, selector_value);
+				element.click();
+			    
+			}else if(action.equals("sendKeys") == true) {
+
+				element = getSelector(driver, selector_type, selector_value);
+				element.sendKeys(value);
+				
+			}else if(action.equals("submit") == true) {
+
+				element = getSelector(driver, selector_type, selector_value);
+				element.submit();
+			    
+			}
+			
+			result = "SUCCESS";
+			
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+
+			result = e.getMessage();
+			
+			throw new MyException("CLASS : " + className + " - METHOD : " + new Object(){}.getClass().getEnclosingMethod().getName() 
+									+ " - TYPE = [Function]/  Function - " 
+									+  e.getStackTrace()[0].getMethodName(), className, 17);
+		}
+		
+		return result;
+	}
 	
+	public WebElement getSelector(EventFiringWebDriver driver, String selector_type, String selector_value) {
+
+		WebElement webElement = null;
+
+		if(selector_type.equals("By.id") == true) {
+			
+			webElement = driver.findElement(By.id(selector_value));
+			
+		}else if(selector_type.equals("By.cssSelector") == true) {
+
+			webElement = driver.findElement(By.cssSelector(selector_value));
+			
+		}else if(selector_type.equals("By.linkText") == true) {
+			
+			webElement = driver.findElement(By.linkText(selector_value));
+			
+		}else if(selector_type.equals("By.className") == true) {
+			
+			webElement = driver.findElement(By.className(selector_value));
+			
+		}else if(selector_type.equals("By.name") == true) {
+
+			webElement = driver.findElement(By.name(selector_value));
+			
+		}else if(selector_type.equals("By.tagName") == true) {
+
+			webElement = driver.findElement(By.tagName(selector_value));
+			
+		}else if(selector_type.equals("By.xpath") == true) {
+
+			webElement = driver.findElement(By.xpath(selector_value));
+			
+		}else if(selector_type.equals("By.partialLinkText") == true) {
+
+			webElement = driver.findElement(By.partialLinkText(selector_value));
+			
+		}
+		
+		return webElement;
+	}
 	
 }
