@@ -1,5 +1,7 @@
 package com.minimon;
 
+import java.io.File;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -17,7 +19,7 @@ public class MinimonApplication {
 
 
 	public static void setDriverPath(String driverPath) {
-		MinimonApplication.driverPath = driverPath;
+		MinimonApplication.driverPath = driverPath+File.separator+"chromedriver.exe";
 	}
 
 
