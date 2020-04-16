@@ -347,10 +347,6 @@ function monInit(){
 	});
 	
 	
-	$( "#api_method" ).select(function() {
-	  alert( "Handler for .select() called." );
-	});
-
 	$('body').on('click', '#apiCheck', function(){
 		var url = $("#saveApiForm [name='url']").val();
 		if(url == '') {
@@ -456,13 +452,12 @@ function monInit(){
 		else{
 
 			var file = $("#saveTransactionForm [name=transactionFile]")[0].files[0];
-			
 		    var formData = new FormData();
 		    formData.append("transactionFile", file);
 
 			$.ajax({
 				type : 'POST',
-				url : '/uploadTransactionFile',                 
+				url : '/transactionCheck',                 
 				data : formData,
 				processData: false,
                 contentType: false,
@@ -475,24 +470,11 @@ function monInit(){
 					}else{
 						if(data.result == "success") { 
 							
-							$.ajax({
-								type : 'POST',
-								url : '/transactionCheck',
-								data : $("#saveTransactionForm").serialize(),
-								success : function(data) {
-									var errorCode = data.errorCode;
-									if(typeof errorCode != "undefined"){
-										$('#errorCode').val(errorCode);
-										$('#errorCreate').submit();
-									}else{
-										if(data.result == "success") { 
-											$("#transactionCheck").attr('cd', transactionFile);
-											alert('검사 완료');
-
-										}
-									}
-								}
-							});
+							$("#transactionCheck").attr('cd', transactionFile);
+							$("#saveTransactionForm [name=status]").val(data.status);
+							$("#saveTransactionForm [name=loadTime]").val(data.data.loadTime);
+							alert('검사 완료');
+							
 						}
 					}
 				}
@@ -500,5 +482,125 @@ function monInit(){
 			
 		}
 	});
+
 	
+	$('body').on('click', '.transactionExecuteBtn', function(){
+		
+		$.ajax({
+			type : 'GET',
+			url : '/transactionExecute/'+$(this).attr('cd'),
+			dataType : 'json',
+			success : function(data) {
+				var errorCode = data.errorCode;
+				if(typeof errorCode != "undefined"){
+					$('#errorCode').val(errorCode);
+					$('#errorCreate').submit();
+				}else{
+					if(data.result == "success") { 
+
+						alert("실행 완료");
+						
+					}
+				}
+			}
+		});
+	});
+	
+
+	$('body').on('click', '#deleteTransaction', function(){
+		$.ajax({
+			type : 'DELETE',
+			url : '/api/'+$("#saveTransactionForm [name='seq']").val(),
+			dataType : 'json',
+			success : function(data) {
+				var errorCode = data.errorCode;
+				if(typeof errorCode != "undefined"){
+					$('#errorCode').val(errorCode);
+					$('#errorCreate').submit();
+				}else{
+					if(data.result == "success") { 
+						alert('삭제 완료');
+						window.location.reload();
+					}
+				}
+			}
+		});
+	});
+	
+
+	$('body').on('click', '#saveTransaction', function(){
+
+		if($("#transactionCheck").attr('cd') != $("#saveTransactionForm [name='url']").val()) {
+			alert('Transaction 검사를 진행해주세요.');
+			return;
+		}
+		
+		var method = 'POST';
+		var url = '/transaction';
+		if($("#saveTransactionForm [name='seq']").val() != '') {
+			method = 'PUT';
+			url = '/transaction/'+$("#saveTransactionForm [name='seq']").val();
+		}
+		
+		$.ajax({
+			type : method,
+			url : url,
+			data : getTransactionSaveData(),
+			dataType : 'json',
+			success : function(data) {
+				var errorCode = data.errorCode;
+				if(typeof errorCode != "undefined"){
+					$('#errorCode').val(errorCode);
+					$('#errorCreate').submit();
+				}else{
+					if(data.result == "success") { 
+
+						$("#saveTransactionModal").hide();
+						alert("저장 완료");
+						window.location.reload();
+
+					}
+				}
+			}
+		});
+	});
+	
+
+
+
+	
+	$('body').on('click', '.transactionEditBtn', function(){
+		
+		/* transaction 출력 */
+		$.ajax({
+			type : 'GET',
+			url : '/transaction/'+$(this).attr('cd'),
+			dataType : 'json',
+			success : function(data) {
+				var errorCode = data.errorCode;
+				if(typeof errorCode != "undefined"){
+					$('#errorCode').val(errorCode);
+					$('#errorCreate').submit();
+				}else{
+					if(data.result == "success") { 
+						$("#saveTransactionForm [name='seq']").val(data.data.seq);
+						$("#saveTransactionForm [name='title']").val(data.data.title);
+						$("#saveTransactionForm [name='timeout']").val(data.data.timeout);
+						$("#saveTransactionForm [name='timer']").val(data.data.timer);
+						$("#saveTransactionForm [name='loadTimePer']").val(data.data.loadTimePer);
+						$("#saveTransactionForm [name='useable']").each(function(){
+							if($(this).val() == data.data.useable) $(this).attr('checked','true');
+							else  $(this).removeAttr('checked');
+						});
+						$("#saveTransactionForm [name='status']").val(data.data.status);
+						$("#saveTransactionForm [name='loadTime']").val(data.data.loadTime);
+						$("#transactionCheck").attr('cd', data.data.transactionCode);
+						
+						
+						$('#saveApiModal').modal('show');
+					}
+				}
+			}
+		});
+	});
 }

@@ -133,6 +133,9 @@ public class SeleniumHandler {
 		
 		try {
 			
+			// 기존 프로세스 킬
+		    Runtime.getRuntime().exec("taskkill /F /IM chromedriver");
+		        
 			// 크롬 드라이버 파일 경로설정 
 			ClassPathResource cpr = new ClassPathResource("/setting/chromedriver.exe");
 			System.setProperty(driverName, cpr.getFile().getPath()); 
@@ -142,7 +145,7 @@ public class SeleniumHandler {
 			
 			ChromeOptions options = new ChromeOptions();
 			options.setExperimentalOption("w3c", false);
-			options.addArguments("headless");
+//			options.addArguments("headless");
 			options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
 			driver = new EventFiringWebDriver(new ChromeDriver(options));
 		    js = (JavascriptExecutor) driver;
@@ -440,7 +443,7 @@ public class SeleniumHandler {
 			
 			if(action.equals("get") == true) {
 
-				selenium.connectUrl(value, driver, 5000);
+				driver.get(value);
 				
 			}else if(action.equals("size") == true){
 				
@@ -452,7 +455,7 @@ public class SeleniumHandler {
 			    
 			}else if(action.equals("wait") == true) {
 				
-			    vars.put(selector_value, waitForWindow(2000));
+			    vars.put(selector_value, waitForWindow(5000));
 			    
 			}else if(action.equals("switch") == true) {
 				
@@ -495,6 +498,8 @@ public class SeleniumHandler {
 
 		WebElement webElement = null;
 
+		System.out.println(selector_type+" : "+selector_value);
+		
 		if(selector_type.equals("By.id") == true) {
 			
 			webElement = driver.findElement(By.id(selector_value));

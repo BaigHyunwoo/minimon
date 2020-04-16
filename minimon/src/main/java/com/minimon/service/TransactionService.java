@@ -5,11 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.openqa.selenium.support.events.EventFiringWebDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.minimon.common.CommonUtils;
 import com.minimon.common.SeleniumHandler;
 import com.minimon.entity.TblMonCodeData;
 import com.minimon.entity.TblMonTransaction;
@@ -24,13 +23,11 @@ public class TransactionService {
 
 	private String className = this.getClass().toString();
 	
-	private Logger logger = LoggerFactory.getLogger(TransactionService.class);
-	
 	
 	
 	/**
 	 * 
-	 * 	URL 모니터링 검사 실행
+	 * 	transaction 모니터링 검사 실행
 	 * 
 	 * 
 	 * 
@@ -42,7 +39,7 @@ public class TransactionService {
 		try {
 			
 			for(TblMonTransaction transaction : tblMonTransactions) 	{
-				Map<String, Object> logData = executeTransaction(transaction);
+				Map<String, Object> logData = executeTransaction(transaction.getCodeDatas());
 				checkData.put(""+transaction.getSeq(), errorCheckTransaction(transaction, logData));
 			}
 			
@@ -59,37 +56,41 @@ public class TransactionService {
 	
 	
 
-	
 	/**
 	 * 
-	 * 	transaction 실행
+	 * 	transaction 모니터링 검사 상태 검사
 	 * 
 	 * 
 	 * 
 	 * 	@exception			핸들러로 처리	CODE 12
 	 */
-	public Map<String, Object> executeTransaction(TblMonTransaction transaction) throws Exception {
-		Map<String, Object> logData = new HashMap<String, Object>();
+	public int checkStatus(Map<String, Object> logData) throws Exception {
+		
+		int status = 200;
 		
 		try {
 			
-			
-			
-			logger.debug(logData.toString());
-			
+			for(String key : logData.keySet()) {
+				
+				if(logData.get(key).equals("ERR") == true) status = 500;
+				
+			}
 			
 		}catch(Exception e) {
+			
+			status = 500;
+			
 			e.printStackTrace();
 
 			throw new MyException("CLASS : " + className + " - METHOD : " +  new Object(){}.getClass().getEnclosingMethod().getName()  + " "
-					+ "- TYPE = [Function]/  Function - execute", className, 12);
+					+ "- TYPE = [Function]/  Function - execute", className, 11);
          
 		}
 		
-		return logData;
+		return status;
 	}
 	
-
+	
 
 	/**
 	 * 
@@ -105,15 +106,34 @@ public class TransactionService {
 		try {
 
 			String result = "SUCCESS";
+			int status = Integer.parseInt(""+logData.get("status"));
+			double loadTime = Double.parseDouble(""+logData.get("loadTime"));
+			
 			
 			/*
 			 * CHECK
 			 */
+			if(transaction.getStatus() == status) checkData.put("status", "SUCCESS");
+			else {
+				checkData.put("status", "ERR");
+				result = "ERR";
+			}
+			
+			if(loadTime <= CommonUtils.getPerData(transaction.getLoadTime(), transaction.getLoadTimePer(), 1)) checkData.put("loadTime", "SUCCESS");
+			else {
+				checkData.put("loadTime", "ERR");
+				result = "ERR";
+			}
 
 			
 			/*
 			 * SET PARAM
 			 */
+			checkData.put("check_loadTime",loadTime);
+			checkData.put("check_status",status);
+			checkData.put("origin_loadTime",transaction.getLoadTime());
+			checkData.put("origin_status",transaction.getStatus());
+			checkData.put("seq", transaction.getSeq());
 			checkData.put("result", result);
 			
 		}catch(Exception e) {
@@ -139,7 +159,7 @@ public class TransactionService {
 	 * 
 	 * 	@exception			핸들러로 처리	CODE 14
 	 */
-	public Map<String, Object> executeCode(List<TblMonCodeData> codeDatas) throws Exception {
+	public Map<String, Object> executeTransaction(List<TblMonCodeData> codeDatas) throws Exception {
 		Map<String, Object> logData = new HashMap<String, Object>();
 		EventFiringWebDriver driver = null;
 		
@@ -147,17 +167,16 @@ public class TransactionService {
 			
 			SeleniumHandler selenium = new SeleniumHandler();
 			driver = selenium.setUp();
-	
-			System.out.println(codeDatas.size());
-			
+
+            long startTime = System.currentTimeMillis();
 			for(int i=0; i< codeDatas.size(); i++) {
 				TblMonCodeData tblMonCodeData = codeDatas.get(i);
-				System.out.println(tblMonCodeData != null);
-				System.out.println(tblMonCodeData.getAction()+" "+ tblMonCodeData.getSelector_type()+" "+ tblMonCodeData.getSelector_value()+" "+tblMonCodeData.getValue());
+				System.out.println(tblMonCodeData.getAction()+" "+ tblMonCodeData.getSelector_type()+" "+ tblMonCodeData.getSelector_value()+" "+ tblMonCodeData.getValue());
 				logData.put(""+i, selenium.executeAction(selenium, driver, tblMonCodeData.getAction(), tblMonCodeData.getSelector_type(), tblMonCodeData.getSelector_value(), tblMonCodeData.getValue()));
 			}
+            long endTime = System.currentTimeMillis();
+            logData.put("loadTime", endTime-startTime);
 			
-			logger.debug(logData.toString());
 			
 			
 		} catch(Exception e) {
@@ -204,7 +223,6 @@ public class TransactionService {
 				tblMonCodeData.setSelector_type(selector_type);
 				tblMonCodeData.setSelector_value(selector_value);
 				tblMonCodeData.setValue(value);
-				System.out.println(tblMonCodeData.getAction()+" "+tblMonCodeData.getSelector_type()+" "+tblMonCodeData.getValue());
 			}
 			
 		} catch(Exception e) {
@@ -264,35 +282,35 @@ public class TransactionService {
 		
 		if(line.indexOf("By.id") > 0) {
 			
-			return "id";
+			return "By.id";
 			
 		}else if(line.indexOf("By.cssSelector") > 0) {
 			
-			return "cssSelector";
+			return "By.cssSelector";
 			
 		}else if(line.indexOf("By.linkText") > 0) {
 
-			return "linkText";
+			return "By.linkText";
 			
 		}else if(line.indexOf("By.className") > 0) {
 			
-			return "className";
+			return "By.className";
 			
 		}else if(line.indexOf("By.name") > 0) {
 			
-			return "name";
+			return "By.name";
 			
 		}else if(line.indexOf("By.tagName") > 0) {
 
-			return "tagName";
+			return "By.tagName";
 			
 		}else if(line.indexOf("By.xpath") > 0) {
 
-			return "xpath";
+			return "By.xpath";
 			
 		}else if(line.indexOf("By.partialLinkText") > 0) {
 
-			return "partialLinkText";
+			return "By.partialLinkText";
 			
 		}
 		
@@ -305,11 +323,11 @@ public class TransactionService {
 		
 		if(type.equals("first") == true) {
 
-			return line.substring(line.indexOf(stObj)+stObjLen, line.indexOf(edObj, line.indexOf(stObj)+stObjLen));
+			return line.substring(line.indexOf(stObj)+stObjLen, line.indexOf(edObj, line.indexOf(stObj)));
 			
 		}else {
 
-			return line.substring(line.lastIndexOf(stObj)+stObjLen, line.indexOf(edObj, line.lastIndexOf(stObj)+stObjLen));
+			return line.substring(line.lastIndexOf(stObj)+stObjLen, line.indexOf(edObj, line.lastIndexOf(stObj)));
 			
 		}
 	}

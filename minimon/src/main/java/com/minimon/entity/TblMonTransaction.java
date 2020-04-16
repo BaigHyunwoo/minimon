@@ -50,7 +50,6 @@ public class TblMonTransaction {
     @NotNull
     private Date uptDate;
     
-    @NotNull
     private String transactionCode;
     
 
@@ -68,6 +67,14 @@ public class TblMonTransaction {
     private double loadTime;
 
     
+	public List<TblMonCodeData> getCodeDatas() {
+		return codeDatas;
+	}
+
+	public void setCodeDatas(List<TblMonCodeData> codeDatas) {
+		this.codeDatas = codeDatas;
+	}
+
 	public String getTransactionCode() {
 		return transactionCode;
 	}

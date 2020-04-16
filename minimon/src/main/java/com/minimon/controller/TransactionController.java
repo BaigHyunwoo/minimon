@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.minimon.entity.TblMonApi;
+import com.minimon.entity.TblMonApiParam;
 import com.minimon.entity.TblMonCodeData;
 import com.minimon.entity.TblMonTransaction;
 import com.minimon.repository.TblMonTransactionRepository;
@@ -47,6 +49,7 @@ public class TransactionController {
 	@Autowired
 	EmailService emailService;
 
+
 	/**
 	 * 
 	 * URL DTO Set
@@ -62,9 +65,9 @@ public class TransactionController {
 		tblMonTransaction.setStatus(Integer.parseInt(""+param.get("status")));
 		tblMonTransaction.setUptDate(new Date());
 		if(tblMonTransaction.getRegDate() == null) tblMonTransaction.setRegDate(new Date());
+		//tblMonTransaction.setCodeDatas(setTblMonCodeDatas(param));
 		return tblMonTransaction;
 	}
-	
 	
 	/**
 	 * 
@@ -77,6 +80,7 @@ public class TransactionController {
     	
     	try {
 
+    		List<TblMonTransaction> transactionList = tblMonTransactionRepository.findAll();
     		result.put("result", "success");
     		
     		
@@ -101,6 +105,8 @@ public class TransactionController {
 
     	try {
 
+    		tblMonTransactionRepository.save(setTblMonTransaction(new TblMonTransaction(), param));
+    		
 			result.put("result", "success");
 			
 		} catch (Exception e) {
@@ -123,7 +129,12 @@ public class TransactionController {
     	HashMap<String, Object> result = new HashMap<String, Object>();
     	
     	try {
+    		
 
+
+    		TblMonTransaction existsTransaction = tblMonTransactionRepository.findBySeq(seq);
+
+    		result.put("data", existsTransaction);
     		result.put("result", "success");
     		
     		
@@ -149,6 +160,13 @@ public class TransactionController {
     	
     	try {
 
+    		TblMonTransaction existsTransaction = tblMonTransactionRepository.findBySeq(seq);
+    		
+    		if(existsTransaction != null) {
+    			
+    			tblMonTransactionRepository.save(setTblMonTransaction(existsTransaction, param));
+    			
+    		}
     		
     		result.put("data", seq);
     		result.put("result", "success");
@@ -178,6 +196,15 @@ public class TransactionController {
     	HashMap<String, Object> result = new HashMap<String, Object>();
     	
     	try {
+
+
+    		TblMonTransaction existsTransaction = tblMonTransactionRepository.findBySeq(seq);
+    		
+    		if(existsTransaction != null) {
+    			
+    			tblMonTransactionRepository.delete(existsTransaction);
+    			
+    		}
     		
     		result.put("data", seq);
     		result.put("result", "success");
@@ -199,42 +226,39 @@ public class TransactionController {
 	 * 
 	 */
     @ResponseBody
-	@RequestMapping(value="/uploadTransactionFile", method=RequestMethod.POST)
-	public Map<String, Object> uploadTransactionFile(MultipartFile transactionFile) {
+	@RequestMapping(value="/transactionCheck", method=RequestMethod.POST)
+	public Map<String, Object> transactionCheck(MultipartFile transactionFile) {
     	Map<String, Object> result = new HashMap<String, Object>();
 
     	try {
+    		List<TblMonCodeData> codeDatas = new ArrayList<TblMonCodeData>();
     		
-    		if(transactionFile.isEmpty() == false) {
-    			List<TblMonCodeData> codeDatas = new ArrayList<TblMonCodeData>();
-    		    
-    		    /*
-    		     * READ CODE FILE
-    		     */
-    			BufferedReader br;
-    			String line;
-    		    InputStream is = transactionFile.getInputStream();
-    		    br = new BufferedReader(new InputStreamReader(is));
-    		    boolean check = false;
-    		    while ((line = br.readLine()) != null) {
-    		    	
-    		    	/*
-    		    	 * TEST FUNCTION START
-    		    	 */
-    		    	if(line.indexOf("@Test") > 0) check = true;
-    		    	if(check == true) {
-    		    		TblMonCodeData tblMonCodeData = transactionService.getCodeData(line);
-    		    		if(tblMonCodeData != null) codeDatas.add(tblMonCodeData);
-    		    	}
-    		    }
-    		    
-    		    /*
-    		     * CODE EXECUTE
-    		     */
-    		    result = transactionService.executeCode(codeDatas);
-        		result.put("result", "success");
-    		    
-    		}
+		    /*
+		     * READ CODE FILE
+		     */
+			BufferedReader br;
+			String line;
+		    InputStream is = transactionFile.getInputStream();
+		    br = new BufferedReader(new InputStreamReader(is));
+		    boolean check = false;
+		    while ((line = br.readLine()) != null) {
+		    	
+		    	/*
+		    	 * TEST FUNCTION START
+		    	 */
+		    	if(line.indexOf("@Test") > 0) check = true;
+		    	if(check == true) {
+		    		TblMonCodeData tblMonCodeData = transactionService.getCodeData(line);
+		    		if(tblMonCodeData != null) codeDatas.add(tblMonCodeData);
+		    	}
+		    }
+
+    		Map<String, Object> logData = transactionService.executeTransaction(codeDatas);
+    		result.put("status", transactionService.checkStatus(logData));
+    		result.put("data", logData);
+    		result.put("codeDatas", codeDatas);
+        	result.put("result", "success");
+
 			
 		} catch (Exception e) {
 			
@@ -246,31 +270,6 @@ public class TransactionController {
 		
         return result;
 	}
-    
-	/**
-	 * 
-	 * transaction CHECK
-	 * 
-	 */
-    @RequestMapping(path = "/transactionCheck", method= RequestMethod.POST)
-	public Map<String, Object> transactionCheck(@RequestParam Map<String, Object> param) {
-    	Map<String, Object> result = new HashMap<String, Object>();
-
-    	try {
-
-    		TblMonTransaction tblMonTransaction = setTblMonTransaction(new TblMonTransaction(), param);
-    		result.put("data", transactionService.executeTransaction(tblMonTransaction));
-    		result.put("result", "success");
-			
-		} catch (Exception e) {
-			
-			e.printStackTrace();
-			
-		}
-		
-        return result;
-	}
-    
 
 
 	/**

@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.minimon.entity.TblMonApi;
+import com.minimon.entity.TblMonTransaction;
 import com.minimon.entity.TblMonUrl;
 import com.minimon.repository.TblMonApiRepository;
+import com.minimon.repository.TblMonTransactionRepository;
 import com.minimon.repository.TblMonUrlRepository;
 
 
@@ -34,6 +36,9 @@ public class MainController {
 
 	@Autowired
 	TblMonApiRepository tblMonApiRepository;
+
+	@Autowired
+	TblMonTransactionRepository tblMonTransactionRepository;
 	
 	/**
 	 * 
@@ -45,11 +50,13 @@ public class MainController {
 		
 		List<TblMonUrl> urlList = tblMonUrlRepository.findAll();
 		List<TblMonApi> apiList = tblMonApiRepository.findAll();
+		List<TblMonTransaction> transactionList = tblMonTransactionRepository.findAll();
 		
 		
 		ModelAndView mav = new ModelAndView("view/main/index");
 		mav.addObject("urlList", urlList);
 		mav.addObject("apiList", apiList);
+		mav.addObject("transactionList", transactionList);
 		mav.addObject("status", 200);
         return mav;
 	}

@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -38,29 +39,11 @@ public class MinimonApplicationTests {
 	  }
 	  @Test
 	  public void test1() {
-	    driver.get("https://www.yanadoo.co.kr/english/basic/");
-	    driver.manage().window().setSize(new Dimension(1936, 1056));
-	    driver.findElement(By.cssSelector(".reg > a")).click();
-	    {
-	      WebElement element = driver.findElement(By.linkText("지금 신청하기"));
-	      Actions builder = new Actions(driver);
-	      builder.moveToElement(element).perform();
-	    }
-	    driver.findElement(By.linkText("지금 신청하기")).click();
-	    {
-	      WebElement element = driver.findElement(By.tagName("body"));
-	      Actions builder = new Actions(driver);
-	      builder.moveToElement(element, 0, 0).perform();
-	    }
-	    {
-	      WebElement element = driver.findElement(By.cssSelector(".pop-login > .pop-ynd-bg"));
-	      Actions builder = new Actions(driver);
-	      builder.moveToElement(element).perform();
-	    }
-	    {
-	      WebElement element = driver.findElement(By.tagName("body"));
-	      Actions builder = new Actions(driver);
-	      builder.moveToElement(element, 0, 0).perform();
-	    }
+		    driver.get("https://www.naver.com/");
+		    driver.manage().window().setSize(new Dimension(1936, 1056));
+		    driver.findElement(By.cssSelector(".mn_dic > .an_icon")).click();
+		    driver.findElement(By.id("ac_input")).click();
+		    driver.findElement(By.id("ac_input")).sendKeys("야나두");
+		    driver.findElement(By.id("ac_input")).sendKeys(Keys.ENTER);
 	  }
 }
