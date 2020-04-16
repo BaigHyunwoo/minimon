@@ -50,6 +50,7 @@ public class TblMonTransaction {
     @NotNull
     private Date uptDate;
     
+    @NotNull
     private String transactionCode;
     
 

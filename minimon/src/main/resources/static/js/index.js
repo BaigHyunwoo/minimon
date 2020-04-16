@@ -470,9 +470,14 @@ function monInit(){
 					}else{
 						if(data.result == "success") { 
 							
+							
 							$("#transactionCheck").attr('cd', transactionFile);
-							$("#saveTransactionForm [name=status]").val(data.status);
+							$("#saveTransactionForm [name=status]").val(data.data.status);
 							$("#saveTransactionForm [name=loadTime]").val(data.data.loadTime);
+							$("#saveTransactionForm [name=codeDatas]").val(JSON.stringify(data.codeDatas));
+							$("#saveTransactionForm [name=transactionCode]").val(transactionFile);
+							$("#transactionFile").attr('cd', transactionFile);
+							
 							alert('검사 완료');
 							
 						}
@@ -530,7 +535,7 @@ function monInit(){
 
 	$('body').on('click', '#saveTransaction', function(){
 
-		if($("#transactionCheck").attr('cd') != $("#saveTransactionForm [name='url']").val()) {
+		if($("#transactionCheck").attr('cd') != $("#transactionFile").attr('cd')) {
 			alert('Transaction 검사를 진행해주세요.');
 			return;
 		}
@@ -545,7 +550,7 @@ function monInit(){
 		$.ajax({
 			type : method,
 			url : url,
-			data : getTransactionSaveData(),
+			data : $("#saveTransactionForm").serialize(),
 			dataType : 'json',
 			success : function(data) {
 				var errorCode = data.errorCode;
@@ -583,6 +588,7 @@ function monInit(){
 					$('#errorCreate').submit();
 				}else{
 					if(data.result == "success") { 
+						
 						$("#saveTransactionForm [name='seq']").val(data.data.seq);
 						$("#saveTransactionForm [name='title']").val(data.data.title);
 						$("#saveTransactionForm [name='timeout']").val(data.data.timeout);
@@ -594,10 +600,13 @@ function monInit(){
 						});
 						$("#saveTransactionForm [name='status']").val(data.data.status);
 						$("#saveTransactionForm [name='loadTime']").val(data.data.loadTime);
+						$("#saveTransactionForm [name='transactionCode']").val(data.data.transactionCode);
+						$("#saveTransactionForm [name=codeDatas]").val(JSON.stringify(data.data.codeDatas));
+						$("#transactionFile").attr('cd',data.data.transactionCode);
 						$("#transactionCheck").attr('cd', data.data.transactionCode);
 						
 						
-						$('#saveApiModal').modal('show');
+						$('#saveTransactionModal').modal('show');
 					}
 				}
 			}

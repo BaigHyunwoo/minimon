@@ -1,7 +1,5 @@
 package com.minimon.entity;
 
-import java.util.Date;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,11 +26,6 @@ public class TblMonCodeData {
     private String selector_value;
 
     private String value;
-    
-    @NotNull
-    private Date regDate;
-
-    
     
 	public String getSelector_type() {
 		return selector_type;
@@ -64,14 +57,6 @@ public class TblMonCodeData {
 
 	public void setValue(String value) {
 		this.value = value;
-	}
-
-	public Date getRegDate() {
-		return regDate;
-	}
-
-	public void setRegDate(Date regDate) {
-		this.regDate = regDate;
 	}
 
 	public int getSeq() {

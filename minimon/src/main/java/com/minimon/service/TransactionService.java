@@ -129,6 +129,7 @@ public class TransactionService {
 			/*
 			 * SET PARAM
 			 */
+			checkData.put("logData",logData);
 			checkData.put("check_loadTime",loadTime);
 			checkData.put("check_status",status);
 			checkData.put("origin_loadTime",transaction.getLoadTime());
@@ -170,12 +171,16 @@ public class TransactionService {
 
             long startTime = System.currentTimeMillis();
 			for(int i=0; i< codeDatas.size(); i++) {
+				
 				TblMonCodeData tblMonCodeData = codeDatas.get(i);
-				System.out.println(tblMonCodeData.getAction()+" "+ tblMonCodeData.getSelector_type()+" "+ tblMonCodeData.getSelector_value()+" "+ tblMonCodeData.getValue());
 				logData.put(""+i, selenium.executeAction(selenium, driver, tblMonCodeData.getAction(), tblMonCodeData.getSelector_type(), tblMonCodeData.getSelector_value(), tblMonCodeData.getValue()));
+				
 			}
             long endTime = System.currentTimeMillis();
+            
+            
             logData.put("loadTime", endTime-startTime);
+            logData.put("status", checkStatus(logData));
 			
 			
 			

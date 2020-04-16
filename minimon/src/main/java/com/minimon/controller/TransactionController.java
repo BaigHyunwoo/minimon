@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.minimon.entity.TblMonApi;
-import com.minimon.entity.TblMonApiParam;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.minimon.entity.TblMonCodeData;
 import com.minimon.entity.TblMonTransaction;
 import com.minimon.repository.TblMonTransactionRepository;
@@ -56,16 +56,28 @@ public class TransactionController {
 	 * 
 	 */
 	private TblMonTransaction setTblMonTransaction(TblMonTransaction tblMonTransaction, Map<String, Object> param) {
-		tblMonTransaction.setTitle(""+param.get("title"));
-		tblMonTransaction.setTimer(Integer.parseInt(""+param.get("timer")));
-		tblMonTransaction.setTimeout(Integer.parseInt(""+param.get("timeout")));
-		tblMonTransaction.setUseable(Integer.parseInt(""+param.get("transaction_useable")));
-		tblMonTransaction.setLoadTime(Double.parseDouble(""+param.get("loadTime")));
-		tblMonTransaction.setLoadTimePer(Integer.parseInt(""+param.get("loadTimePer")));
-		tblMonTransaction.setStatus(Integer.parseInt(""+param.get("status")));
-		tblMonTransaction.setUptDate(new Date());
-		if(tblMonTransaction.getRegDate() == null) tblMonTransaction.setRegDate(new Date());
-		//tblMonTransaction.setCodeDatas(setTblMonCodeDatas(param));
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		try {
+			
+			tblMonTransaction.setTitle(""+param.get("title"));
+			tblMonTransaction.setTimer(Integer.parseInt(""+param.get("timer")));
+			tblMonTransaction.setTimeout(Integer.parseInt(""+param.get("timeout")));
+			tblMonTransaction.setUseable(Integer.parseInt(""+param.get("transaction_useable")));
+			tblMonTransaction.setLoadTime(Double.parseDouble(""+param.get("loadTime")));
+			tblMonTransaction.setLoadTimePer(Integer.parseInt(""+param.get("loadTimePer")));
+			tblMonTransaction.setStatus(Integer.parseInt(""+param.get("status")));
+			tblMonTransaction.setTransactionCode(""+param.get("transactionCode"));
+			tblMonTransaction.setUptDate(new Date());
+			if(tblMonTransaction.getRegDate() == null) tblMonTransaction.setRegDate(new Date());
+			tblMonTransaction.setCodeDatas(objectMapper.readValue(param.get("codeDatas").toString(), new TypeReference<List<TblMonCodeData>>(){}));
+			
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+			
+		}
+		
 		return tblMonTransaction;
 	}
 	
@@ -81,6 +93,7 @@ public class TransactionController {
     	try {
 
     		List<TblMonTransaction> transactionList = tblMonTransactionRepository.findAll();
+    		result.put("transactionList", transactionList);
     		result.put("result", "success");
     		
     		
@@ -99,14 +112,13 @@ public class TransactionController {
 	 * transaction 생성
 	 * 
 	 */
-    @RequestMapping(path = "/transaction", method= RequestMethod.POST)
+	@RequestMapping(path = "/transaction", method= RequestMethod.POST)
 	public HashMap<String, Object> createTransaction(@RequestParam Map<String, Object> param) {
     	HashMap<String, Object> result = new HashMap<String, Object>();
 
     	try {
 
     		tblMonTransactionRepository.save(setTblMonTransaction(new TblMonTransaction(), param));
-    		
 			result.put("result", "success");
 			
 		} catch (Exception e) {
@@ -163,7 +175,7 @@ public class TransactionController {
     		TblMonTransaction existsTransaction = tblMonTransactionRepository.findBySeq(seq);
     		
     		if(existsTransaction != null) {
-    			
+
     			tblMonTransactionRepository.save(setTblMonTransaction(existsTransaction, param));
     			
     		}
@@ -254,7 +266,6 @@ public class TransactionController {
 		    }
 
     		Map<String, Object> logData = transactionService.executeTransaction(codeDatas);
-    		result.put("status", transactionService.checkStatus(logData));
     		result.put("data", logData);
     		result.put("codeDatas", codeDatas);
         	result.put("result", "success");
@@ -283,6 +294,16 @@ public class TransactionController {
     	
     	try {
 
+    		TblMonTransaction existsTransaction = tblMonTransactionRepository.findBySeq(seq);
+    		
+    		if(existsTransaction != null) {
+    			
+    			Map<String, Object> logData = transactionService.executeTransaction(existsTransaction.getCodeDatas());
+    			result.put(""+existsTransaction.getSeq(), transactionService.errorCheckTransaction(existsTransaction, logData));
+				emailService.sendSimpleMessage("qorto12@naver.com", "모니터링 검사 결과", result.toString());
+    			
+    		}
+    		
     		result.put("data", seq);
     		result.put("result", "success");
     		

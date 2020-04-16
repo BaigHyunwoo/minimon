@@ -8,16 +8,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.minimon.controller.MainController;
 import com.minimon.entity.TblMonApi;
+import com.minimon.entity.TblMonTransaction;
 import com.minimon.entity.TblMonUrl;
 import com.minimon.exceptionHandler.MyException;
 import com.minimon.repository.TblMonApiRepository;
+import com.minimon.repository.TblMonTransactionRepository;
 import com.minimon.repository.TblMonUrlRepository;
 import com.minimon.service.ApiService;
 import com.minimon.service.EmailService;
+import com.minimon.service.TransactionService;
 import com.minimon.service.UrlService;
 
 
@@ -39,6 +43,9 @@ public class ExecuteTool {
 
 	@Autowired
 	TblMonApiRepository tblMonApiRepository;
+
+	@Autowired
+	TblMonTransactionRepository tblMonTransactionRepository;
 	
 	@Autowired
 	UrlService urlService;
@@ -46,6 +53,9 @@ public class ExecuteTool {
 	@Autowired
 	ApiService apiService;
 
+	@Autowired
+	TransactionService transactionService;
+	
 	@Autowired
 	EmailService emailService;
 	
@@ -62,27 +72,21 @@ public class ExecuteTool {
 	 * 
 	 * 	@exception			핸들러로 처리	CODE 11
 	 */
-	//@Scheduled(cron = "0 * * * * *")
+	@Scheduled(cron = "0 * * * * *")
 	public void execute() throws Exception {
+		
 		try {
 			
 			List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
 			
-			/*
-			 * API
-			 */
 			List<TblMonApi> apis = tblMonApiRepository.findByUseable(1);
 			resultList.add(apiService.checkApis(apis));
 			
-			/*
-			 * URL
-			 */
 			List<TblMonUrl> urls = tblMonUrlRepository.findByUseable(1);
 			resultList.add(urlService.checkUrls(urls));
 			
-			/*
-			 * Trasacntion
-			 */
+    		List<TblMonTransaction> transactions = tblMonTransactionRepository.findAll();
+			resultList.add(transactionService.checkTransactions(transactions));
 			
 			/*
 			 * status check and sending e-mail

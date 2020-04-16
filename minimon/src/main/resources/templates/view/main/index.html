@@ -129,9 +129,11 @@
 							<td th:text="${result.title}"></td>
 							<td th:text="${result.timer}"></td>
 							<td th:text="${result.useable}"></td>
-							<td th:text="${result.uptDate}"></td>
 							<td>
-			 		 	  		<input cd='${result.seq}' class='btn btn-success transactionEditBtn loginBtn' type="button" value="수정" />
+			 		 	  		<input th:attr="cd=${result.seq}" class='btn btn-success transactionExecuteBtn loginBtn' type="button" value="실행" />
+			 		 	  	</td>
+							<td>
+			 		 	  		<input th:attr="cd=${result.seq}" class='btn btn-success transactionEditBtn loginBtn' type="button" value="수정" />
 			 		 	  	</td>
 						</tr>
 					</tbody>
@@ -368,7 +370,8 @@
 							  </div>
 							</div>
 							
-			 		 	  	<input id='transactionCheck' class='btn btn-success' type="button" value="검사" />
+			 		 	  	<input id='transactionCode' name="transactionCode" class='btn btn-success' type="hidden" />
+			 		 	  	<input id='transactionCheck' name="transactionCheck" class='btn btn-success' type="button" value="검사" />
 					    </li>
 					    <li class="list-group-item">
 					    	<label>LoadTime</label>
@@ -380,6 +383,7 @@
 							    <span class="input-group-text">%</span>
 							  </div>
 							</div>
+							<input name="codeDatas" type="hidden" class='form-control' readOnly />
 							
 							<label>Status</label> 
 							<input name="status" type="text" class='form-control' value="200" readOnly />
