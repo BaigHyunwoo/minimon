@@ -1,5 +1,6 @@
 package com.minimon.common;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -25,7 +26,6 @@ import org.openqa.selenium.support.events.AbstractWebDriverEventListener;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ClassPathResource;
 
 import com.minimon.exceptionHandler.MyException;
 
@@ -137,8 +137,7 @@ public class SeleniumHandler {
 		    Runtime.getRuntime().exec("taskkill /F /IM chromedriver");
 		        
 			// 크롬 드라이버 파일 경로설정 
-			ClassPathResource cpr = new ClassPathResource("/setting/chromedriver.exe");
-			System.setProperty(driverName, cpr.getFile().getPath()); 
+			System.setProperty(driverName, "D:"+File.separator+"minimon"+File.separator+"chromedriver.exe"); 
 			
 			LoggingPreferences logPrefs = new LoggingPreferences();
 			logPrefs.enable(LogType.PERFORMANCE, Level.ALL);

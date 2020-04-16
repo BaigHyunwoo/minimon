@@ -1,8 +1,5 @@
 package com.minimon;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,9 +9,6 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.interactions.Actions;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -24,14 +18,12 @@ import com.minimon.common.SeleniumHandler;
 @SpringBootTest
 public class MinimonApplicationTests {
 	private WebDriver driver;
-	  private Map<String, Object> vars;
 	  JavascriptExecutor js;
 	  @Before
 	  public void setUp() throws Exception {
 		SeleniumHandler seleniumHandler = new SeleniumHandler();
 		driver = seleniumHandler.setUp();
 	    js = (JavascriptExecutor) driver;
-	    vars = new HashMap<String, Object>();
 	  }
 	  @After
 	  public void tearDown() {
