@@ -612,4 +612,29 @@ function monInit(){
 			}
 		});
 	});
+	
+	
+	$('body').on('click', '.driverBtn', function(){
+		
+		$.ajax({
+			type : 'POST',
+			url : '/main/driver',
+			data : {driverPath : $("#driver").val()},
+			dataType : 'json',
+			success : function(data) {
+				var errorCode = data.errorCode;
+				if(typeof errorCode != "undefined"){
+					$('#errorCode').val(errorCode);
+					$('#errorCreate').submit();
+				}else{
+					if(data.result == "success") { 
+						
+						alert("저장 완료");
+						window.location.reload();
+
+					}
+				}
+			}
+		});
+	});
 }

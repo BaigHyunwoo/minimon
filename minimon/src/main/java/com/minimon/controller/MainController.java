@@ -1,8 +1,11 @@
 package com.minimon.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -10,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.minimon.MinimonApplication;
 import com.minimon.entity.TblMonApi;
 import com.minimon.entity.TblMonTransaction;
 import com.minimon.entity.TblMonUrl;
@@ -40,6 +44,9 @@ public class MainController {
 	@Autowired
 	TblMonTransactionRepository tblMonTransactionRepository;
 	
+
+	private static final Logger logger = LoggerFactory.getLogger(MainController.class.getName());
+	
 	/**
 	 * 
 	 * 메인 화면 접근
@@ -59,6 +66,32 @@ public class MainController {
 		mav.addObject("transactionList", transactionList);
 		mav.addObject("status", 200);
         return mav;
+	}
+    
+
+	/**
+	 * 
+	 * Driver Path 등록
+	 * 
+	 */
+	@RequestMapping(path = "/main/driver", method= RequestMethod.POST)
+	public HashMap<String, Object> driver(@RequestParam Map<String, Object> param) {
+    	HashMap<String, Object> result = new HashMap<String, Object>();
+
+    	try {
+
+    		logger.info("driverPath : "+param.get("driverPath"));
+    		MinimonApplication.setDriverPath(""+param.get("driverPath"));
+    		
+			result.put("result", "success");
+			
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+			
+		}
+		
+        return result;
 	}
 	
 }

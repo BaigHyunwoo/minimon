@@ -1,6 +1,5 @@
 package com.minimon.common;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -27,6 +26,7 @@ import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.minimon.MinimonApplication;
 import com.minimon.exceptionHandler.MyException;
 
 
@@ -137,7 +137,7 @@ public class SeleniumHandler {
 		    Runtime.getRuntime().exec("taskkill /F /IM chromedriver");
 		        
 			// 크롬 드라이버 파일 경로설정 
-			System.setProperty(driverName, "D:"+File.separator+"minimon"+File.separator+"chromedriver.exe"); 
+			System.setProperty(driverName, MinimonApplication.getDriverPath()); 
 			
 			LoggingPreferences logPrefs = new LoggingPreferences();
 			logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
@@ -199,13 +199,12 @@ public class SeleniumHandler {
 			e1.printStackTrace();
 			
 			totalLoadTime = -1;
-			logger.info(url + " : Error - TimeOut");
 			
 		}catch(Exception e) {
 			e.printStackTrace();
 			
 			totalLoadTime = -2;
-			logger.debug("Error - Unknown ERROR");
+			logger.info("Error - Unknown ERROR");
 			
 		}
 		
@@ -497,8 +496,6 @@ public class SeleniumHandler {
 
 		WebElement webElement = null;
 
-		System.out.println(selector_type+" : "+selector_value);
-		
 		if(selector_type.equals("By.id") == true) {
 			
 			webElement = driver.findElement(By.id(selector_value));

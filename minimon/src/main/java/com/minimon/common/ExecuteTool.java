@@ -11,6 +11,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.minimon.MinimonApplication;
 import com.minimon.controller.MainController;
 import com.minimon.entity.TblMonApi;
 import com.minimon.entity.TblMonTransaction;
@@ -72,28 +73,37 @@ public class ExecuteTool {
 	 * 
 	 * 	@exception			핸들러로 처리	CODE 11
 	 */
-	@Scheduled(cron = "0 * * * * *")
+	@Scheduled(cron = "0 0/5 * * * *")
 	public void execute() throws Exception {
 		
 		try {
 			
-			List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
+			if (MinimonApplication.getDriverPath().length() > 1) {
+
+				List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
+				
+				List<TblMonApi> apis = tblMonApiRepository.findByUseable(1);
+				resultList.add(apiService.checkApis(apis));
+				
+				List<TblMonUrl> urls = tblMonUrlRepository.findByUseable(1);
+				resultList.add(urlService.checkUrls(urls));
+				
+	    		List<TblMonTransaction> transactions = tblMonTransactionRepository.findAll();
+				resultList.add(transactionService.checkTransactions(transactions));
+				
+				/*
+				 * status check and sending e-mail
+				 */
+				check(resultList);
+				
+				logger.info("Monitoring Execute Complete");
+				
+			}else {
+
+				logger.info("Please save your webDriverPath at the main page");
+				
+			}
 			
-			List<TblMonApi> apis = tblMonApiRepository.findByUseable(1);
-			resultList.add(apiService.checkApis(apis));
-			
-			List<TblMonUrl> urls = tblMonUrlRepository.findByUseable(1);
-			resultList.add(urlService.checkUrls(urls));
-			
-    		List<TblMonTransaction> transactions = tblMonTransactionRepository.findAll();
-			resultList.add(transactionService.checkTransactions(transactions));
-			
-			/*
-			 * status check and sending e-mail
-			 */
-			check(resultList);
-			
-			logger.debug("Monitoring Execute Complete");
 	
 		}catch(Exception e) {
 			e.printStackTrace();

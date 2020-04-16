@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.openqa.selenium.support.events.EventFiringWebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +25,8 @@ public class TransactionService {
 
 	private String className = this.getClass().toString();
 	
-	
+
+	private Logger logger = LoggerFactory.getLogger(TransactionService.class);
 	
 	/**
 	 * 
@@ -182,7 +185,8 @@ public class TransactionService {
             logData.put("loadTime", endTime-startTime);
             logData.put("status", checkStatus(logData));
 			
-			
+
+			logger.debug(logData.toString());
 			
 		} catch(Exception e) {
 			e.printStackTrace();
