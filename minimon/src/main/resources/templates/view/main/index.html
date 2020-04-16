@@ -24,11 +24,15 @@
 <body> 
 	<div id="main" role="main">
 		<div class='topDiv'>
-			<div id='defaultMain'  class='float-l'>
-				<span id='defaultText' > Monitoring System</span>
-				<label>driverPath</label> 
-	    		<input type="text" name="driver" id="driver" class='' >
-	  			<input class='btn btn-success driverBtn ' type="button" value="등록" />
+			<div id='defaultMain'  class='float-l' style="width: 100%;">
+				<div class="float-l">
+					<label>driverPath</label> 
+		    		<input type="text" name="driver" id="driver" class='' >
+		  			<input class='btn btn-success driverBtn ' type="button" value="등록" />
+				</div>
+				<div class="float-r" style="margin-right: 2%;">
+					<span id='defaultText' > Monitoring System</span>
+				</div>
 			</div>
 		</div>
 		
@@ -55,7 +59,8 @@
 						<tr th:each="result: ${urlList}">
 							<td th:text="${result.seq}"></td>
 							<td th:text="${result.title}"></td>
-							<td th:text="${result.url}"></td>
+							<td th:if="${#strings.length(result.url) > 20}" th:text="${#strings.substring(result.url, 0, 20)} + '...'"></td>
+							<td th:if="${#strings.length(result.url) <= 20}" th:text="${result.url}"></td>
 							<td th:text="${result.timer}"></td>
 							<td th:text="${result.useable}"></td>
 							<td>
@@ -93,7 +98,8 @@
 						<tr th:each="result: ${apiList}">
 							<td th:text="${result.seq}"></td>
 							<td th:text="${result.title}"></td>
-							<td th:text="${result.url}"></td>
+							<td th:if="${#strings.length(result.url) > 20}" th:text="${#strings.substring(result.url, 0, 20)} + '...'"></td>
+							<td th:if="${#strings.length(result.url) <= 20}" th:text="${result.url}"></td>
 							<td th:text="${result.timer}"></td>
 							<td th:text="${result.useable}"></td>
 							<td>
@@ -164,40 +170,68 @@
 			</div>
 			<div class="modal-body">
 				<form action="/url" id="saveUrlForm" name="saveUrlForm">
-					<div class='createDiv'>
-						<input type="hidden" name="seq" value="">
-						<strong>정보 입력</strong>
-						<label>Title</label> <input name="title" type="text" class='loginInput' autocomplete="off" style='width:200px;  margin-left: 8px;' />
-						<label>URL <input  name="url" type="text" class='loginInput' autocomplete="off" style='width:200px;  margin-left: 8px;' />
-			 		 	
-						<label>Timeout <input name="timeout" type="number" class='loginInput' value="30" />
-						<label>Timer <input name="timer" type="number" class='loginInput' value="5" />
-						<label>Useable 
-							<input name="useable" type="radio" value="1" checked class='loginInput'/>
-							<input name="useable" type="radio" value="0" class='loginInput'/>
-						
-		 		 	  	<input id='urlCheck' class='btn btn-success loginBtn' type="button" value="검사" />
-					</div>
-	
-					<div class='createDiv'>
-						<strong>검사 정보 설정</strong>
-						<label>
-							LoadTime 
-							<input name="loadTime" type="text" class='loginInput' readOnly autocomplete="off" style='width:100px;  margin-left: 8px;' />ms
-							&emsp;+<input type="number" name="loadTimePer" value="5" style='width:40px;'>%
-						
-						<label>
-							PayLoad 
-							<input name="payLoad" type="text" class='loginInput' readOnly autocomplete="off" style='width:100px;  margin-left: 8px;' />bytes
-							&emsp;+-<input type="number" name="payLoadPer" value="5" style='width:40px;'>%
-						
-						<label>Status <input name="status" type="test" class='loginInput' value="200" readOnly />
-					</div>
-					
-					<div class="mgt15 text-right resource-btz">
-						<button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
-						<button type="button" id="deleteUrl" class="btn btn btn-success" >삭제</button>
-						<button type="button" id="saveUrl" class="btn btn btn-success" >저장</button>
+					<div class="card" style="width: 100%;">
+					  <ul class="list-group list-group-flush">
+					    <li class="list-group-item">
+					    	<input type="hidden" name="seq" value="">
+							<label>Title</label>
+							<input name="title" type="text" class='form-control' autocomplete="off" />
+							
+							<label>URL</label>
+							<input  name="url" type="text" class='form-control' autocomplete="off"  />
+							
+							<label>Timeout</label> 
+							<input name="timeout" type="number" class='form-control' value="30"/>
+							
+							<label>Timer</label> 
+							<input name="timer" type="number" class='form-control' value="5"/>
+							
+							<label>Useable</label> 
+							<div class="form-check">
+							  <input class="form-check-input" type="radio" name="useable" id="useable_on" value="1" checked>
+							  <label class="form-check-label" for="useable_on">
+							    사용
+							  </label>
+							</div>
+							<div class="form-check">
+							  <input class="form-check-input" type="radio" name="useable" id="useable_off" value="0">
+							  <label class="form-check-label" for="useable_off">
+							   미사용
+							  </label>
+							</div>
+							
+			 		 	  	<input id='urlCheck' class='btn btn-success' type="button" value="검사" />
+					    </li>
+					    <li class="list-group-item">
+					    	<label>LoadTime</label>
+							<div class="input-group">
+							  <input name="loadTime" type="text" class='form-control' readOnly autocomplete="off" value="0" />
+							  <div class="input-group-append">
+							    <span class="input-group-text">Ms</span>
+							  	<input type="number" name="loadTimePer" value="5" class="form-control" style="width: 70px;">
+							    <span class="input-group-text">%</span>
+							  </div>
+							</div>
+							
+					    	<label>PayLoad</label>
+							<div class="input-group">
+							  <input name="payLoad" type="text" class='form-control' readOnly autocomplete="off" value="0" />
+							  <div class="input-group-append">
+							    <span class="input-group-text">Byte</span>
+							  	<input type="number" name="payLoadPer" value="5" class="form-control" style="width: 70px;">
+							    <span class="input-group-text">%</span>
+							  </div>
+							</div>
+							
+							<label>Status</label> 
+							<input name="status" type="text" class='form-control' value="200" />
+							<div class="mgt15 text-right resource-btz">
+								<button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+								<button type="button" id="deleteUrl" class="btn btn btn-success" >삭제</button>
+								<button type="button" id="saveUrl" class="btn btn btn-success" >저장</button>
+							</div>
+					    </li>
+					  </ul>
 					</div>
 				</form>
 			</div>
