@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.minimon.entity.TblMonApi;
 import com.minimon.entity.TblMonApiParam;
+import com.minimon.entity.TblMonResult;
 import com.minimon.repository.TblMonApiRepository;
 import com.minimon.service.ApiService;
 import com.minimon.service.EmailService;
+import com.minimon.service.ResultService;
 
 
 
@@ -38,6 +40,9 @@ public class ApiController {
 
 	@Autowired
 	EmailService emailService;
+
+	@Autowired
+	ResultService resultService;
 	
 	@Autowired
 	TblMonApiRepository tblMonApiRepository;
@@ -277,7 +282,7 @@ public class ApiController {
 	 * API  검사 실행
 	 * 
 	 */
-    @RequestMapping(path = "/apiExecute/{seq}", method= RequestMethod.GET)
+	@RequestMapping(path = "/apiExecute/{seq}", method= RequestMethod.GET)
 	public HashMap<String, Object> apiExecute(@PathVariable("seq") int seq) {
     	HashMap<String, Object> result = new HashMap<String, Object>();
     	try {
@@ -287,8 +292,11 @@ public class ApiController {
     		if(existsApi != null) {
 
 				Map<String, Object> logData = apiService.executeApi(existsApi);
-				result.put(existsApi.getUrl(), apiService.errorCheckApi(existsApi, logData));
-				emailService.sendSimpleMessage("qorto12@naver.com", "모니터링 검사 결과", result.toString());
+				Map<String, Object> data = apiService.errorCheckApi(existsApi, logData);
+				result.put(existsApi.getUrl(), data);
+				
+				TblMonResult tblMonResult = resultService.saveResult(data);
+				emailService.sendSimpleMessage("qorto12@naver.com", "모니터링 검사 결과", tblMonResult);
     			
     		}
     		

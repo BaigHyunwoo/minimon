@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -78,6 +79,7 @@ public class TblMonApi {
     @NotNull
     private double payLoad;
 
+    @Lob
 	private String response;				// 검사-데이터 : 데이터
 	
 	public void addApiParam(TblMonApiParam tblMonApiParam) {

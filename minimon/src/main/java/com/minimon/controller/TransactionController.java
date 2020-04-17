@@ -21,9 +21,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.minimon.entity.TblMonCodeData;
+import com.minimon.entity.TblMonResult;
 import com.minimon.entity.TblMonTransaction;
 import com.minimon.repository.TblMonTransactionRepository;
 import com.minimon.service.EmailService;
+import com.minimon.service.ResultService;
 import com.minimon.service.TransactionService;
 
 
@@ -49,6 +51,8 @@ public class TransactionController {
 	@Autowired
 	EmailService emailService;
 
+	@Autowired
+	ResultService resultService;
 
 	/**
 	 * 
@@ -261,7 +265,12 @@ public class TransactionController {
 		    	if(line.indexOf("@Test") > 0) check = true;
 		    	if(check == true) {
 		    		TblMonCodeData tblMonCodeData = transactionService.getCodeData(line);
-		    		if(tblMonCodeData != null) codeDatas.add(tblMonCodeData);
+		    		if(tblMonCodeData != null) {
+		    			codeDatas.add(tblMonCodeData);
+			    		System.out.println(line);
+			    		System.out.println(tblMonCodeData.getAction()+" "+tblMonCodeData.getSelector_type()+ "  "+tblMonCodeData.getSelector_value()+"     "+tblMonCodeData.getValue());
+		    		}
+
 		    	}
 		    }
 
@@ -299,8 +308,11 @@ public class TransactionController {
     		if(existsTransaction != null) {
     			
     			Map<String, Object> logData = transactionService.executeTransaction(existsTransaction.getCodeDatas());
-    			result.put(""+existsTransaction.getSeq(), transactionService.errorCheckTransaction(existsTransaction, logData));
-				emailService.sendSimpleMessage("qorto12@naver.com", "모니터링 검사 결과", result.toString());
+				Map<String, Object> data = transactionService.errorCheckTransaction(existsTransaction, logData);
+				result.put(""+existsTransaction.getSeq(), data);
+
+				TblMonResult tblMonResult = resultService.saveResult(data);
+				emailService.sendSimpleMessage("qorto12@naver.com", "모니터링 검사 결과", tblMonResult);
     			
     		}
     		

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.minimon.MinimonApplication;
 import com.minimon.controller.MainController;
 import com.minimon.entity.TblMonApi;
+import com.minimon.entity.TblMonResult;
 import com.minimon.entity.TblMonTransaction;
 import com.minimon.entity.TblMonUrl;
 import com.minimon.exceptionHandler.MyException;
@@ -22,6 +23,7 @@ import com.minimon.repository.TblMonTransactionRepository;
 import com.minimon.repository.TblMonUrlRepository;
 import com.minimon.service.ApiService;
 import com.minimon.service.EmailService;
+import com.minimon.service.ResultService;
 import com.minimon.service.TransactionService;
 import com.minimon.service.UrlService;
 
@@ -47,6 +49,9 @@ public class ExecuteTool {
 
 	@Autowired
 	TblMonTransactionRepository tblMonTransactionRepository;
+	
+	@Autowired
+	ResultService resultService;
 	
 	@Autowired
 	UrlService urlService;
@@ -134,7 +139,8 @@ public class ExecuteTool {
 				for(Object value : result.values()) {
 					Map<String, Object> checkLog = (Map<String, Object>) value;
 					if(checkLog.get("result").equals("ERR") == true) {
-						emailService.sendSimpleMessage("qorto12@naver.com", "모니터링 검사 결과", checkLog.toString());
+						TblMonResult tblMonResult = resultService.saveResult(checkLog);
+						emailService.sendSimpleMessage("qorto12@naver.com", "모니터링 검사 결과", tblMonResult);
 					}
 				}
 			}

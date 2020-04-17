@@ -171,6 +171,8 @@ public class ApiService {
 			checkData.put("url", api.getUrl());
 			checkData.put("method", api.getMethod());
 			checkData.put("seq", api.getSeq());
+			checkData.put("title", api.getTitle());
+			checkData.put("type", "API");
 			checkData.put("result", result);
 			
 		}catch(Exception e) {

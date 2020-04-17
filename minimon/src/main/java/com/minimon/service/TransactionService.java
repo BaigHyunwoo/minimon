@@ -138,6 +138,8 @@ public class TransactionService {
 			checkData.put("origin_loadTime",transaction.getLoadTime());
 			checkData.put("origin_status",transaction.getStatus());
 			checkData.put("seq", transaction.getSeq());
+			checkData.put("type", "TRANSACTION");
+			checkData.put("title", transaction.getTitle());
 			checkData.put("result", result);
 			
 		}catch(Exception e) {
@@ -331,11 +333,13 @@ public class TransactionService {
 		int stObjLen = stObj.length();
 		
 		if(type.equals("first") == true) {
-
+			
+			if(line.indexOf(stObj) < 0) return null;
 			return line.substring(line.indexOf(stObj)+stObjLen, line.indexOf(edObj, line.indexOf(stObj)));
 			
 		}else {
 
+			if(line.lastIndexOf(stObj) < 0) return null;
 			return line.substring(line.lastIndexOf(stObj)+stObjLen, line.indexOf(edObj, line.lastIndexOf(stObj)));
 			
 		}

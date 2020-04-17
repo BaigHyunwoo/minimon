@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.minimon.entity.TblMonResult;
 import com.minimon.entity.TblMonUrl;
 import com.minimon.repository.TblMonUrlRepository;
 import com.minimon.service.EmailService;
+import com.minimon.service.ResultService;
 import com.minimon.service.UrlService;
 
 
@@ -36,6 +38,9 @@ public class UrlController {
 
 	@Autowired
 	EmailService emailService;
+
+	@Autowired
+	ResultService resultService;
 	
 	@Autowired
 	TblMonUrlRepository tblMonUrlRepository;
@@ -249,8 +254,11 @@ public class UrlController {
     		if(existsUrl != null) {
 
 				Map<String, Object> logData = urlService.executeUrl(existsUrl.getUrl(), existsUrl.getTimeout());
-				result.put(existsUrl.getUrl(), urlService.errorCheckUrl(existsUrl, logData));
-				emailService.sendSimpleMessage("qorto12@naver.com", "모니터링 검사 결과", result.toString());
+				Map<String, Object> data = urlService.errorCheckUrl(existsUrl, logData);
+				result.put(existsUrl.getUrl(), data);
+
+				TblMonResult tblMonResult = resultService.saveResult(data);
+				emailService.sendSimpleMessage("qorto12@naver.com", "모니터링 검사 결과", tblMonResult);
     			
     		}
     		

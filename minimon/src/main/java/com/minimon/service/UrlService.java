@@ -155,6 +155,9 @@ public class UrlService {
 			checkData.put("origin_payLoad",url.getPayLoad());
 			checkData.put("origin_status",url.getStatus());
 			checkData.put("url", url.getUrl());
+			checkData.put("seq", url.getSeq());
+			checkData.put("type", "URL");
+			checkData.put("title", url.getTitle());
 			checkData.put("result", result);
 			
 		}catch(Exception e) {

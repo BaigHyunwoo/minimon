@@ -515,7 +515,7 @@ function monInit(){
 	$('body').on('click', '#deleteTransaction', function(){
 		$.ajax({
 			type : 'DELETE',
-			url : '/api/'+$("#saveTransactionForm [name='seq']").val(),
+			url : '/transaction/'+$("#saveTransactionForm [name='seq']").val(),
 			dataType : 'json',
 			success : function(data) {
 				var errorCode = data.errorCode;

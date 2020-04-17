@@ -23,6 +23,8 @@ import org.openqa.selenium.logging.LoggingPreferences;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.support.events.AbstractWebDriverEventListener;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -457,7 +459,7 @@ public class SeleniumHandler {
 			    
 			}else if(action.equals("switch") == true) {
 				
-			    driver.switchTo().window(vars.get(selector_value).toString());
+			    if(selector_value != null) driver.switchTo().window(vars.get(selector_value).toString());
 			    
 			}else if(action.equals("click") == true) {
 				
@@ -475,6 +477,10 @@ public class SeleniumHandler {
 				element.submit();
 			    
 			}
+
+
+			waitHtml(driver);
+			
 			
 			result = "SUCCESS";
 			
@@ -495,42 +501,55 @@ public class SeleniumHandler {
 	public WebElement getSelector(EventFiringWebDriver driver, String selector_type, String selector_value) {
 
 		WebElement webElement = null;
-
+	    WebDriverWait wait = new WebDriverWait(driver, 30);
+		
 		if(selector_type.equals("By.id") == true) {
 			
-			webElement = driver.findElement(By.id(selector_value));
+			webElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(selector_value)));
 			
 		}else if(selector_type.equals("By.cssSelector") == true) {
 
-			webElement = driver.findElement(By.cssSelector(selector_value));
+			webElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(selector_value)));
 			
 		}else if(selector_type.equals("By.linkText") == true) {
 			
-			webElement = driver.findElement(By.linkText(selector_value));
+			webElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.linkText(selector_value)));
 			
 		}else if(selector_type.equals("By.className") == true) {
 			
-			webElement = driver.findElement(By.className(selector_value));
+			webElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className(selector_value)));
 			
 		}else if(selector_type.equals("By.name") == true) {
 
-			webElement = driver.findElement(By.name(selector_value));
+			webElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name(selector_value)));
 			
 		}else if(selector_type.equals("By.tagName") == true) {
 
-			webElement = driver.findElement(By.tagName(selector_value));
+			webElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName(selector_value)));
 			
 		}else if(selector_type.equals("By.xpath") == true) {
 
-			webElement = driver.findElement(By.xpath(selector_value));
+			webElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(selector_value)));
 			
 		}else if(selector_type.equals("By.partialLinkText") == true) {
 
-			webElement = driver.findElement(By.partialLinkText(selector_value));
+			webElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.partialLinkText(selector_value)));
 			
 		}
+			
 		
 		return webElement;
 	}
+
 	
+	public void waitHtml(EventFiringWebDriver driver) throws InterruptedException {
+
+		while(0 < 1) {
+			Thread.sleep(100);
+			JavascriptExecutor js = (JavascriptExecutor)driver;
+			if(js.executeScript("return document.readyState").toString().equals("complete") == true) {
+				break;
+			}
+		}
+	}
 }
