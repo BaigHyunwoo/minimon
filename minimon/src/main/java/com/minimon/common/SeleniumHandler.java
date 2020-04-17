@@ -11,6 +11,7 @@ import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.json.JSONObject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -459,7 +460,8 @@ public class SeleniumHandler {
 			    
 			}else if(action.equals("switch") == true) {
 				
-			    if(selector_value != null) driver.switchTo().window(vars.get(selector_value).toString());
+			    if(selector_value != null) driver.switchTo().frame(selector_value).toString();
+			    else driver.switchTo().defaultContent();
 			    
 			}else if(action.equals("click") == true) {
 				
@@ -469,7 +471,32 @@ public class SeleniumHandler {
 			}else if(action.equals("sendKeys") == true) {
 
 				element = getSelector(driver, selector_type, selector_value);
-				element.sendKeys(value);
+
+				if(value.equals("Keys.ENTER") == true) {
+					
+					element.sendKeys(Keys.ENTER);
+					
+				}else if(value.equals("Keys.BACK_SPACE") == true) {
+
+					element.sendKeys(Keys.BACK_SPACE);
+					
+				}else if(value.equals("Keys.DELETE") == true) {
+
+					element.sendKeys(Keys.DELETE);
+					
+				}else if(value.equals("Keys.SPACE") == true) {
+
+					element.sendKeys(Keys.SPACE);
+					
+				}else if(value.equals("Keys.ESCAPE") == true) {
+
+					element.sendKeys(Keys.ESCAPE);
+					
+				}else {
+
+					element.sendKeys(value);
+					
+				}
 				
 			}else if(action.equals("submit") == true) {
 

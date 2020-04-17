@@ -348,7 +348,7 @@ public class TransactionService {
 	public String getCodeSelectorValue(String line, String action) {
 		
 		
-		if(action.equals("click") == true || action.equals("submit") == true || action.equals("sendKeys") == true) {
+		if(action.equals("switch") == true || action.equals("click") == true || action.equals("submit") == true || action.equals("sendKeys") == true) {
 			
 			return getValueByObject("first", line, "(\"", "\")");
 			
