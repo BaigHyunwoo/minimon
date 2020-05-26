@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-@Table(name="yanadoo.dbo.tbl_mon_code_data")
+@Table(name="tbl_mon_code_data")
 public class TblMonCodeData {
 
 	@Id	

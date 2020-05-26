@@ -21,7 +21,8 @@ public class EmailService{
 	private Logger logger = LoggerFactory.getLogger(EmailService.class);
 
     public void sendSimpleMessage(String to, String subject, TblMonResult tblMonResult) throws MessagingException {
-    	String text = new StringBuffer().append("<h1>모니터링 결과입니다.</h1>")
+    	String text = new StringBuffer()
+				.append("<h1>모니터링 결과입니다.</h1>")
         	    .append("<p> 타이틀 : "+tblMonResult.getTitle()+"</p>")
         	    .append("<p> 종류 : "+tblMonResult.getType()+"</p>")
         	    .append("<p> SEQ : "+tblMonResult.getMon_seq()+"</p>")
@@ -37,7 +38,7 @@ public class EmailService{
         helper.setSubject(subject);
         helper.setTo(to);
         helper.setText(text, true);
-        emailSender.send(message);
+        //emailSender.send(message);
         
         logger.info("SEND MAIL : "+to+"  Body : "+text);
     }

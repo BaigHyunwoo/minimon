@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-@Table(name="yanadoo.dbo.tbl_mon_api_param")
+@Table(name="tbl_mon_api_param")
 public class TblMonApiParam {
 
 	@Id	
