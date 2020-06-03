@@ -34,29 +34,8 @@ public class MinimonApplicationTests {
 	  }
 	  @Test
 	  public void paymentsTest() throws InterruptedException {
-		    WebDriverWait wait = new WebDriverWait(driver, 30);
-
 		    driver.get("https://www.yanadoo.co.kr/english/basic/");
-		    driver.manage().window().setSize(new Dimension(1936, 1056));
-		    wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".menuBtn img"))).click();
-		    wait.until(ExpectedConditions.visibilityOfElementLocated(By.linkText("평생수강"))).click();
-		    wait.until(ExpectedConditions.visibilityOfElementLocated(By.linkText("지금 신청하기"))).click();
-		    driver.switchTo().frame("loginPop");
-		    wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("login_sub_id"))).click();
-		    wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("login_sub_id"))).sendKeys("qorto12");
-		    wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("login_main_pw"))).sendKeys("Alsdk972!@");
-		    wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("login_main_pw"))).sendKeys(Keys.ENTER);
-		    driver.switchTo().defaultContent();
-		    wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".pop-coupon-blue .cookie > span"))).click();
-		    waitHtml(driver);
-		    wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".chk_bx2"))).click();
-		    wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("r_cp1"))).click();
-		    wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("r_cp1"))).sendKeys("010");
-		    wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("r_cp2"))).sendKeys("2407");
-		    wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("r_cp3"))).sendKeys("1563");
-		    wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".tb-order:nth-child(2) > .chk_bx2 > em"))).click();
-		    wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".active:nth-child(3)"))).click();
-		    wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("text-field-line-3"))).click();
+		  	driver.quit();
 	  }
 	  
 
