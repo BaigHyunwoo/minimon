@@ -39,10 +39,72 @@ public class SendingHttp {
 
 	
 	private String className = this.getClass().toString();
-	
-	
+
+
 	/**
 	 *  HTTP CALL GET
+	 *
+	 *
+	 *  @author 백현우
+	 *
+	 *
+	 *  @param	url					전송 URL
+	 *  @param	data				전송 JSON DATA
+	 *
+	 *
+	 * 	@throws MyException 모든 Exception을 ExceptionHandler에서 처리 에러코드 11
+	 */
+	@SuppressWarnings("deprecation")
+	public Map<String,Object> sendingMassage(String url, String data) throws Exception {
+
+		Map<String,Object> returnMap = new HashMap<String, Object>();
+
+		try {
+
+
+			HttpClient httpclient = HttpClients.createDefault();
+
+			HttpPost httppost = new HttpPost(url);
+
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+
+			params.add(new BasicNameValuePair("data",  URLEncoder.encode(data, "UTF-8") ) );
+
+			httppost.setEntity(new UrlEncodedFormEntity(params));
+
+			HttpResponse res = httpclient.execute(httppost);
+
+			HttpEntity resEntity = res.getEntity();
+
+			if(resEntity != null) {
+
+				String json = EntityUtils.toString(resEntity);
+
+				String decodeStr = URLDecoder.decode(json,"UTF-8");
+
+				ObjectMapper mapper = new ObjectMapper();
+
+				Map<String, Object> map = new HashMap<String, Object>();
+
+				map = mapper.readValue(decodeStr, new TypeReference<Map<String, Object>>(){});
+
+				returnMap = map;
+
+			}
+
+			httpclient.getConnectionManager().shutdown();
+
+		} catch (Exception e) {
+			throw new MyException("CLASS : " + className + " - METHOD : " +  new Object(){}.getClass().getEnclosingMethod().getName()  + " "
+					+ "- TYPE = [Function]/  Function - " + e.getStackTrace()[0].getMethodName() , className, 11);
+		}
+
+		return returnMap;
+
+	}
+
+	/**
+	 *  HTTP CALL WITH CELLPHONE
 	 *  
 	 *  
 	 *  @author 백현우
@@ -55,7 +117,7 @@ public class SendingHttp {
 	 * 	@throws MyException 모든 Exception을 ExceptionHandler에서 처리 에러코드 11
 	 */
 	@SuppressWarnings("deprecation")
-	public Map<String,Object> sendingMassage(String url, String data) throws Exception {
+	public Map<String,Object> sendingMassage(String url, String data, String cellPhone) throws Exception {
 		
 		Map<String,Object> returnMap = new HashMap<String, Object>();
 		
@@ -68,7 +130,8 @@ public class SendingHttp {
 		    
 		    List<NameValuePair> params = new ArrayList<NameValuePair>();
 
-	        params.add(new BasicNameValuePair("data",  URLEncoder.encode(data, "UTF-8") ) );
+			params.add(new BasicNameValuePair("data",  URLEncoder.encode(data, "UTF-8") ) );
+			params.add(new BasicNameValuePair("cellPhone",  URLEncoder.encode(cellPhone, "UTF-8") ) );
 		    
 		    httppost.setEntity(new UrlEncodedFormEntity(params));
 		    

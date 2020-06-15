@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.minimon.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +22,6 @@ import com.minimon.exceptionHandler.MyException;
 import com.minimon.repository.TblMonApiRepository;
 import com.minimon.repository.TblMonTransactionRepository;
 import com.minimon.repository.TblMonUrlRepository;
-import com.minimon.service.ApiService;
-import com.minimon.service.EmailService;
-import com.minimon.service.ResultService;
-import com.minimon.service.TransactionService;
-import com.minimon.service.UrlService;
 
 
 /**
@@ -64,6 +60,9 @@ public class ExecuteTool {
 	
 	@Autowired
 	EmailService emailService;
+
+	@Autowired
+	SmsService smsService;
 	
 	private Logger logger = LoggerFactory.getLogger(MainController.class);
 
@@ -141,6 +140,7 @@ public class ExecuteTool {
 					if(checkLog.get("result").equals("ERR") == true) {
 						TblMonResult tblMonResult = resultService.saveResult(checkLog);
 						emailService.sendSimpleMessage("qorto12@naver.com", "모니터링 검사 결과", tblMonResult);
+						smsService.sendSimpleMessage("qorto12@naver.com", "모니터링 검사 결과", tblMonResult);
 					}
 				}
 			}
