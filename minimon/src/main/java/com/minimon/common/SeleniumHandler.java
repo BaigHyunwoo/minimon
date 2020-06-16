@@ -157,7 +157,7 @@ public class SeleniumHandler {
 			
 
 		}catch(Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 			
 			if(driver != null) driver.quit();
 			throw new MyException("CLASS : " + className + " - METHOD : " + new Object(){}.getClass().getEnclosingMethod().getName() 

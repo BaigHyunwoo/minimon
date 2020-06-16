@@ -271,7 +271,6 @@ public class TransactionController {
 		    		TblMonCodeData tblMonCodeData = transactionService.getCodeData(line);
 		    		if(tblMonCodeData != null) {
 		    			codeDatas.add(tblMonCodeData);
-			    		logger.debug(line);
 			    		logger.debug(tblMonCodeData.getAction()+" "+tblMonCodeData.getSelector_type()+ "  "+tblMonCodeData.getSelector_value()+"     "+tblMonCodeData.getValue());
 		    		}
 
@@ -316,8 +315,8 @@ public class TransactionController {
 				result.put(""+existsTransaction.getSeq(), data);
 
 				TblMonResult tblMonResult = resultService.saveResult(data);
-				emailService.sendSimpleMessage("qorto12@naver.com", "모니터링 검사 결과", tblMonResult);
-    			
+				resultService.sendResult(tblMonResult);
+
     		}
     		
     		result.put("data", seq);

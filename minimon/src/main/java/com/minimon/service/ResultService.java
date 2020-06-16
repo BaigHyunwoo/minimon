@@ -14,6 +14,12 @@ import com.minimon.repository.TblMonResultRepository;
 public class ResultService {
 
 	@Autowired
+	EmailService emailService;
+
+	@Autowired
+	SmsService smsService;
+
+	@Autowired
 	TblMonResultRepository tblMonResultRepository;
 
 	private String className = this.getClass().toString();
@@ -51,8 +57,15 @@ public class ResultService {
 		return tblMonResult;
 		
 	}
-	
-	
+
+
+	public void sendResult(TblMonResult tblMonResult) throws Exception {
+		smsService.sendSimpleMessage("010-3220-8934", "모니터링 검사 결과", tblMonResult);// CTO님
+		smsService.sendSimpleMessage("010-9380-4365", "모니터링 검사 결과", tblMonResult);// 국 책임님
+		smsService.sendSimpleMessage("010-9871-8476", "모니터링 검사 결과", tblMonResult);// 이상배 주임님
+		smsService.sendSimpleMessage("010-5391-7226", "모니터링 검사 결과", tblMonResult);// 이 책임님
+//		emailService.sendSimpleMessage("qorto12@naver.com", "모니터링 검사 결과", tblMonResult);
+	}
 
 	
 }

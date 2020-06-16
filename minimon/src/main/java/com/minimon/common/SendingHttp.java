@@ -123,15 +123,14 @@ public class SendingHttp {
 		
 		try {
 			
-			
 		    HttpClient httpclient = HttpClients.createDefault();
 		    
 		    HttpPost httppost = new HttpPost(url);
 		    
 		    List<NameValuePair> params = new ArrayList<NameValuePair>();
 
-			params.add(new BasicNameValuePair("data",  URLEncoder.encode(data, "UTF-8") ) );
-			params.add(new BasicNameValuePair("cellPhone",  URLEncoder.encode(cellPhone, "UTF-8") ) );
+			params.add(new BasicNameValuePair("data",  data ) );
+			params.add(new BasicNameValuePair("cellPhone",  cellPhone ) );
 		    
 		    httppost.setEntity(new UrlEncodedFormEntity(params));
 		    
@@ -139,25 +138,10 @@ public class SendingHttp {
 
 		    HttpEntity resEntity = res.getEntity();
 		    
-		    if(resEntity != null) {
-		    	
-	    		String json = EntityUtils.toString(resEntity);
-	    		
-	    		String decodeStr = URLDecoder.decode(json,"UTF-8");
-	    		
-	    		ObjectMapper mapper = new ObjectMapper();
-
-	    		Map<String, Object> map = new HashMap<String, Object>(); 
-
-	    		map = mapper.readValue(decodeStr, new TypeReference<Map<String, Object>>(){}); 
-	    		
-	    		returnMap = map;
-
-		    }
-		    
 		    httpclient.getConnectionManager().shutdown();
-		    
+
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new MyException("CLASS : " + className + " - METHOD : " +  new Object(){}.getClass().getEnclosingMethod().getName()  + " "
 					+ "- TYPE = [Function]/  Function - " + e.getStackTrace()[0].getMethodName() , className, 11);
 		}

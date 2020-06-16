@@ -1,17 +1,5 @@
 package com.minimon.common;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import com.minimon.service.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.minimon.MinimonApplication;
 import com.minimon.controller.MainController;
 import com.minimon.entity.TblMonApi;
@@ -22,6 +10,17 @@ import com.minimon.exceptionHandler.MyException;
 import com.minimon.repository.TblMonApiRepository;
 import com.minimon.repository.TblMonTransactionRepository;
 import com.minimon.repository.TblMonUrlRepository;
+import com.minimon.service.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -139,8 +138,7 @@ public class ExecuteTool {
 					Map<String, Object> checkLog = (Map<String, Object>) value;
 					if(checkLog.get("result").equals("ERR") == true) {
 						TblMonResult tblMonResult = resultService.saveResult(checkLog);
-						emailService.sendSimpleMessage("qorto12@naver.com", "모니터링 검사 결과", tblMonResult);
-						smsService.sendSimpleMessage("qorto12@naver.com", "모니터링 검사 결과", tblMonResult);
+						resultService.sendResult(tblMonResult);
 					}
 				}
 			}
@@ -157,5 +155,7 @@ public class ExecuteTool {
 		}
 		
 	}
+
+
 
 }

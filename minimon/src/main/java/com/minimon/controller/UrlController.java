@@ -258,8 +258,8 @@ public class UrlController {
 				result.put(existsUrl.getUrl(), data);
 
 				TblMonResult tblMonResult = resultService.saveResult(data);
-				emailService.sendSimpleMessage("qorto12@naver.com", "모니터링 검사 결과", tblMonResult);
-    			
+				resultService.sendResult(tblMonResult);
+
     		}
     		
     		result.put("data", seq);

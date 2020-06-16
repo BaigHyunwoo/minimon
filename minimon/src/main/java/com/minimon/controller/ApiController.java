@@ -1,25 +1,15 @@
 package com.minimon.controller;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.minimon.entity.TblMonApi;
 import com.minimon.entity.TblMonApiParam;
 import com.minimon.entity.TblMonResult;
 import com.minimon.repository.TblMonApiRepository;
 import com.minimon.service.ApiService;
-import com.minimon.service.EmailService;
 import com.minimon.service.ResultService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.*;
 
 
 
@@ -39,11 +29,8 @@ public class ApiController {
 	ApiService apiService;
 
 	@Autowired
-	EmailService emailService;
-
-	@Autowired
 	ResultService resultService;
-	
+
 	@Autowired
 	TblMonApiRepository tblMonApiRepository;
 
@@ -296,8 +283,7 @@ public class ApiController {
 				result.put(existsApi.getUrl(), data);
 				
 				TblMonResult tblMonResult = resultService.saveResult(data);
-				emailService.sendSimpleMessage("qorto12@naver.com", "모니터링 검사 결과", tblMonResult);
-    			
+				resultService.sendResult(tblMonResult);
     		}
     		
     		result.put("data", seq);
