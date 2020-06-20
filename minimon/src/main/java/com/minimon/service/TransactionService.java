@@ -122,7 +122,7 @@ public class TransactionService {
 				result = "ERR";
 			}
 			
-			if(loadTime <= CommonUtils.getPerData(transaction.getLoadTime(), transaction.getLoadTimePer(), 1)) checkData.put("loadTime", "SUCCESS");
+			if(loadTime <= CommonUtils.getPerData(transaction.getLoadTime(), transaction.getErrLoadTime(), 1)) checkData.put("loadTime", "SUCCESS");
 			else {
 				checkData.put("loadTime", "ERR");
 				result = "ERR";

@@ -46,7 +46,7 @@ public class ApiController {
 		TblMonApi.setTimeout(Integer.parseInt(""+param.get("timeout")));
 		TblMonApi.setUseable(Integer.parseInt(""+param.get("api_useable")));
 		TblMonApi.setLoadTime(Double.parseDouble(""+param.get("loadTime")));
-		TblMonApi.setLoadTimePer(Integer.parseInt(""+param.get("loadTimePer")));
+		TblMonApi.setErrLoadTime(Integer.parseInt(""+param.get("errLoadTime")));
 		TblMonApi.setPayLoad(Double.parseDouble(""+param.get("payLoad")));
 		TblMonApi.setPayLoadPer(Integer.parseInt(""+param.get("payLoadPer")));
 		TblMonApi.setStatus(Integer.parseInt(""+param.get("status")));
@@ -283,7 +283,7 @@ public class ApiController {
 				result.put(existsApi.getUrl(), data);
 				
 				TblMonResult tblMonResult = resultService.saveResult(data);
-				resultService.sendResult(tblMonResult);
+				resultService.sendResultByProperties(tblMonResult);
     		}
     		
     		result.put("data", seq);

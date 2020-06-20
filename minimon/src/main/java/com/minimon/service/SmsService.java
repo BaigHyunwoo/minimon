@@ -11,16 +11,11 @@ public class SmsService {
 
     private Logger logger = LoggerFactory.getLogger(SmsService.class);
 
-    public void sendSimpleMessage(String to, String subject, TblMonResult tblMonResult) throws Exception{
+    public void sendSimpleMessage(String to, TblMonResult tblMonResult) throws Exception{
         String text = new StringBuffer()
-                .append("YND monitoring Result Message")
-                .append("\nTitle : "+tblMonResult.getTitle()+"  ")
-                .append("\nType : "+tblMonResult.getType()+" ")
-                .append("\nSEQ : "+tblMonResult.getMon_seq()+" ")
-                .append("\nDate : "+tblMonResult.getRegDate()+" ")
-                .append("\nResult : "+tblMonResult.getResult()+" ")
-                .append("\nLoad Time : "+tblMonResult.getLoadTime()+"Ms ")
-                .append("\nResponse : \n"+tblMonResult.getResponse().replaceAll(",", ",\n")+" ")
+                .append("\n"+tblMonResult.getRegDate()+" ")
+                .append("\n"+tblMonResult.getType()+" : "+tblMonResult.getTitle()+" ")
+                .append("\nERR : "+tblMonResult.getResult()+" ")
                 .toString();
 
         SendingHttp sendingHttp = new SendingHttp();

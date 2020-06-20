@@ -37,7 +37,6 @@ public class TblMonResult {
     private String result;
 
     @Lob
-    @NotNull
     private String response;
     
     @NotNull

@@ -19,7 +19,7 @@ public class MinimonApplication {
 
 
 	public static void setDriverPath(String driverPath) {
-		MinimonApplication.driverPath = driverPath+File.separator+"chromedriver.exe";
+		MinimonApplication.driverPath = driverPath;
 
 	}
 

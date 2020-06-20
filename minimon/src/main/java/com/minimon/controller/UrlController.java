@@ -57,7 +57,7 @@ public class UrlController {
 		tblMonUrl.setTimeout(Integer.parseInt(""+param.get("timeout")));
 		tblMonUrl.setUseable(Integer.parseInt(""+param.get("useable")));
 		tblMonUrl.setLoadTime(Double.parseDouble(""+param.get("loadTime")));
-		tblMonUrl.setLoadTimePer(Integer.parseInt(""+param.get("loadTimePer")));
+		tblMonUrl.setErrLoadTime(Integer.parseInt(""+param.get("errLoadTime")));
 		tblMonUrl.setPayLoad(Double.parseDouble(""+param.get("payLoad")));
 		tblMonUrl.setPayLoadPer(Integer.parseInt(""+param.get("payLoadPer")));
 		tblMonUrl.setStatus(Integer.parseInt(""+param.get("status")));
@@ -258,7 +258,7 @@ public class UrlController {
 				result.put(existsUrl.getUrl(), data);
 
 				TblMonResult tblMonResult = resultService.saveResult(data);
-				resultService.sendResult(tblMonResult);
+				resultService.sendResultByProperties(tblMonResult);
 
     		}
     		

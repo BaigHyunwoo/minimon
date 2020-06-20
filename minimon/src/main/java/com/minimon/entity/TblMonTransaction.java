@@ -39,7 +39,7 @@ public class TblMonTransaction {
     private int timeout;
 
     @NotNull
-    private int loadTimePer;
+    private int errLoadTime;
 
     @NotNull
     private int useable;
@@ -96,8 +96,8 @@ public class TblMonTransaction {
 		this.timeout = timeout;
 	}
 
-	public void setLoadTimePer(int loadTimePer) {
-		this.loadTimePer = loadTimePer;
+	public void setErrLoadTime(int errLoadTime) {
+		this.errLoadTime = errLoadTime;
 	}
 
 	public void setUseable(int useable) {
@@ -148,8 +148,8 @@ public class TblMonTransaction {
 		return timeout;
 	}
 
-	public int getLoadTimePer() {
-		return loadTimePer;
+	public int getErrLoadTime() {
+		return errLoadTime;
 	}
 
 	public int getStatus() {

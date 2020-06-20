@@ -189,7 +189,7 @@ function monInit(){
 						$("#saveUrlForm [name='title']").val(data.data.title);
 						$("#saveUrlForm [name='timeout']").val(data.data.timeout);
 						$("#saveUrlForm [name='timer']").val(data.data.timer);
-						$("#saveUrlForm [name='loadTimePer']").val(data.data.loadTimePer);
+						$("#saveUrlForm [name='errLoadTime']").val(data.data.errLoadTime);
 						$("#saveUrlForm [name='payLoadPer']").val(data.data.payLoadPer);
 						$("#saveUrlForm [name='useable']").each(function(){
 							if($(this).val() == data.data.useable) $(this).attr('checked','true');
@@ -252,7 +252,7 @@ function monInit(){
 						$("#saveApiForm [name='title']").val(data.data.title);
 						$("#saveApiForm [name='timeout']").val(data.data.timeout);
 						$("#saveApiForm [name='timer']").val(data.data.timer);
-						$("#saveApiForm [name='loadTimePer']").val(data.data.loadTimePer);
+						$("#saveApiForm [name='errLoadTime']").val(data.data.errLoadTime);
 						$("#saveApiForm [name='payLoadPer']").val(data.data.payLoadPer);
 						$("#saveApiForm [name='useable']").each(function(){
 							if($(this).val() == data.data.useable) $(this).attr('checked','true');
@@ -593,7 +593,7 @@ function monInit(){
 						$("#saveTransactionForm [name='title']").val(data.data.title);
 						$("#saveTransactionForm [name='timeout']").val(data.data.timeout);
 						$("#saveTransactionForm [name='timer']").val(data.data.timer);
-						$("#saveTransactionForm [name='loadTimePer']").val(data.data.loadTimePer);
+						$("#saveTransactionForm [name='errLoadTime']").val(data.data.errLoadTime);
 						$("#saveTransactionForm [name='useable']").each(function(){
 							if($(this).val() == data.data.useable) $(this).attr('checked','true');
 							else  $(this).removeAttr('checked');

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.minimon.entity.TblMonUrl;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -44,11 +45,8 @@ public class ApiService {
 	
 	/**
 	 * 
-	 * 	URL 모니터링 검사 실행
-	 * 
-	 * 
-	 * 
-	 * 	@exception			핸들러로 처리	CODE 11
+	 * 	API 모니터링 검사 실행
+	 *
 	 */
 	public Map<String, Object> checkApis(List<TblMonApi> apis) throws Exception {
 		Map<String, Object> checkData = new HashMap<String, Object>();
@@ -77,19 +75,13 @@ public class ApiService {
 	/**
 	 * 
 	 * 	API 실행
-	 * 
-	 * 
-	 * 
-	 * 	@exception			핸들러로 처리	CODE 12
+	 *
 	 */
 	public Map<String, Object> executeApi(TblMonApi api) throws Exception {
 		Map<String, Object> logData = new HashMap<String, Object>();
 		
 		try {
-			
-			/*
-			 * 실행
-			 */
+
 			logData = httpSending(api);
 			
 			logger.debug(logData.toString());
@@ -111,69 +103,26 @@ public class ApiService {
 	/**
 	 * 
 	 * 	URL 에러 검사
-	 * 
-	 * 
-	 * 
-	 * 	@exception			핸들러로 처리	CODE 13
+	 *
 	 */
 	public Map<String, Object> errorCheckApi(TblMonApi api, Map<String, Object> logData) throws Exception {
 		Map<String, Object> checkData = new HashMap<String, Object>();
 		
 		try {
 
-			String result = "SUCCESS";
 			int status = Integer.parseInt(""+logData.get("status"));
 			double loadTime = Double.parseDouble(""+logData.get("loadTime"));
 			double payLoad = Double.parseDouble(""+logData.get("payLoad"));
 			String response = ""+logData.get("response");
-			
-			
-			/*
-			 * CHECK
-			 */
-			if(api.getStatus() == status) checkData.put("status", "SUCCESS");
-			else {
-				checkData.put("status", "ERR");
-				result = "ERR";
-			}
-			
-			if(loadTime <= CommonUtils.getPerData(api.getLoadTime(), api.getLoadTimePer(), 1)) checkData.put("loadTime", "SUCCESS");
-			else {
-				checkData.put("loadTime", "ERR");
-				result = "ERR";
-			}
 
-			if(CommonUtils.getPerData(api.getPayLoad(), api.getPayLoadPer(), 2) <= payLoad 
-					&& payLoad <= CommonUtils.getPerData(api.getPayLoad(), api.getPayLoadPer(), 1)) checkData.put("status", "SUCCESS");
-			else {
-				checkData.put("payLoad", "ERR");
-				result = "ERR";
-			}
-			
-			if(response.equals(api.getResponse()) == true) checkData.put("response", "SUCCESS");
-			else {
-				checkData.put("response", "ERR");
-				result = "ERR";
-			}
 
-			
-			/*
-			 * SET PARAM
-			 */
-			checkData.put("check_loadTime",loadTime);
-			checkData.put("check_payLoad",payLoad);
-			checkData.put("check_status",status);
-			checkData.put("check_response",response);
-			checkData.put("origin_loadTime",api.getLoadTime());
-			checkData.put("origin_payLoad",api.getPayLoad());
-			checkData.put("origin_status",api.getStatus());
-			checkData.put("origin_response", api.getResponse());
 			checkData.put("url", api.getUrl());
 			checkData.put("method", api.getMethod());
 			checkData.put("seq", api.getSeq());
 			checkData.put("title", api.getTitle());
 			checkData.put("type", "API");
-			checkData.put("result", result);
+			checkData.put("check_loadTime",loadTime);
+			checkData.put("result", errCheck(status, loadTime, payLoad, response, api));
 			
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -187,17 +136,22 @@ public class ApiService {
 	}
 
 
+	public String errCheck(int status, double totalLoadTime, double totalPayLoad, String response, TblMonApi api) {
+		if (status >= 400)
+			return status + "";
+		else if (totalLoadTime >= api.getErrLoadTime())
+			return "LOAD TIME";
+		else if (CommonUtils.getPerData(api.getPayLoad(), api.getPayLoadPer(), 2) > totalPayLoad
+				|| totalPayLoad > CommonUtils.getPerData(api.getPayLoad(), api.getPayLoadPer(), 1))
+			return "PAYLOAD";
+		else if(response.equals(api.getResponse()) == false)
+			return "RESPONSE";
+		else
+			return "SUCCESS";
+	}
 
 	/**
 	 *  HTTP SENDING
-	 *  
-	 *  @author 백현우
-	 *  @param	code				전송 코드
-	 *  @param	url					전송 URL
-	 *  @param	paramMap			전송 토큰 Params
-	 *  @param	jsonMap				전송 JsonData
-	 *  
-	 * 	@exception			핸들러로 처리	CODE 14
 	 */
 	@SuppressWarnings("deprecation")
 	public Map<String, Object> httpSending(TblMonApi api) throws Exception {
@@ -214,7 +168,7 @@ public class ApiService {
 		    }
 		    
 	        long st = System.currentTimeMillis();
-	        HttpResponse response = httpclient.execute(getHttpRequest(api.getMethod(), api.getUrl(), params));
+	        HttpResponse response = httpclient.execute(httpRequest(api.getMethod(), api.getUrl(), params));
         	long ed = System.currentTimeMillis();
 
         	result = getApiLogData(st, ed, response);
@@ -235,10 +189,6 @@ public class ApiService {
 
 	/**
 	 *  GET HTTP LOG DATA
-	 *  
-	 *  @author 백현우
-	 *  
-	 * 	@exception			핸들러로 처리	CODE 15
 	 */
 	public Map<String, Object> getApiLogData(long st, long ed, HttpResponse response) throws Exception{
 		Map<String, Object> result = new HashMap<String, Object>();
@@ -251,7 +201,7 @@ public class ApiService {
 	    	int status = response.getStatusLine().getStatusCode();
 
         	StringBuffer responseData = new StringBuffer();
-			if (status >= 200 && status < 300) {
+			if (status >= 200 && status < 400) {
 				String inputLine = "";
 
 				reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
@@ -283,13 +233,9 @@ public class ApiService {
 	
 
 	/**
-	 *  GET HTTP REQUEST
-	 *  
-	 *  @author 백현우
-	 *  
-	 * 	@exception			핸들러로 처리	CODE 16
+	 *  HTTP REQUEST
 	 */
-	public HttpUriRequest getHttpRequest(String method, String url, List<NameValuePair> params) throws Exception {
+	public HttpUriRequest httpRequest(String method, String url, List<NameValuePair> params) throws Exception {
 		HttpUriRequest http = null;
 
 	    try {

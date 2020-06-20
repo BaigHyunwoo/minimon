@@ -36,7 +36,7 @@ public class TblMonUrl {
     private int timeout;
 
     @NotNull
-    private int loadTimePer;
+    private int errLoadTime;
 
     @NotNull
     private int payLoadPer;
@@ -80,8 +80,8 @@ public class TblMonUrl {
 		this.timeout = timeout;
 	}
 
-	public void setLoadTimePer(int loadTimePer) {
-		this.loadTimePer = loadTimePer;
+	public void setErrLoadTime(int errLoadTime) {
+		this.errLoadTime = errLoadTime;
 	}
 
 	public void setPayLoadPer(int payLoadPer) {
@@ -144,8 +144,8 @@ public class TblMonUrl {
 		return timeout;
 	}
 
-	public int getLoadTimePer() {
-		return loadTimePer;
+	public int getErrLoadTime() {
+		return errLoadTime;
 	}
 
 	public int getPayLoadPer() {

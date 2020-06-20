@@ -73,7 +73,7 @@ public class TransactionController {
 			tblMonTransaction.setTimeout(Integer.parseInt(""+param.get("timeout")));
 			tblMonTransaction.setUseable(Integer.parseInt(""+param.get("transaction_useable")));
 			tblMonTransaction.setLoadTime(Double.parseDouble(""+param.get("loadTime")));
-			tblMonTransaction.setLoadTimePer(Integer.parseInt(""+param.get("loadTimePer")));
+			tblMonTransaction.setErrLoadTime(Integer.parseInt(""+param.get("errLoadTime")));
 			tblMonTransaction.setStatus(Integer.parseInt(""+param.get("status")));
 			tblMonTransaction.setTransactionCode(""+param.get("transactionCode"));
 			tblMonTransaction.setUptDate(new Date());
@@ -315,7 +315,7 @@ public class TransactionController {
 				result.put(""+existsTransaction.getSeq(), data);
 
 				TblMonResult tblMonResult = resultService.saveResult(data);
-				resultService.sendResult(tblMonResult);
+				resultService.sendResultByProperties(tblMonResult);
 
     		}
     		

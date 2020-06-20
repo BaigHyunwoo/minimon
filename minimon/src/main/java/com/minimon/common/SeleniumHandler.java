@@ -1,5 +1,6 @@
 package com.minimon.common;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -71,7 +72,6 @@ public class SeleniumHandler {
 	}
 
 
-	@SuppressWarnings("unchecked")
 	public String waitForWindow(int timeout) {
 	  try {
 	    Thread.sleep(timeout);
@@ -126,8 +126,7 @@ public class SeleniumHandler {
 	 *  
 	 *  
 	 *  @return driver 구동
-	 * 	@throws 에러코드 11
-	 * 
+	 *
 	 */
 	public EventFiringWebDriver setUp() throws Exception { 
 		
@@ -140,7 +139,7 @@ public class SeleniumHandler {
 		    Runtime.getRuntime().exec("taskkill /F /IM chromedriver");
 		        
 			// 크롬 드라이버 파일 경로설정 
-			System.setProperty(driverName, MinimonApplication.getDriverPath()); 
+			System.setProperty(driverName, MinimonApplication.getDriverPath()+File.separator+"chromedriver.exe");
 			
 			LoggingPreferences logPrefs = new LoggingPreferences();
 			logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
@@ -157,8 +156,6 @@ public class SeleniumHandler {
 			
 
 		}catch(Exception e) {
-//			e.printStackTrace();
-			
 			if(driver != null) driver.quit();
 			throw new MyException("CLASS : " + className + " - METHOD : " + new Object(){}.getClass().getEnclosingMethod().getName() 
 									+ " - TYPE = [Function]/  Function - " 
@@ -222,13 +219,11 @@ public class SeleniumHandler {
 	 *  
 	 *  @author 백현우
 	 *  
-	 *  @param url 이동할 URL 주소 
 	 *  @param driver 실제 구동되는 드라이버
 	 *  
 	 *  
 	 *  @return 주어진 URL의 로거 반환
-	 * 	@throws 에러코드 12
-	 * 
+	 *
 	 */
 	public LogEntries getLog(EventFiringWebDriver driver) throws Exception {
 		LogEntries logs = null;
@@ -244,9 +239,7 @@ public class SeleniumHandler {
 			return logs;
 			
 		}catch(Exception e) {
-			e.printStackTrace();
-
-			throw new MyException("CLASS : " + className + " - METHOD : " + new Object(){}.getClass().getEnclosingMethod().getName() 
+			throw new MyException("CLASS : " + className + " - METHOD : " + new Object(){}.getClass().getEnclosingMethod().getName()
 									+ " - TYPE = [Function]/  Function - " 
 									+  e.getStackTrace()[0].getMethodName(), className, 12);
 		}
@@ -263,11 +256,6 @@ public class SeleniumHandler {
 	 *  
 	 *  @author 백현우
 	 *  
-	 *  @param 	현재 주소
-	 *  
-	 *  
-	 * 	@throws 에러코드 13
-	 * 
 	 */
 	public String getSource(WebDriver driver) throws Exception {
 		try {
@@ -293,10 +281,7 @@ public class SeleniumHandler {
 	 *  
 	 *  
 	 *  @author 백현우
-	 *  
-	 *  
-	 * 	@throws 에러코드 14
-	 * 
+	 *
 	 */
 	public JSONObject getResourceMessage(LogEntry entry) throws Exception {
 		
@@ -317,17 +302,8 @@ public class SeleniumHandler {
 	
 
 	/**
-	 * 
-	 * 
-	 *  log 분석 
-	 *  
-	 *  
-	 *  @author 	백현우
-	 *  
-	 *  @param 		log 	분석할 log
-	 *  
-	 * 	@throws 	에러코드 15
-	 * 
+	 *  log 분석
+	 *
 	 */
 	public Map<String, Object> expectionLog(LogEntries logs, String currentURL) throws MyException {
 		Map<String, Object> returnData = new HashMap<String, Object>();
@@ -366,13 +342,6 @@ public class SeleniumHandler {
 	/**
 	 * 
 	 *  리소스의 DATA 분석 및 반환
-	 *  
-	 *  
-	 *  @author 백현우
-	 *  
-	 *  
-	 * 	@throws 에러코드 16
-	 * 
 	 */
 	public void setLogData(JSONObject message, int resourceCnt, String currentURL) throws Exception {
 		
@@ -427,12 +396,6 @@ public class SeleniumHandler {
 	 * 
 	 *  Selenium 액션 실행
 	 *  
-	 *  
-	 *  @author 백현우
-	 *  
-	 *  
-	 * 	@throws 에러코드 17
-	 * 
 	 */
 	public String executeAction(SeleniumHandler selenium, EventFiringWebDriver driver, String action, String selector_type, String selector_value, String value) throws Exception{
 		

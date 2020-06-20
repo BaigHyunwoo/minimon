@@ -69,12 +69,7 @@ public class ExecuteTool {
 	
 	
 	/**
-	 * 
 	 * 	모니터링 실행
-	 * 
-	 * 
-	 * 
-	 * 	@exception			핸들러로 처리	CODE 11
 	 */
 	@Scheduled(cron = "0 0/5 * * * *")
 	public void execute() throws Exception {
@@ -91,12 +86,9 @@ public class ExecuteTool {
 				List<TblMonUrl> urls = tblMonUrlRepository.findByUseable(1);
 				resultList.add(urlService.checkUrls(urls));
 				
-	    		List<TblMonTransaction> transactions = tblMonTransactionRepository.findAll();
+	    		List<TblMonTransaction> transactions = tblMonTransactionRepository.findByUseable(1);
 				resultList.add(transactionService.checkTransactions(transactions));
 				
-				/*
-				 * status check and sending e-mail
-				 */
 				check(resultList);
 				
 				logger.info("Monitoring Execute Complete");
@@ -121,14 +113,8 @@ public class ExecuteTool {
 
 	
 	/**
-	 * 
 	 * 	모니터링 실행 결과 전송
-	 * 
-	 * 
-	 * 
-	 * 	@exception			핸들러로 처리	CODE 12
 	 */
-	@SuppressWarnings("unchecked")
 	public void check(List<Map<String, Object>> resultList) throws Exception {
 		
 		try {
@@ -136,19 +122,16 @@ public class ExecuteTool {
 			for(Map<String, Object> result : resultList) {
 				for(Object value : result.values()) {
 					Map<String, Object> checkLog = (Map<String, Object>) value;
-					if(checkLog.get("result").equals("ERR") == true) {
+					if(checkLog.get("result").equals("SUCCESS") == false) {
 						TblMonResult tblMonResult = resultService.saveResult(checkLog);
-						resultService.sendResult(tblMonResult);
+						resultService.sendResultByProperties(tblMonResult);
 					}
 				}
 			}
-			
-			
+
 			logger.debug("Monitoring check Complete");
 	
 		}catch(Exception e) {
-			e.printStackTrace();
-	
 			throw new MyException("CLASS : " + className + " - METHOD : " +  new Object(){}.getClass().getEnclosingMethod().getName()  + " "
 					+ "- TYPE = [Function]/  Function - check", className, 12);
 	     
