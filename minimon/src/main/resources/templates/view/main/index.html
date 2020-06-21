@@ -203,6 +203,19 @@
 			 		 	  	<input id='urlCheck' class='btn btn-success' type="button" value="검사" />
 					    </li>
 					    <li class="list-group-item">
+							<label>LoadTime Check</label>
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="loadTimeCheck" id="loadTimeCheck_on" value="1" checked>
+								<label class="form-check-label" for="loadTimeCheck_on">
+									사용
+								</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="loadTimeCheck" id="loadTimeCheck_off" value="0">
+								<label class="form-check-label" for="loadTimeCheck_off">
+									미사용
+								</label>
+							</div>
 					    	<label>LoadTime</label>
 							<div class="input-group">
 							  <input name="loadTime" type="text" class='form-control' readOnly autocomplete="off" value="0" />
@@ -212,7 +225,20 @@
 							    <span class="input-group-text">Ms</span>
 							  </div>
 							</div>
-							
+
+							<label>PayLoad Check</label>
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="payLoadCheck" id="payLoadCheck_on" value="1" checked>
+								<label class="form-check-label" for="payLoadCheck_on">
+									사용
+								</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="payLoadCheck" id="payLoadCheck_off" value="0">
+								<label class="form-check-label" for="payLoadCheck_off">
+									미사용
+								</label>
+							</div>
 					    	<label>PayLoad</label>
 							<div class="input-group">
 							  <input name="payLoad" type="text" class='form-control' readOnly autocomplete="off" value="0" />

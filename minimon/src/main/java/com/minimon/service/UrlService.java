@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class UrlService {
@@ -129,5 +130,21 @@ public class UrlService {
             return "PAYLOAD";
         else
             return "SUCCESS";
+    }
+
+    public void saveUrl(TblMonUrl tblMonUrl) {
+        tblMonUrlRepository.save(tblMonUrl);
+    }
+
+    public List<TblMonUrl> getUrlList() {
+        return tblMonUrlRepository.findAll();
+    }
+
+    public TblMonUrl getUrl(int seq) {
+        return tblMonUrlRepository.findBySeq(seq);
+    }
+
+    public void remove(int seq) {
+        Optional.of(getUrl(seq)).ifPresent(tblMonUrl -> tblMonUrlRepository.delete(tblMonUrl));
     }
 }

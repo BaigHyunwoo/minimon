@@ -1,15 +1,10 @@
 package com.minimon.entity;
 
-import java.util.Date;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-
 import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @Entity
 @Table(name="tbl_mon_url")
@@ -43,7 +38,21 @@ public class TblMonUrl {
     
     @NotNull
     private int useable;
-    
+
+    @NotNull
+    private int loadTimeCheck;
+
+    @NotNull
+    private int payLoadCheck;
+
+    private Date startDate;
+
+    private Date endDate;
+
+	private int startHour;
+
+	private int endHour;
+
     @NotNull
     private Date regDate;
     
@@ -62,8 +71,8 @@ public class TblMonUrl {
 
     @NotNull
     private double payLoad;
-    
-    
+
+
 	public void setUrl(String url) {
 		this.url = url;
 	}
@@ -163,6 +172,52 @@ public class TblMonUrl {
 	public double getPayLoad() {
 		return payLoad;
 	}
-    
-    
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public int getStartHour() {
+		return startHour;
+	}
+
+	public void setStartHour(int startHour) {
+		this.startHour = startHour;
+	}
+
+	public int getEndHour() {
+		return endHour;
+	}
+
+	public void setEndHour(int endHour) {
+		this.endHour = endHour;
+	}
+
+	public int getLoadTimeCheck() {
+		return loadTimeCheck;
+	}
+
+	public void setLoadTimeCheck(int loadTimeCheck) {
+		this.loadTimeCheck = loadTimeCheck;
+	}
+
+	public int getPayLoadCheck() {
+		return payLoadCheck;
+	}
+
+	public void setPayLoadCheck(int payLoadCheck) {
+		this.payLoadCheck = payLoadCheck;
+	}
 }

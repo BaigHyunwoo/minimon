@@ -197,7 +197,15 @@ function monInit(){
 						});
 						$("#saveUrlForm [name='status']").val(data.data.status);
 						$("#saveUrlForm [name='loadTime']").val(data.data.loadTime);
+						$("#saveUrlForm [name='loadTimeCheck']").each(function(){
+							if($(this).val() == data.data.loadTimeCheck) $(this).attr('checked','true');
+							else  $(this).removeAttr('checked');
+						});
 						$("#saveUrlForm [name='payLoad']").val(data.data.payLoad);
+						$("#saveUrlForm [name='payLoadCheck']").each(function(){
+							if($(this).val() == data.data.payLoadCheck) $(this).attr('checked','true');
+							else  $(this).removeAttr('checked');
+						});
 						$("#urlCheck").attr('cd', data.data.url);
 						$('#saveUrlModal').modal('show');
 						
