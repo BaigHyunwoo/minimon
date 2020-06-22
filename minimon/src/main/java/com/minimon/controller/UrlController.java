@@ -52,6 +52,8 @@ public class UrlController {
         tblMonUrl.setEndDate(transFormat.parse(param.get("url_end_date").toString()));
         tblMonUrl.setStartHour(Integer.parseInt(param.get("url_start_hour").toString()));
         tblMonUrl.setEndHour(Integer.parseInt(param.get("url_end_hour").toString()));
+        tblMonUrl.setTextCheck(Integer.parseInt(param.get("textCheck").toString()));
+        tblMonUrl.setTextCheckValue((param.get("textCheckValue").toString()));
         tblMonUrl.setUptDate(new Date());
         if (tblMonUrl.getRegDate() == null) tblMonUrl.setRegDate(new Date());
         return tblMonUrl;

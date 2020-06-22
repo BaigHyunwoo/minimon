@@ -71,6 +71,7 @@ public class UrlService {
                     selenium.getLog(driver),
                     driver.getCurrentUrl()
             );
+            logData.put("source", selenium.getSource(driver));
 
             logger.debug(logData.toString());
 
@@ -101,13 +102,14 @@ public class UrlService {
             int status = Integer.parseInt("" + logData.get("status"));
             double totalLoadTime = Double.parseDouble("" + logData.get("totalLoadTime"));
             double totalPayLoad = Double.parseDouble("" + logData.get("totalPayLoad"));
+            String source = logData.get("source").toString();
 
             checkData.put("url", url.getUrl());
             checkData.put("seq", url.getSeq());
             checkData.put("type", "URL");
             checkData.put("title", url.getTitle());
             checkData.put("check_loadTime", totalLoadTime);
-            checkData.put("result", errCheck(status, totalLoadTime, totalPayLoad, url));
+            checkData.put("result", errCheck(status, totalLoadTime, totalPayLoad, source, url));
 
         } catch (Exception e) {
             throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {
@@ -119,14 +121,17 @@ public class UrlService {
         return checkData;
     }
 
-    public String errCheck(int status, double totalLoadTime, double totalPayLoad, TblMonUrl url) {
+    public String errCheck(int status, double totalLoadTime, double totalPayLoad, String source, TblMonUrl url) {
         if (status >= 400)
-            return status + "";
+            return status + " ERR";
         else if (url.getLoadTimeCheck() == 1 && totalLoadTime >= url.getErrLoadTime())
-            return "LOAD TIME";
+            return "LOAD TIME ERR";
         else if (url.getPayLoadCheck() == 1 && (CommonUtils.getPerData(url.getPayLoad(), url.getPayLoadPer(), 2) > totalPayLoad
                 || totalPayLoad > CommonUtils.getPerData(url.getPayLoad(), url.getPayLoadPer(), 1)))
-            return "PAYLOAD";
+            return "PAYLOAD ERR";
+        else if (url.getTextCheck() == 1 && source.indexOf(url.getTextCheckValue()) >= 0) {
+            return "TEXT ERR";
+        }
         else
             return "SUCCESS";
     }

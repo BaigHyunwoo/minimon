@@ -15,7 +15,7 @@ public class SmsService {
         String text = new StringBuffer()
                 .append("\n"+tblMonResult.getRegDate()+" ")
                 .append("\n"+tblMonResult.getType()+" : "+tblMonResult.getTitle()+" ")
-                .append("\nERR : "+tblMonResult.getResult()+" ")
+                .append("\nRESULT : "+tblMonResult.getResult()+" ")
                 .toString();
 
         SendingHttp sendingHttp = new SendingHttp();

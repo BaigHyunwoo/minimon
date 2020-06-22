@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +55,10 @@ public class TransactionService {
 
 
     public List<TblMonTransaction> findTransactionUseable() {
-        return tblMonTransactionRepository.findByUseable(1);
+        Date now = new Date();
+        int hours = now.getHours();
+        return tblMonTransactionRepository.findByUseableAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndStartHourLessThanEqualAndEndHourGreaterThanEqual(
+                1, now, now, hours, hours);
     }
 
     /**
@@ -111,14 +115,14 @@ public class TransactionService {
             if (transaction.getStatus() == status) checkData.put("status", "SUCCESS");
             else {
                 checkData.put("status", "ERR");
-                result = "ERR";
+                result = "status ERR";
             }
 
             if (loadTime <= CommonUtils.getPerData(transaction.getLoadTime(), transaction.getErrLoadTime(), 1))
                 checkData.put("loadTime", "SUCCESS");
             else {
-                checkData.put("loadTime", "ERR");
-                result = "ERR";
+                checkData.put("loadTime", " ERR");
+                result = "loadTime ERR";
             }
 
 

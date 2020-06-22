@@ -214,6 +214,11 @@ function monInit(){
 							if($(this).val() == data.data.loadTimeCheck) $(this).attr('checked','true');
 							else  $(this).removeAttr('checked');
 						});
+						$("#saveUrlForm [name='textCheckValue']").val(data.data.textCheckValue);
+						$("#saveUrlForm [name='textCheck']").each(function(){
+							if($(this).val() == data.data.textCheck) $(this).attr('checked','true');
+							else  $(this).removeAttr('checked');
+						});
 						$("#saveUrlForm [name='payLoad']").val(data.data.payLoad);
 						$("#saveUrlForm [name='url_payLoadCheck']").each(function(){
 							if($(this).val() == data.data.payLoadCheck) $(this).attr('checked','true');

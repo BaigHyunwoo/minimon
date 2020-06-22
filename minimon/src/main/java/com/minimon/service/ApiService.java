@@ -123,14 +123,14 @@ public class ApiService {
 
     public String errCheck(int status, double totalLoadTime, double totalPayLoad, String response, TblMonApi api) {
         if (status >= 400)
-            return status + "";
+            return status + " ERR";
         else if (api.getLoadTimeCheck() == 1 && totalLoadTime >= api.getErrLoadTime())
-            return "LOAD TIME";
+            return "LOAD TIME ERR";
         else if (api.getPayLoadCheck() == 1 && (CommonUtils.getPerData(api.getPayLoad(), api.getPayLoadPer(), 2) > totalPayLoad
                 || totalPayLoad > CommonUtils.getPerData(api.getPayLoad(), api.getPayLoadPer(), 1)))
-            return "PAYLOAD";
+            return "PAYLOAD ERR";
         else if (api.getResponseCheck() == 1 && response.equals(api.getResponse()) == false)
-            return "RESPONSE";
+            return "RESPONSE ERR";
         else
             return "SUCCESS";
     }

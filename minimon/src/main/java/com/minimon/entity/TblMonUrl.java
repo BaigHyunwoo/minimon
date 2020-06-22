@@ -62,6 +62,12 @@ public class TblMonUrl {
     
     @NotNull
     private Date uptDate;
+
+	@NotNull
+	private int textCheck;
+
+    @NotNull
+    private String textCheckValue;
     
     
     /*
@@ -223,5 +229,21 @@ public class TblMonUrl {
 
 	public void setPayLoadCheck(int payLoadCheck) {
 		this.payLoadCheck = payLoadCheck;
+	}
+
+	public int getTextCheck() {
+		return textCheck;
+	}
+
+	public void setTextCheck(int textCheck) {
+		this.textCheck = textCheck;
+	}
+
+	public String getTextCheckValue() {
+		return textCheckValue;
+	}
+
+	public void setTextCheckValue(String textCheckValue) {
+		this.textCheckValue = textCheckValue;
 	}
 }

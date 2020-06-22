@@ -1,5 +1,6 @@
 package com.minimon.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,6 +13,6 @@ public interface TblMonTransactionRepository extends JpaRepository<TblMonTransac
 
 	TblMonTransaction findBySeq(int seq);
 
-	List<TblMonTransaction> findByUseable(int useable);
-
+	List<TblMonTransaction> findByUseableAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndStartHourLessThanEqualAndEndHourGreaterThanEqual(
+			int useable, Date startDate, Date endDate, int startHour, int endHour);
 }
