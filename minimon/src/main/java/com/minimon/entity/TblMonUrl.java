@@ -66,7 +66,6 @@ public class TblMonUrl {
 	@NotNull
 	private int textCheck;
 
-    @NotNull
     private String textCheckValue;
     
     

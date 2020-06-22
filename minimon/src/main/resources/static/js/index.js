@@ -56,21 +56,19 @@ function monInit(){
 
 	$('body').on('hide.bs.modal','#saveUrlModal', function (e) {
 		
-		$("#saveUrlForm").trigger('reset');
-		
+		window.location.reload();
 	});
 
 
 	$('body').on('click' , '#createApiBtn' , function(){
-		
+
 		$('#saveApiModal').modal('show');
-		
+
 	});
 
 	$('body').on('hide.bs.modal','#saveApiModal', function (e) {
 
-		$(".del_api_param").trigger("click");
-		$("#saveApiForm").trigger('reset');
+		window.location.reload();
 		
 	});
 
@@ -83,7 +81,7 @@ function monInit(){
 
 	$('body').on('hide.bs.modal','#saveTransactionModal', function (e) {
 
-		$("#saveTransactionModal").trigger('reset');
+		window.location.reload();
 		
 	});
 	
