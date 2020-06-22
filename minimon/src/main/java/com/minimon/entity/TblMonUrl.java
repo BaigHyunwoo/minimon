@@ -45,12 +45,16 @@ public class TblMonUrl {
     @NotNull
     private int payLoadCheck;
 
+	@NotNull
     private Date startDate;
 
+	@NotNull
     private Date endDate;
 
+	@NotNull
 	private int startHour;
 
+	@NotNull
 	private int endHour;
 
     @NotNull

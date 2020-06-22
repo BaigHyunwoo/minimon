@@ -11,10 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class UrlService {
@@ -41,8 +38,6 @@ public class UrlService {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
-
             throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {
             }.getClass().getEnclosingMethod().getName() + " "
                     + "- TYPE = [Function]/  Function - execute", className, 11);
@@ -52,6 +47,12 @@ public class UrlService {
         return checkData;
     }
 
+    public List<TblMonUrl> findUrl() {
+        Date now = new Date();
+        int hours = now.getHours();
+        return tblMonUrlRepository.findByUseableAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndStartHourLessThanEqualAndEndHourGreaterThanEqual(
+                1, now, now, hours, hours);
+    }
 
     /**
      * URL 실행
@@ -75,8 +76,6 @@ public class UrlService {
 
 
         } catch (Exception e) {
-            e.printStackTrace();
-
             throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {
             }.getClass().getEnclosingMethod().getName() + " "
                     + "- TYPE = [Function]/  Function - execute", className, 12);
@@ -123,10 +122,10 @@ public class UrlService {
     public String errCheck(int status, double totalLoadTime, double totalPayLoad, TblMonUrl url) {
         if (status >= 400)
             return status + "";
-        else if (totalLoadTime >= url.getErrLoadTime())
+        else if (url.getLoadTimeCheck() == 1 && totalLoadTime >= url.getErrLoadTime())
             return "LOAD TIME";
-        else if (CommonUtils.getPerData(url.getPayLoad(), url.getPayLoadPer(), 2) > totalPayLoad
-                || totalPayLoad > CommonUtils.getPerData(url.getPayLoad(), url.getPayLoadPer(), 1))
+        else if (url.getPayLoadCheck() == 1 && (CommonUtils.getPerData(url.getPayLoad(), url.getPayLoadPer(), 2) > totalPayLoad
+                || totalPayLoad > CommonUtils.getPerData(url.getPayLoad(), url.getPayLoadPer(), 1)))
             return "PAYLOAD";
         else
             return "SUCCESS";

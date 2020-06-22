@@ -162,7 +162,7 @@
 	<div class="modal-dialog resource-kanban-box" role="document" style="width:96%; max-width:500px;">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="">URL</h5>
+				<h5 class="modal-title">URL</h5>
 				<button type="button" class="close btn btn-default" data-dismiss="modal"
 					aria-label="Close">
 					<span aria-hidden="true">&times;</span>
@@ -174,48 +174,78 @@
 					  <ul class="list-group list-group-flush">
 					    <li class="list-group-item">
 					    	<input type="hidden" name="seq" value="">
-							<label>Title</label>
-							<input name="title" type="text" class='form-control' autocomplete="off" />
-							
-							<label>URL</label>
-							<input  name="url" type="text" class='form-control' autocomplete="off"  />
-							
-							<label>Timeout</label> 
-							<input name="timeout" type="number" class='form-control' value="30"/>
-							
-							<label>Timer</label> 
-							<input name="timer" type="number" class='form-control' value="5"/>
-							
-							<label>Useable</label> 
-							<div class="form-check">
-							  <input class="form-check-input" type="radio" name="useable" id="useable_on" value="1" checked>
-							  <label class="form-check-label" for="useable_on">
-							    사용
-							  </label>
-							</div>
-							<div class="form-check">
-							  <input class="form-check-input" type="radio" name="useable" id="useable_off" value="0">
-							  <label class="form-check-label" for="useable_off">
-							   미사용
-							  </label>
-							</div>
-							
-			 		 	  	<input id='urlCheck' class='btn btn-success' type="button" value="검사" />
-					    </li>
-					    <li class="list-group-item">
-							<label>LoadTime Check</label>
-							<div class="form-check">
-								<input class="form-check-input" type="radio" name="loadTimeCheck" id="loadTimeCheck_on" value="1" checked>
-								<label class="form-check-label" for="loadTimeCheck_on">
+							<label>Useable</label>
+							<br>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="useable" id="useable_on" value="1" checked>
+								<label class="form-check-label" for="useable_on">
 									사용
 								</label>
 							</div>
-							<div class="form-check">
-								<input class="form-check-input" type="radio" name="loadTimeCheck" id="loadTimeCheck_off" value="0">
-								<label class="form-check-label" for="loadTimeCheck_off">
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="useable" id="useable_off" value="0">
+								<label class="form-check-label" for="useable_off">
 									미사용
 								</label>
 							</div>
+							<br>
+							<label>Title</label>
+							<input name="title" type="text" class='form-control' autocomplete="off" />
+
+							<label>URL</label>
+							<input  name="url" type="text" class='form-control' autocomplete="off"  />
+							<div class="row">
+								<div class="col">
+									<label>Timeout</label>
+									<input name="timeout" type="number" class='form-control' value="30"/>
+								</div>
+								<div class="col">
+									<label>Timer</label>
+									<input name="timer" type="number" class='form-control' value="5"  readonly />
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col">
+									<label>기간 (start ~ end)</label>
+									<input name="url_start_date" type="date" class='form-control' th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" />
+								</div>
+								<div class="col">
+									<label>&emsp;</label>
+									<input name="url_end_date" type="date" class='form-control' value="2999-12-31" />
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col">
+									<label>동작 시간</label>
+									<input name="url_start_hour" type="number" class='form-control' value="00" />
+								</div>
+								<div class="col">
+									<label>&emsp;</label>
+									<input name="url_end_hour" type="number" class='form-control' value="24" />
+								</div>
+							</div>
+
+			 		 	  	<input id='urlCheck' class='btn btn-success' type="button" value="검사" />
+					    </li>
+
+					    <li class="list-group-item">
+							<label>LoadTime Check</label>
+							<br>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="url_loadTimeCheck" id="url_loadTimeCheck_on" value="1" checked>
+								<label class="form-check-label" for="url_loadTimeCheck_on">
+									사용
+								</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="url_loadTimeCheck" id="url_loadTimeCheck_off" value="0">
+								<label class="form-check-label" for="url_loadTimeCheck_off">
+									미사용
+								</label>
+							</div>
+							<br>
 					    	<label>LoadTime</label>
 							<div class="input-group">
 							  <input name="loadTime" type="text" class='form-control' readOnly autocomplete="off" value="0" />
@@ -227,18 +257,20 @@
 							</div>
 
 							<label>PayLoad Check</label>
-							<div class="form-check">
-								<input class="form-check-input" type="radio" name="payLoadCheck" id="payLoadCheck_on" value="1" checked>
-								<label class="form-check-label" for="payLoadCheck_on">
+							<br>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="url_payLoadCheck" id="url_payLoadCheck_on" value="1" checked>
+								<label class="form-check-label" for="url_payLoadCheck_on">
 									사용
 								</label>
 							</div>
-							<div class="form-check">
-								<input class="form-check-input" type="radio" name="payLoadCheck" id="payLoadCheck_off" value="0">
-								<label class="form-check-label" for="payLoadCheck_off">
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="url_payLoadCheck" id="url_payLoadCheck_off" value="0">
+								<label class="form-check-label" for="url_payLoadCheck_off">
 									미사용
 								</label>
 							</div>
+							<br>
 					    	<label>PayLoad</label>
 							<div class="input-group">
 							  <input name="payLoad" type="text" class='form-control' readOnly autocomplete="off" value="0" />
@@ -271,7 +303,7 @@
 	<div class="modal-dialog resource-kanban-box" role="document" style="width:96%; max-width:500px;">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="">API</h5>
+				<h5 class="modal-title">API</h5>
 				<button type="button" class="close btn btn-default" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -283,31 +315,59 @@
 					  <ul class="list-group list-group-flush">
 					    <li class="list-group-item">
 					    	<input type="hidden" name="seq" value="">
+							<label>Useable</label>
+							<br>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="api_useable" id="api_useable_on" value="1" checked>
+								<label class="form-check-label" for="api_useable_on">
+									사용
+								</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="api_useable" id="api_useable_off" value="0">
+								<label class="form-check-label" for="api_useable_off">
+									미사용
+								</label>
+							</div>
+							<br>
 							<label>Title</label>
 							<input name="title" type="text" class='form-control' autocomplete="off" />
-							
+
 							<label>URL</label>
 							<input  name="url" type="text" class='form-control' autocomplete="off"  />
-							<label>Timeout</label> 
-							<input name="timeout" type="number" class='form-control' value="30"/>
-							
-							<label>Timer</label> 
-							<input name="timer" type="number" class='form-control' value="5"/>
-							
-							<label>Useable</label> 
-							<div class="form-check">
-							  <input class="form-check-input" type="radio" name="api_useable" id="api_useable_on" value="1" checked>
-							  <label class="form-check-label" for="api_useable_on">
-							    사용
-							  </label>
+							<div class="row">
+								<div class="col">
+									<label>Timeout</label>
+									<input name="timeout" type="number" class='form-control' value="30"/>
+								</div>
+								<div class="col">
+									<label>Timer</label>
+									<input name="timer" type="number" class='form-control' value="5" readonly/>
+								</div>
 							</div>
-							<div class="form-check">
-							  <input class="form-check-input" type="radio" name="api_useable" id="api_useable_off" value="0">
-							  <label class="form-check-label" for="api_useable_off">
-							   미사용
-							  </label>
+
+							<div class="row">
+								<div class="col">
+									<label>기간 (start ~ end)</label>
+									<input name="api_start_date" type="date" class='form-control' th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" />
+								</div>
+								<div class="col">
+									<label>&emsp;</label>
+									<input name="api_end_date" type="date" class='form-control' value="2999-12-31" />
+								</div>
 							</div>
-							
+
+							<div class="row">
+								<div class="col">
+									<label>동작 시간</label>
+									<input name="api_start_hour" type="number" class='form-control' value="00" />
+								</div>
+								<div class="col">
+									<label>&emsp;</label>
+									<input name="api_end_hour" type="number" class='form-control' value="24" />
+								</div>
+							</div>
+
 							<label>Method</label>
 							<select id="api_method" name="method" class="form-control form-control-sm">
 								<option value='GET'>GET</option>
@@ -332,16 +392,46 @@
 			 		 	  	<input id='apiCheck' class='btn btn-success' type="button" value="검사" />
 					    </li>
 					    <li class="list-group-item">
+							<label>LoadTime Check</label>
+							<br>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="api_loadTimeCheck" id="api_loadTimeCheck_on" value="1" checked>
+								<label class="form-check-label" for="api_loadTimeCheck_on">
+									사용
+								</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="api_loadTimeCheck" id="api_loadTimeCheck_off" value="0">
+								<label class="form-check-label" for="api_loadTimeCheck_off">
+									미사용
+								</label>
+							</div>
+							<br>
 					    	<label>LoadTime</label>
 							<div class="input-group">
 							  <input name="loadTime" type="text" class='form-control' readOnly autocomplete="off" value="0" />
 							  <div class="input-group-append">
 							    <span class="input-group-text">Ms</span>
-							  	<input type="number" name="errLoadTime" value="5" class="form-control" style="width: 100px;">
+							  	<input type="number" name="errLoadTime" value="3000" class="form-control" style="width: 100px;">
 							    <span class="input-group-text">Ms</span>
 							  </div>
 							</div>
-							
+
+							<label>PayLoad Check</label>
+							<br>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="api_payLoadCheck" id="api_payLoadCheck_on" value="1" checked>
+								<label class="form-check-label" for="api_payLoadCheck_on">
+									사용
+								</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="api_payLoadCheck" id="api_payLoadCheck_off" value="0">
+								<label class="form-check-label" for="api_payLoadCheck_off">
+									미사용
+								</label>
+							</div>
+							<br>
 					    	<label>PayLoad</label>
 							<div class="input-group">
 							  <input name="payLoad" type="text" class='form-control' readOnly autocomplete="off" value="0" />
@@ -354,17 +444,32 @@
 							
 							<label>Status</label> 
 							<input name="status" type="text" class='form-control' value="200" />
-							<div class="mgt15 text-right resource-btz">
-								<button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
-								<button type="button" id="deleteApi" class="btn btn btn-success" >삭제</button>
-								<button type="button" id="saveApi" class="btn btn btn-success" >저장</button>
+							<label>Response Check</label>
+							<br>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="api_responseCheck" id="api_responseCheck_on" value="1" checked>
+								<label class="form-check-label" for="api_responseCheck_on">
+									사용
+								</label>
 							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="api_responseCheck" id="api_responseCheck_off" value="0">
+								<label class="form-check-label" for="api_responseCheck_off">
+									미사용
+								</label>
+							</div>
+							<br>
 							<label>Response</label> 
 							<input name="response" type="hidden" class='form-control' value="200" readOnly />
 							<div class="card" style="width: 18rem;">
 							  <div class="card-body">
 							    <p class="card-text" id="api_response"></p>
 							  </div>
+							</div>
+							<div class="mgt15 text-right resource-btz">
+								<button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+								<button type="button" id="deleteApi" class="btn btn btn-success" >삭제</button>
+								<button type="button" id="saveApi" class="btn btn btn-success" >저장</button>
 							</div>
 					    </li>
 					  </ul>
@@ -381,39 +486,69 @@
 	<div class="modal-dialog resource-kanban-box" role="document" style="width:96%; max-width:500px;">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="">TRANSACTION</h5>
+				<h5 class="modal-title">TRANSACTION</h5>
 				<button type="button" class="close btn btn-default" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
 			<div class="modal-body">
 				
-				<form action="/api" id="saveTransactionForm" name="saveTransactionForm" class="form-group">
+				<form action="/transaction" id="saveTransactionForm" name="saveTransactionForm" class="form-group">
 					<div class="card" style="width: 100%;">
 					  <ul class="list-group list-group-flush">
 					    <li class="list-group-item">
 					    	<input type="hidden" name="seq" value="">
-							<label>Title</label>
-							<input name="title" type="text" class='form-control' autocomplete="off" />
-							
-							<label>Timeout</label> 
-							<input name="timeout" type="number" class='form-control' value="30"/>
-							
-							<label>Timer</label> 
-							<input name="timer" type="number" class='form-control' value="5"/>
-							
-							<label>Useable</label> 
+
+							<label>Useable</label>
+							<br>
 							<div class="form-check">
-							  <input class="form-check-input" type="radio" name="transaction_useable" id="transaction_useable_on" value="1" checked>
-							  <label class="form-check-label" for="transaction_useable_on">
-							    사용
-							  </label>
+								<input class="form-check-input form-check-inline" type="radio" name="transaction_useable" id="transaction_useable_on" value="1" checked>
+								<label class="form-check-label" for="transaction_useable_on">
+									사용
+								</label>
 							</div>
 							<div class="form-check">
-							  <input class="form-check-input" type="radio" name="transaction_useable" id="transaction_useable_off" value="0">
-							  <label class="form-check-label" for="transaction_useable_off">
-							   미사용
-							  </label>
+								<input class="form-check-input form-check-inline" type="radio" name="transaction_useable" id="transaction_useable_off" value="0">
+								<label class="form-check-label" for="transaction_useable_off">
+									미사용
+								</label>
+							</div>
+							<br>
+
+							<label>Title</label>
+							<input name="title" type="text" class='form-control' autocomplete="off" />
+
+							<div class="row">
+								<div class="col">
+									<label>Timeout</label>
+									<input name="timeout" type="number" class='form-control' value="30"/>
+								</div>
+								<div class="col">
+									<label>Timer</label>
+									<input name="timer" type="number" class='form-control' value="5" readonly />
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col">
+									<label>기간 (start ~ end)</label>
+									<input name="transaction_start_date" type="date" class='form-control' th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" />
+								</div>
+								<div class="col">
+									<label>&emsp;</label>
+									<input name="transaction_end_date" type="date" class='form-control' value="2999-12-31" />
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col">
+									<label>동작 시간</label>
+									<input name="transaction_start_hour" type="number" class='form-control' value="00" />
+								</div>
+								<div class="col">
+									<label>&emsp;</label>
+									<input name="transaction_end_hour" type="number" class='form-control' value="24" />
+								</div>
 							</div>
 							
 							<label>Transaction File</label>
@@ -429,12 +564,27 @@
 			 		 	  	<input id='transactionCheck' name="transactionCheck" class='btn btn-success' type="button" value="검사" />
 					    </li>
 					    <li class="list-group-item">
+							<label>LoadTime Check</label>
+							<br>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="transaction_loadTimeCheck" id="transaction_loadTimeCheck_on" value="1" checked>
+								<label class="form-check-label" for="transaction_loadTimeCheck_on">
+									사용
+								</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="transaction_loadTimeCheck" id="transaction_loadTimeCheck_off" value="0">
+								<label class="form-check-label" for="transaction_loadTimeCheck_off">
+									미사용
+								</label>
+							</div>
+							<br>
 					    	<label>LoadTime</label>
 							<div class="input-group">
 							  <input name="loadTime" type="text" class='form-control' readOnly autocomplete="off" value="0" />
 							  <div class="input-group-append">
 							    <span class="input-group-text">Ms</span>
-							  	<input type="number" name="errLoadTime" value="5" class="form-control" style="width: 100px;">
+							  	<input type="number" name="errLoadTime" value="3000" class="form-control" style="width: 100px;">
 							    <span class="input-group-text">Ms</span>
 							  </div>
 							</div>
@@ -462,7 +612,7 @@
 $(document).ready(function() {
 	
 	monInit();
-	
+
 });
 </script>
 </html>

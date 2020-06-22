@@ -42,8 +42,6 @@ public class ResultService {
 			tblMonResultRepository.save(tblMonResult);
 			
 		}catch(Exception e) {
-			e.printStackTrace();
-
 			throw new MyException("CLASS : " + className + " - METHOD : " +  new Object(){}.getClass().getEnclosingMethod().getName()  + " "
 					+ "- TYPE = [Function]/  Function - saveResult", className, 11);
          

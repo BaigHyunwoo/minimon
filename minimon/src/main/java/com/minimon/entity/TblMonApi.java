@@ -50,7 +50,28 @@ public class TblMonApi {
     
     @NotNull
     private int useable;
-    
+
+	@NotNull
+	private int loadTimeCheck;
+
+	@NotNull
+	private int payLoadCheck;
+
+	@NotNull
+	private int responseCheck;
+
+	@NotNull
+	private Date startDate;
+
+	@NotNull
+	private Date endDate;
+
+	@NotNull
+	private int startHour;
+
+	@NotNull
+	private int endHour;
+
     @NotNull
     private Date regDate;
     
@@ -217,6 +238,61 @@ public class TblMonApi {
 	public double getPayLoad() {
 		return payLoad;
 	}
-    
-    
+
+
+	public int getPayLoadCheck() {
+		return payLoadCheck;
+	}
+
+	public void setPayLoadCheck(int payLoadCheck) {
+		this.payLoadCheck = payLoadCheck;
+	}
+
+	public int getLoadTimeCheck() {
+		return loadTimeCheck;
+	}
+
+	public void setLoadTimeCheck(int loadTimeCheck) {
+		this.loadTimeCheck = loadTimeCheck;
+	}
+
+	public int getResponseCheck() {
+		return responseCheck;
+	}
+
+	public void setResponseCheck(int responseCheck) {
+		this.responseCheck = responseCheck;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public int getStartHour() {
+		return startHour;
+	}
+
+	public void setStartHour(int startHour) {
+		this.startHour = startHour;
+	}
+
+	public int getEndHour() {
+		return endHour;
+	}
+
+	public void setEndHour(int endHour) {
+		this.endHour = endHour;
+	}
 }

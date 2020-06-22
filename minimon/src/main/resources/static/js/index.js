@@ -4,7 +4,7 @@
  *  date 변환 
  *  
  */
-function getFormatDate(date){ 
+function getFormatDateTime(date){
 	var year = date.getFullYear();
 	var month = (1 + date.getMonth());
 	month = getTwoLengthDate(month);
@@ -17,6 +17,14 @@ function getFormatDate(date){
 	var second = date.getSeconds();
 	second = getTwoLengthDate(second);
 	return year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second; 
+}
+function getFormatDate(date){
+	var year = date.getFullYear();
+	var month = (1 + date.getMonth());
+	month = getTwoLengthDate(month);
+	var day = date.getDate();
+	day = getTwoLengthDate(day);
+	return year + '-' + month + '-' + day ;
 }
 
 /**
@@ -184,11 +192,16 @@ function monInit(){
 				}else{
 					if(data.result == "success") { 
 
+
 						$("#saveUrlForm [name='seq']").val(data.data.seq);
 						$("#saveUrlForm [name='url']").val(data.data.url);
 						$("#saveUrlForm [name='title']").val(data.data.title);
 						$("#saveUrlForm [name='timeout']").val(data.data.timeout);
 						$("#saveUrlForm [name='timer']").val(data.data.timer);
+						$("#saveUrlForm [name='url_start_date']").val(getFormatDate(new Date(data.data.startDate)));
+						$("#saveUrlForm [name='url_end_date']").val(getFormatDate(new Date(data.data.endDate)));
+						$("#saveUrlForm [name='url_start_hour']").val(data.data.startHour);
+						$("#saveUrlForm [name='url_end_hour']").val(data.data.endHour);
 						$("#saveUrlForm [name='errLoadTime']").val(data.data.errLoadTime);
 						$("#saveUrlForm [name='payLoadPer']").val(data.data.payLoadPer);
 						$("#saveUrlForm [name='useable']").each(function(){
@@ -197,12 +210,12 @@ function monInit(){
 						});
 						$("#saveUrlForm [name='status']").val(data.data.status);
 						$("#saveUrlForm [name='loadTime']").val(data.data.loadTime);
-						$("#saveUrlForm [name='loadTimeCheck']").each(function(){
+						$("#saveUrlForm [name='url_loadTimeCheck']").each(function(){
 							if($(this).val() == data.data.loadTimeCheck) $(this).attr('checked','true');
 							else  $(this).removeAttr('checked');
 						});
 						$("#saveUrlForm [name='payLoad']").val(data.data.payLoad);
-						$("#saveUrlForm [name='payLoadCheck']").each(function(){
+						$("#saveUrlForm [name='url_payLoadCheck']").each(function(){
 							if($(this).val() == data.data.payLoadCheck) $(this).attr('checked','true');
 							else  $(this).removeAttr('checked');
 						});
@@ -260,17 +273,33 @@ function monInit(){
 						$("#saveApiForm [name='title']").val(data.data.title);
 						$("#saveApiForm [name='timeout']").val(data.data.timeout);
 						$("#saveApiForm [name='timer']").val(data.data.timer);
+						$("#saveApiForm [name='api_start_date']").val(getFormatDate(new Date(data.data.startDate)));
+						$("#saveApiForm [name='api_end_date']").val(getFormatDate(new Date(data.data.endDate)));
+						$("#saveApiForm [name='api_start_hour']").val(data.data.startHour);
+						$("#saveApiForm [name='api_end_hour']").val(data.data.endHour);
 						$("#saveApiForm [name='errLoadTime']").val(data.data.errLoadTime);
 						$("#saveApiForm [name='payLoadPer']").val(data.data.payLoadPer);
-						$("#saveApiForm [name='useable']").each(function(){
+						$("#saveApiForm [name='api_useable']").each(function(){
 							if($(this).val() == data.data.useable) $(this).attr('checked','true');
 							else  $(this).removeAttr('checked');
 						});
 						$("#saveApiForm [name='method']").val(data.data.method);
 						$("#saveApiForm [name='status']").val(data.data.status);
+						$("#saveApiForm [name='api_loadTimeCheck']").each(function(){
+							if($(this).val() == data.data.loadTimeCheck) $(this).attr('checked','true');
+							else  $(this).removeAttr('checked');
+						});
 						$("#saveApiForm [name='loadTime']").val(data.data.loadTime);
+						$("#saveApiForm [name='api_payLoadCheck']").each(function(){
+							if($(this).val() == data.data.payLoadCheck) $(this).attr('checked','true');
+							else  $(this).removeAttr('checked');
+						});
 						$("#saveApiForm [name='payLoad']").val(data.data.payLoad);
 						$("#apiCheck").attr('cd', data.data.url);
+						$("#saveApiForm [name='api_responseCheck']").each(function(){
+							if($(this).val() == data.data.responseCheck) $(this).attr('checked','true');
+							else  $(this).removeAttr('checked');
+						});
 						$("#api_response").text(data.data.response);
 						$("#saveApiForm [name='response']").val(data.data.response);
 						
@@ -601,9 +630,18 @@ function monInit(){
 						$("#saveTransactionForm [name='title']").val(data.data.title);
 						$("#saveTransactionForm [name='timeout']").val(data.data.timeout);
 						$("#saveTransactionForm [name='timer']").val(data.data.timer);
+						$("#saveTransactionForm [name='transaction_start_date']").val(getFormatDate(new Date(data.data.startDate)));
+						$("#saveTransactionForm [name='transaction_end_date']").val(getFormatDate(new Date(data.data.endDate)));
+						$("#saveTransactionForm [name='transaction_start_hour']").val(data.data.startHour);
+						$("#saveTransactionForm [name='transaction_end_hour']").val(data.data.endHour);
 						$("#saveTransactionForm [name='errLoadTime']").val(data.data.errLoadTime);
 						$("#saveTransactionForm [name='useable']").each(function(){
 							if($(this).val() == data.data.useable) $(this).attr('checked','true');
+							else  $(this).removeAttr('checked');
+						});
+
+						$("#saveTransactionForm [name='transaction_loadTimeCheck']").each(function(){
+							if($(this).val() == data.data.loadTimeCheck) $(this).attr('checked','true');
 							else  $(this).removeAttr('checked');
 						});
 						$("#saveTransactionForm [name='status']").val(data.data.status);

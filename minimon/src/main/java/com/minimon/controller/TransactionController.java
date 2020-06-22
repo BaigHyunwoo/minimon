@@ -3,6 +3,7 @@ package com.minimon.controller;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -67,11 +68,16 @@ public class TransactionController {
 		ObjectMapper objectMapper = new ObjectMapper();
 
 		try {
-			
+			SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd");
 			tblMonTransaction.setTitle(""+param.get("title"));
 			tblMonTransaction.setTimer(Integer.parseInt(""+param.get("timer")));
+			tblMonTransaction.setStartDate(transFormat.parse(param.get("transaction_start_date").toString()));
+			tblMonTransaction.setEndDate(transFormat.parse(param.get("transaction_end_date").toString()));
+			tblMonTransaction.setStartHour(Integer.parseInt(param.get("transaction_start_hour").toString()));
+			tblMonTransaction.setEndHour(Integer.parseInt(param.get("transaction_end_hour").toString()));
 			tblMonTransaction.setTimeout(Integer.parseInt(""+param.get("timeout")));
 			tblMonTransaction.setUseable(Integer.parseInt(""+param.get("transaction_useable")));
+			tblMonTransaction.setLoadTimeCheck(Integer.parseInt("" + param.get("transaction_loadTimeCheck")));
 			tblMonTransaction.setLoadTime(Double.parseDouble(""+param.get("loadTime")));
 			tblMonTransaction.setErrLoadTime(Integer.parseInt(""+param.get("errLoadTime")));
 			tblMonTransaction.setStatus(Integer.parseInt(""+param.get("status")));

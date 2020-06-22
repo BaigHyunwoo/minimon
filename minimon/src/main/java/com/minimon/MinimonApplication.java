@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class MinimonApplication {
 	
-	static String driverPath = "D:/minimon/chromedriver.exe";
+	static String driverPath = "D:/minimon/";
 
 	
 	

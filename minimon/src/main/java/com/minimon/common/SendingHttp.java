@@ -141,7 +141,6 @@ public class SendingHttp {
 		    httpclient.getConnectionManager().shutdown();
 
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new MyException("CLASS : " + className + " - METHOD : " +  new Object(){}.getClass().getEnclosingMethod().getName()  + " "
 					+ "- TYPE = [Function]/  Function - " + e.getStackTrace()[0].getMethodName() , className, 11);
 		}

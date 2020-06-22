@@ -1,17 +1,18 @@
 package com.minimon.repository;
 
-import java.util.List;
-
+import com.minimon.entity.TblMonApi;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.minimon.entity.TblMonApi;
+import java.util.Date;
+import java.util.List;
 
 @Repository
 public interface TblMonApiRepository extends JpaRepository<TblMonApi, String> {
 
 	TblMonApi findBySeq(int seq);
 
-	List<TblMonApi> findByUseable(int useable);
+	List<TblMonApi> findByUseableAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndStartHourLessThanEqualAndEndHourGreaterThanEqual(
+			int useable, Date startDate, Date endDate, int startHour, int endHour);
 
 }

@@ -43,7 +43,10 @@ public class TblMonTransaction {
 
     @NotNull
     private int useable;
-    
+
+	@NotNull
+	private int loadTimeCheck;
+
     @NotNull
     private Date regDate;
     
@@ -52,6 +55,18 @@ public class TblMonTransaction {
     
     @NotNull
     private String transactionCode;
+
+	@NotNull
+	private Date startDate;
+
+	@NotNull
+	private Date endDate;
+
+	@NotNull
+	private int startHour;
+
+	@NotNull
+	private int endHour;
     
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -159,5 +174,44 @@ public class TblMonTransaction {
 	public double getLoadTime() {
 		return loadTime;
 	}
-    
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public int getStartHour() {
+		return startHour;
+	}
+
+	public void setStartHour(int startHour) {
+		this.startHour = startHour;
+	}
+
+	public int getEndHour() {
+		return endHour;
+	}
+
+	public void setEndHour(int endHour) {
+		this.endHour = endHour;
+	}
+
+	public int getLoadTimeCheck() {
+		return loadTimeCheck;
+	}
+
+	public void setLoadTimeCheck(int loadTimeCheck) {
+		this.loadTimeCheck = loadTimeCheck;
+	}
 }

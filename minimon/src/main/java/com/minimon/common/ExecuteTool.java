@@ -2,10 +2,7 @@ package com.minimon.common;
 
 import com.minimon.MinimonApplication;
 import com.minimon.controller.MainController;
-import com.minimon.entity.TblMonApi;
 import com.minimon.entity.TblMonResult;
-import com.minimon.entity.TblMonTransaction;
-import com.minimon.entity.TblMonUrl;
 import com.minimon.exceptionHandler.MyException;
 import com.minimon.repository.TblMonApiRepository;
 import com.minimon.repository.TblMonTransactionRepository;
@@ -24,121 +21,101 @@ import java.util.Map;
 
 
 /**
- * 
  * 모니터링 동작 관리
- * 
- * 
- * 
- * @author 백현우
  *
+ * @author 백현우
  */
 @RestController
 @EnableScheduling
 public class ExecuteTool {
 
-	@Autowired
-	TblMonUrlRepository tblMonUrlRepository;
+    @Autowired
+    TblMonUrlRepository tblMonUrlRepository;
 
-	@Autowired
-	TblMonApiRepository tblMonApiRepository;
+    @Autowired
+    TblMonApiRepository tblMonApiRepository;
 
-	@Autowired
-	TblMonTransactionRepository tblMonTransactionRepository;
-	
-	@Autowired
-	ResultService resultService;
-	
-	@Autowired
-	UrlService urlService;
-	
-	@Autowired
-	ApiService apiService;
+    @Autowired
+    TblMonTransactionRepository tblMonTransactionRepository;
 
-	@Autowired
-	TransactionService transactionService;
-	
-	@Autowired
-	EmailService emailService;
+    @Autowired
+    ResultService resultService;
 
-	@Autowired
-	SmsService smsService;
-	
-	private Logger logger = LoggerFactory.getLogger(MainController.class);
+    @Autowired
+    UrlService urlService;
 
-	private String className = this.getClass().toString();
-	
-	
-	/**
-	 * 	모니터링 실행
-	 */
-	@Scheduled(cron = "0 0/5 * * * *")
-	public void execute() throws Exception {
-		
-		try {
-			
-			if (MinimonApplication.getDriverPath().length() > 1) {
+    @Autowired
+    ApiService apiService;
 
-				List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
-				
-				List<TblMonApi> apis = tblMonApiRepository.findByUseable(1);
-				resultList.add(apiService.checkApis(apis));
-				
-				List<TblMonUrl> urls = tblMonUrlRepository.findByUseable(1);
-				resultList.add(urlService.checkUrls(urls));
-				
-	    		List<TblMonTransaction> transactions = tblMonTransactionRepository.findByUseable(1);
-				resultList.add(transactionService.checkTransactions(transactions));
-				
-				check(resultList);
-				
-				logger.info("Monitoring Execute Complete");
-				
-			}else {
+    @Autowired
+    TransactionService transactionService;
 
-				logger.info("Please save your webDriverPath at the main page");
-				
-			}
-			
-	
-		}catch(Exception e) {
-			e.printStackTrace();
-	
-			throw new MyException("CLASS : " + className + " - METHOD : " +  new Object(){}.getClass().getEnclosingMethod().getName()  + " "
-					+ "- TYPE = [Function]/  Function - execute", className, 11);
-	     
-		}
-		
-	}
-	
+    @Autowired
+    EmailService emailService;
 
-	
-	/**
-	 * 	모니터링 실행 결과 전송
-	 */
-	public void check(List<Map<String, Object>> resultList) throws Exception {
-		
-		try {
-			
-			for(Map<String, Object> result : resultList) {
-				for(Object value : result.values()) {
-					Map<String, Object> checkLog = (Map<String, Object>) value;
-					if(checkLog.get("result").equals("SUCCESS") == false) {
-						TblMonResult tblMonResult = resultService.saveResult(checkLog);
-						resultService.sendResultByProperties(tblMonResult);
-					}
-				}
-			}
+    @Autowired
+    SmsService smsService;
 
-			logger.debug("Monitoring check Complete");
-	
-		}catch(Exception e) {
-			throw new MyException("CLASS : " + className + " - METHOD : " +  new Object(){}.getClass().getEnclosingMethod().getName()  + " "
-					+ "- TYPE = [Function]/  Function - check", className, 12);
-	     
-		}
-		
-	}
+    private Logger logger = LoggerFactory.getLogger(MainController.class);
 
+    private String className = this.getClass().toString();
+
+
+    /**
+     * 모니터링 실행
+     */
+    @Scheduled(cron = "0 0/5 * * * *")
+    public void execute() throws Exception {
+
+        try {
+            if (MinimonApplication.getDriverPath().length() > 1) {
+                List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
+                resultList.add(apiService.checkApis(apiService.findApi()));
+                resultList.add(urlService.checkUrls(urlService.findUrl()));
+                resultList.add(transactionService.checkTransactions(transactionService.findTransactionUseable()));
+                check(resultList);
+                logger.info("Monitoring Execute Complete");
+            } else {
+                logger.info("Please save your webDriverPath at the main page");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {
+            }.getClass().getEnclosingMethod().getName() + " "
+                    + "- TYPE = [Function]/  Function - execute", className, 11);
+
+        }
+
+    }
+
+
+    /**
+     * 모니터링 실행 결과 전송
+     */
+    public void check(List<Map<String, Object>> resultList) throws Exception {
+
+        try {
+            for (Map<String, Object> result : resultList) {
+                for (Object value : result.values()) {
+                    Map<String, Object> checkLog = (Map<String, Object>) value;
+                    if (checkLog.get("result").equals("SUCCESS") == false) {
+                        TblMonResult tblMonResult = resultService.saveResult(checkLog);
+                        resultService.sendResultByProperties(tblMonResult);
+                    }
+                }
+            }
+
+            logger.debug("Monitoring check Complete");
+
+        } catch (Exception e) {
+            throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {
+            }.getClass().getEnclosingMethod().getName() + " "
+                    + "- TYPE = [Function]/  Function - check", className, 12);
+
+        }
+
+    }
 
 
 }
