@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="ko" 
+	xmlns:th="http://www.thymeleaf.org"
+  	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head>
+<meta charset="UTF-8">
+
+	<title>Monitoring System</title>
+
+	<!-- jquery -->
+	<script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	
+	<!-- Custom CSS -->
+	<link rel="stylesheet" href="/css/index.css">
+
+	<!-- Custom JS -->
+	<script src="/js/index.js"></script>
+	
+</head>
+
+<body> 
+	<div id="main" role="main">
+		<div class='topDiv'>
+			<div id='defaultMain'  class='float-l' style="width: 100%;">
+				<div class="float-l">
+					<label>FILE PATH</label>
+		    		<input type="text" name="driver" id="driver" class='' >
+		  			<input class='btn btn-success driverBtn ' type="button" value="등록" />
+				</div>
+				<div class="float-r" style="margin-right: 2%;">
+					<span id='defaultText' > Monitoring System</span>
+				</div>
+			</div>
+		</div>
+		
+		<div class='topKeyDiv' >
+			<p class='keyTitle'>
+				<span class='keywordText' >URL</span>
+		 		 	  	<input id='createUrlBtn' class='btn btn-success loginBtn float-r' type="button" value="등록" />
+			
+			
+			<div class='keywordTb'>
+				<table class="table table-striped table-hover dataTable no-footer table-custom" role="grid" aria-describedby="" >
+					<thead>
+						<tr style="height:32px;">
+							<th class="text-align-center" style="width:33px">Seq</th>
+							<th class="text-align-center" style="width:100px">Title</th>
+							<th class="text-align-center" style="width:100px">URL</th>
+							<th class="text-align-center" style="width:33px">Timer</th>
+							<th class="text-align-center" style="width:33px">Useable</th>
+							<th class="text-align-center" style="width:70px">Execute</th>
+							<th class="text-align-center" style="width:70px">Edit</th>
+						</tr>
+					</thead>
+					<tbody class="topKeywordList"> 
+						<tr th:each="result: ${urlList}">
+							<td th:text="${result.seq}"></td>
+							<td th:text="${result.title}"></td>
+							<td th:if="${#strings.length(result.url) > 20}" th:text="${#strings.substring(result.url, 0, 20)} + '...'"></td>
+							<td th:if="${#strings.length(result.url) <= 20}" th:text="${result.url}"></td>
+							<td th:text="${result.timer}"></td>
+							<td th:text="${result.useable}"></td>
+							<td>
+			 		 	  		<input th:attr="cd=${result.seq}" class='btn btn-success urlExecuteBtn loginBtn' type="button" value="실행" />
+			 		 	  	</td>
+							<td>
+			 		 	  		<input th:attr="cd=${result.seq}" class='btn btn-success urlEditBtn loginBtn' type="button" value="수정" />
+			 		 	  	</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		
+		<div class='topKeyDiv' >
+			<p class='keyTitle'>
+				<span class='keywordText' >API</span>
+		 		 	  	<input id='createApiBtn' class='btn btn-success loginBtn float-r' type="button" value="등록" />
+			
+			
+			<div class='keywordTb'>
+				<table class="table table-striped table-hover dataTable no-footer table-custom" role="grid" aria-describedby="" >
+					<thead>
+						<tr style="height:32px;">
+							<th class="text-align-center" style="width:33px">Seq</th>
+							<th class="text-align-center" style="width:100px">Title</th>
+							<th class="text-align-center" style="width:100px">URL</th>
+							<th class="text-align-center" style="width:33px">Timer</th>
+							<th class="text-align-center" style="width:33px">Useable</th>
+							<th class="text-align-center" style="width:70px">Excute</th>
+							<th class="text-align-center" style="width:70px">Edit</th>
+						</tr>
+					</thead>
+					<tbody class="topKeywordList"> 
+						<tr th:each="result: ${apiList}">
+							<td th:text="${result.seq}"></td>
+							<td th:text="${result.title}"></td>
+							<td th:if="${#strings.length(result.url) > 20}" th:text="${#strings.substring(result.url, 0, 20)} + '...'"></td>
+							<td th:if="${#strings.length(result.url) <= 20}" th:text="${result.url}"></td>
+							<td th:text="${result.timer}"></td>
+							<td th:text="${result.useable}"></td>
+							<td>
+			 		 	  		<input th:attr="cd=${result.seq}" class='btn btn-success apiExecuteBtn loginBtn' type="button" value="실행" />
+			 		 	  	</td>
+							<td>
+			 		 	  		<input th:attr="cd=${result.seq}" class='btn btn-success apiEditBtn loginBtn' type="button" value="수정" />
+			 		 	  	</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		
+		<div class='topKeyDiv' >
+			<p class='keyTitle'>
+				<span class='keywordText'>Transaction</span>
+		 		 	  	<input id='createTransactionBtn' class='btn btn-success loginBtn float-r' type="button" value="등록" />
+			
+			
+			<div class='keywordTb'>
+				<table class="table table-striped table-hover dataTable no-footer table-custom" role="grid" aria-describedby="" >
+					<thead>
+						<tr style="height:32px;">
+							<th class="text-align-center" style="width:33px">Seq</th>
+							<th class="text-align-center" style="width:100px">Title</th>
+							<th class="text-align-center" style="width:33px">Timer</th>
+							<th class="text-align-center" style="width:33px">Useable</th>
+							<th class="text-align-center" style="width:70px">Excute</th>
+							<th class="text-align-center" style="width:70px">Edit</th>
+						</tr>
+					</thead>
+					<tbody class="topKeywordList"> 
+						<tr th:each="result: ${transactionList}">
+							<td th:text="${result.seq}"></td>
+							<td th:text="${result.title}"></td>
+							<td th:text="${result.timer}"></td>
+							<td th:text="${result.useable}"></td>
+							<td>
+			 		 	  		<input th:attr="cd=${result.seq}" class='btn btn-success transactionExecuteBtn loginBtn' type="button" value="실행" />
+			 		 	  	</td>
+							<td>
+			 		 	  		<input th:attr="cd=${result.seq}" class='btn btn-success transactionEditBtn loginBtn' type="button" value="수정" />
+			 		 	  	</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div style="display:none;">
+		<form method="POST" id="errorCreate">
+			<input type="hidden" name="errorCode" id="errorCode" value="" >
+		</form>
+	</div>
+</body>
+
+<!-- URL 등록 모달 -->
+<div class="modal fade" id="saveUrlModal" aria-hidden="true">
+	<div class="modal-dialog resource-kanban-box" role="document" style="width:96%; max-width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">URL</h5>
+				<button type="button" class="close btn btn-default" data-dismiss="modal"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form action="/url" id="saveUrlForm" name="saveUrlForm">
+					<div class="card" style="width: 100%;">
+					  <ul class="list-group list-group-flush">
+					    <li class="list-group-item">
+					    	<input type="hidden" name="seq" value="">
+							<label>Useable</label>
+							<br>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="useable" id="useable_on" value="1" checked>
+								<label class="form-check-label" for="useable_on">
+									사용
+								</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="useable" id="useable_off" value="0">
+								<label class="form-check-label" for="useable_off">
+									미사용
+								</label>
+							</div>
+							<br>
+							<label>Title</label>
+							<input name="title" type="text" class='form-control' autocomplete="off" />
+
+							<label>URL</label>
+							<input  name="url" type="text" class='form-control' autocomplete="off"  />
+							<div class="row">
+								<div class="col">
+									<label>Timeout</label>
+									<input name="timeout" type="number" class='form-control' value="30"/>
+								</div>
+								<div class="col">
+									<label>Timer</label>
+									<input name="timer" type="number" class='form-control' value="5"  readonly />
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col">
+									<label>기간 (start ~ end)</label>
+									<input name="url_start_date" type="date" class='form-control' th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" />
+								</div>
+								<div class="col">
+									<label>&emsp;</label>
+									<input name="url_end_date" type="date" class='form-control' value="2999-12-31" />
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col">
+									<label>동작 시간</label>
+									<input name="url_start_hour" type="number" class='form-control' value="00" />
+								</div>
+								<div class="col">
+									<label>&emsp;</label>
+									<input name="url_end_hour" type="number" class='form-control' value="24" />
+								</div>
+							</div>
+
+			 		 	  	<input id='urlCheck' class='btn btn-success' type="button" value="검사" />
+					    </li>
+
+					    <li class="list-group-item">
+							<label>LoadTime Check</label>
+							<br>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="url_loadTimeCheck" id="url_loadTimeCheck_on" value="1" checked>
+								<label class="form-check-label" for="url_loadTimeCheck_on">
+									사용
+								</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="url_loadTimeCheck" id="url_loadTimeCheck_off" value="0">
+								<label class="form-check-label" for="url_loadTimeCheck_off">
+									미사용
+								</label>
+							</div>
+							<br>
+					    	<label>LoadTime</label>
+							<div class="input-group">
+							  <input name="loadTime" type="text" class='form-control' readOnly autocomplete="off" value="0" />
+							  <div class="input-group-append">
+							    <span class="input-group-text">Ms</span>
+							  	<input type="number" name="errLoadTime" value="3000" class="form-control" style="width: 100px;">
+							    <span class="input-group-text">Ms</span>
+							  </div>
+							</div>
+
+							<label>PayLoad Check</label>
+							<br>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="url_payLoadCheck" id="url_payLoadCheck_on" value="1" checked>
+								<label class="form-check-label" for="url_payLoadCheck_on">
+									사용
+								</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="url_payLoadCheck" id="url_payLoadCheck_off" value="0">
+								<label class="form-check-label" for="url_payLoadCheck_off">
+									미사용
+								</label>
+							</div>
+							<br>
+					    	<label>PayLoad</label>
+							<div class="input-group">
+							  <input name="payLoad" type="text" class='form-control' readOnly autocomplete="off" value="0" />
+							  <div class="input-group-append">
+							    <span class="input-group-text">Byte</span>
+							  	<input type="number" name="payLoadPer" value="5" class="form-control" style="width: 70px;">
+							    <span class="input-group-text">%</span>
+							  </div>
+							</div>
+
+							<label>Text Check</label>
+							<br>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="textCheck" id="url_textCheck_on" value="1" checked>
+								<label class="form-check-label" for="url_textCheck_on">
+									사용
+								</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="textCheck" id="url_textCheck_off" value="0">
+								<label class="form-check-label" for="url_textCheck_off">
+									미사용
+								</label>
+							</div>
+							<br>
+							<label>Text</label>
+							<div class="input-group">
+								<input name="textCheckValue" type="text" class='form-control' autocomplete="off" value="" />
+							</div>
+							
+							<label>Status</label> 
+							<input name="status" type="text" class='form-control' value="200" />
+							<div class="mgt15 text-right resource-btz">
+								<button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+								<button type="button" id="deleteUrl" class="btn btn btn-success" >삭제</button>
+								<button type="button" id="saveUrl" class="btn btn btn-success" >저장</button>
+							</div>
+					    </li>
+					  </ul>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<!-- API 등록 모달 -->
+<div class="modal fade" id="saveApiModal" aria-hidden="true">
+	<div class="modal-dialog resource-kanban-box" role="document" style="width:96%; max-width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">API</h5>
+				<button type="button" class="close btn btn-default" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				
+				<form action="/api" id="saveApiForm" name="saveApiForm" class="form-group">
+					<div class="card" style="width: 100%;">
+					  <ul class="list-group list-group-flush">
+					    <li class="list-group-item">
+					    	<input type="hidden" name="seq" value="">
+							<label>Useable</label>
+							<br>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="api_useable" id="api_useable_on" value="1" checked>
+								<label class="form-check-label" for="api_useable_on">
+									사용
+								</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="api_useable" id="api_useable_off" value="0">
+								<label class="form-check-label" for="api_useable_off">
+									미사용
+								</label>
+							</div>
+							<br>
+							<label>Title</label>
+							<input name="title" type="text" class='form-control' autocomplete="off" />
+
+							<label>URL</label>
+							<input  name="url" type="text" class='form-control' autocomplete="off"  />
+							<div class="row">
+								<div class="col">
+									<label>Timeout</label>
+									<input name="timeout" type="number" class='form-control' value="30"/>
+								</div>
+								<div class="col">
+									<label>Timer</label>
+									<input name="timer" type="number" class='form-control' value="5" readonly/>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col">
+									<label>기간 (start ~ end)</label>
+									<input name="api_start_date" type="date" class='form-control' th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" />
+								</div>
+								<div class="col">
+									<label>&emsp;</label>
+									<input name="api_end_date" type="date" class='form-control' value="2999-12-31" />
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col">
+									<label>동작 시간</label>
+									<input name="api_start_hour" type="number" class='form-control' value="00" />
+								</div>
+								<div class="col">
+									<label>&emsp;</label>
+									<input name="api_end_hour" type="number" class='form-control' value="24" />
+								</div>
+							</div>
+
+							<label>Method</label>
+							<select id="api_method" name="method" class="form-control form-control-sm">
+								<option value='GET'>GET</option>
+								<option value='POST'>POST</option>
+								<option value='PUT'>PUT</option>
+								<option value='DELETE'>DELETE</option>
+								<option value='PATCH'>PATCH</option>
+							</select>
+							
+							<label>Data-Type</label>
+							<div class="form-check">
+							  <input class="form-check-input" type="radio" name="data_type" id="data_type_json" value="1" checked>
+							  <label class="form-check-label" for="data_type_json">
+							    Json
+							  </label>
+							</div>
+							
+							<label>Params <a href="#" class="add_api_param badge badge-pill">new</a></label>
+							<ul class="list-group api_params">
+							  
+							</ul>
+			 		 	  	<input id='apiCheck' class='btn btn-success' type="button" value="검사" />
+					    </li>
+					    <li class="list-group-item">
+							<label>LoadTime Check</label>
+							<br>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="api_loadTimeCheck" id="api_loadTimeCheck_on" value="1" checked>
+								<label class="form-check-label" for="api_loadTimeCheck_on">
+									사용
+								</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="api_loadTimeCheck" id="api_loadTimeCheck_off" value="0">
+								<label class="form-check-label" for="api_loadTimeCheck_off">
+									미사용
+								</label>
+							</div>
+							<br>
+					    	<label>LoadTime</label>
+							<div class="input-group">
+							  <input name="loadTime" type="text" class='form-control' readOnly autocomplete="off" value="0" />
+							  <div class="input-group-append">
+							    <span class="input-group-text">Ms</span>
+							  	<input type="number" name="errLoadTime" value="3000" class="form-control" style="width: 100px;">
+							    <span class="input-group-text">Ms</span>
+							  </div>
+							</div>
+
+							<label>PayLoad Check</label>
+							<br>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="api_payLoadCheck" id="api_payLoadCheck_on" value="1" checked>
+								<label class="form-check-label" for="api_payLoadCheck_on">
+									사용
+								</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="api_payLoadCheck" id="api_payLoadCheck_off" value="0">
+								<label class="form-check-label" for="api_payLoadCheck_off">
+									미사용
+								</label>
+							</div>
+							<br>
+					    	<label>PayLoad</label>
+							<div class="input-group">
+							  <input name="payLoad" type="text" class='form-control' readOnly autocomplete="off" value="0" />
+							  <div class="input-group-append">
+							    <span class="input-group-text">Byte</span>
+							  	<input type="number" name="payLoadPer" value="5" class="form-control" style="width: 70px;">
+							    <span class="input-group-text">%</span>
+							  </div>
+							</div>
+							
+							<label>Status</label> 
+							<input name="status" type="text" class='form-control' value="200" />
+							<label>Response Check</label>
+							<br>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="api_responseCheck" id="api_responseCheck_on" value="1" checked>
+								<label class="form-check-label" for="api_responseCheck_on">
+									사용
+								</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="api_responseCheck" id="api_responseCheck_off" value="0">
+								<label class="form-check-label" for="api_responseCheck_off">
+									미사용
+								</label>
+							</div>
+							<br>
+							<label>Response</label> 
+							<input name="response" type="hidden" class='form-control' value="200" readOnly />
+							<div class="card" style="width: 18rem;">
+							  <div class="card-body">
+							    <p class="card-text" id="api_response"></p>
+							  </div>
+							</div>
+							<div class="mgt15 text-right resource-btz">
+								<button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+								<button type="button" id="deleteApi" class="btn btn btn-success" >삭제</button>
+								<button type="button" id="saveApi" class="btn btn btn-success" >저장</button>
+							</div>
+					    </li>
+					  </ul>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<!-- Transaction 등록 모달 -->
+<div class="modal fade" id="saveTransactionModal" aria-hidden="true">
+	<div class="modal-dialog resource-kanban-box" role="document" style="width:96%; max-width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">TRANSACTION</h5>
+				<button type="button" class="close btn btn-default" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				
+				<form action="/transaction" id="saveTransactionForm" name="saveTransactionForm" class="form-group">
+					<div class="card" style="width: 100%;">
+					  <ul class="list-group list-group-flush">
+					    <li class="list-group-item">
+					    	<input type="hidden" name="seq" value="">
+
+							<label>Useable</label>
+							<br>
+							<div class="form-check">
+								<input class="form-check-input form-check-inline" type="radio" name="transaction_useable" id="transaction_useable_on" value="1" checked>
+								<label class="form-check-label" for="transaction_useable_on">
+									사용
+								</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input form-check-inline" type="radio" name="transaction_useable" id="transaction_useable_off" value="0">
+								<label class="form-check-label" for="transaction_useable_off">
+									미사용
+								</label>
+							</div>
+							<br>
+
+							<label>Title</label>
+							<input name="title" type="text" class='form-control' autocomplete="off" />
+
+							<div class="row">
+								<div class="col">
+									<label>Timeout</label>
+									<input name="timeout" type="number" class='form-control' value="30"/>
+								</div>
+								<div class="col">
+									<label>Timer</label>
+									<input name="timer" type="number" class='form-control' value="5" readonly />
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col">
+									<label>기간 (start ~ end)</label>
+									<input name="transaction_start_date" type="date" class='form-control' th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" />
+								</div>
+								<div class="col">
+									<label>&emsp;</label>
+									<input name="transaction_end_date" type="date" class='form-control' value="2999-12-31" />
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col">
+									<label>동작 시간</label>
+									<input name="transaction_start_hour" type="number" class='form-control' value="00" />
+								</div>
+								<div class="col">
+									<label>&emsp;</label>
+									<input name="transaction_end_hour" type="number" class='form-control' value="24" />
+								</div>
+							</div>
+							
+							<label>Transaction File</label>
+							<div class="input-group mb-3">
+							  <div class="">
+							  	<form id="fileUploadForm" name="fileUploadForm" method="POST" enctype="multipart/form-data">
+							    	<input type="file" name="transactionFile" id="transactionFile">
+							  	</form>
+							  </div>
+							</div>
+							
+			 		 	  	<input id='transactionCode' name="transactionCode" class='btn btn-success' type="hidden" />
+			 		 	  	<input id='transactionCheck' name="transactionCheck" class='btn btn-success' type="button" value="검사" />
+					    </li>
+					    <li class="list-group-item">
+							<label>LoadTime Check</label>
+							<br>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="transaction_loadTimeCheck" id="transaction_loadTimeCheck_on" value="1" checked>
+								<label class="form-check-label" for="transaction_loadTimeCheck_on">
+									사용
+								</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="transaction_loadTimeCheck" id="transaction_loadTimeCheck_off" value="0">
+								<label class="form-check-label" for="transaction_loadTimeCheck_off">
+									미사용
+								</label>
+							</div>
+							<br>
+					    	<label>LoadTime</label>
+							<div class="input-group">
+							  <input name="loadTime" type="text" class='form-control' readOnly autocomplete="off" value="0" />
+							  <div class="input-group-append">
+							    <span class="input-group-text">Ms</span>
+							  	<input type="number" name="errLoadTime" value="3000" class="form-control" style="width: 100px;">
+							    <span class="input-group-text">Ms</span>
+							  </div>
+							</div>
+							<input name="codeDatas" type="hidden" class='form-control' readOnly />
+							
+							<label>Status</label> 
+							<input name="status" type="text" class='form-control' value="200" readOnly />
+							
+							<div class="mgt15 text-right resource-btz">
+								<button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+								<button type="button" id="deleteTransaction" class="btn btn btn-success" >삭제</button>
+								<button type="button" id="saveTransaction" class="btn btn btn-success" >저장</button>
+							</div>
+					    </li>
+					  </ul>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+
+$(document).ready(function() {
+	
+	monInit();
+
+});
+</script>
+</html>
+

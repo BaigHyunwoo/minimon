@@ -1,36 +1,24 @@
 package com.minimon.controller;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.minimon.entity.TblMonCodeData;
-import com.minimon.entity.TblMonResult;
-import com.minimon.entity.TblMonTransaction;
+import com.minimon.entity.MonCodeData;
+import com.minimon.entity.MonResult;
+import com.minimon.entity.MonTransaction;
 import com.minimon.repository.TblMonTransactionRepository;
 import com.minimon.service.EmailService;
 import com.minimon.service.ResultService;
 import com.minimon.service.TransactionService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 
 /**
@@ -42,49 +30,45 @@ import com.minimon.service.TransactionService;
  * @author 백현우
  *
  */
+@Slf4j
+@RequiredArgsConstructor
 @RestController
 public class TransactionController {
 
-	@Autowired
-	TblMonTransactionRepository tblMonTransactionRepository;
-	
-	@Autowired
-	TransactionService transactionService;
-	
-	@Autowired
-	EmailService emailService;
+    private final TblMonTransactionRepository tblMonTransactionRepository;
 
-	@Autowired
-	ResultService resultService;
+	private final TransactionService transactionService;
 
-	private Logger logger = LoggerFactory.getLogger(TransactionController.class);
-	
+    private final EmailService emailService;
+
+	private final ResultService resultService;
+
 	/**
 	 * 
 	 * URL DTO Set
 	 * 
 	 */
-	private TblMonTransaction setTblMonTransaction(TblMonTransaction tblMonTransaction, Map<String, Object> param) {
+	private MonTransaction setTblMonTransaction(MonTransaction monTransaction, Map<String, Object> param) {
 		ObjectMapper objectMapper = new ObjectMapper();
 
 		try {
 			SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd");
-			tblMonTransaction.setTitle(""+param.get("title"));
-			tblMonTransaction.setTimer(Integer.parseInt(""+param.get("timer")));
-			tblMonTransaction.setStartDate(transFormat.parse(param.get("transaction_start_date").toString()));
-			tblMonTransaction.setEndDate(transFormat.parse(param.get("transaction_end_date").toString()));
-			tblMonTransaction.setStartHour(Integer.parseInt(param.get("transaction_start_hour").toString()));
-			tblMonTransaction.setEndHour(Integer.parseInt(param.get("transaction_end_hour").toString()));
-			tblMonTransaction.setTimeout(Integer.parseInt(""+param.get("timeout")));
-			tblMonTransaction.setUseable(Integer.parseInt(""+param.get("transaction_useable")));
-			tblMonTransaction.setLoadTimeCheck(Integer.parseInt("" + param.get("transaction_loadTimeCheck")));
-			tblMonTransaction.setLoadTime(Double.parseDouble(""+param.get("loadTime")));
-			tblMonTransaction.setErrLoadTime(Integer.parseInt(""+param.get("errLoadTime")));
-			tblMonTransaction.setStatus(Integer.parseInt(""+param.get("status")));
-			tblMonTransaction.setTransactionCode(""+param.get("transactionCode"));
-			tblMonTransaction.setUptDate(new Date());
-			if(tblMonTransaction.getRegDate() == null) tblMonTransaction.setRegDate(new Date());
-			tblMonTransaction.setCodeDatas(objectMapper.readValue(param.get("codeDatas").toString(), new TypeReference<List<TblMonCodeData>>(){}));
+			monTransaction.setTitle(""+param.get("title"));
+			monTransaction.setTimer(Integer.parseInt(""+param.get("timer")));
+			monTransaction.setStartDate(transFormat.parse(param.get("transaction_start_date").toString()));
+			monTransaction.setEndDate(transFormat.parse(param.get("transaction_end_date").toString()));
+			monTransaction.setStartHour(Integer.parseInt(param.get("transaction_start_hour").toString()));
+			monTransaction.setEndHour(Integer.parseInt(param.get("transaction_end_hour").toString()));
+			monTransaction.setTimeout(Integer.parseInt(""+param.get("timeout")));
+			monTransaction.setUseable(Integer.parseInt(""+param.get("transaction_useable")));
+			monTransaction.setLoadTimeCheck(Integer.parseInt("" + param.get("transaction_loadTimeCheck")));
+			monTransaction.setLoadTime(Double.parseDouble(""+param.get("loadTime")));
+			monTransaction.setErrLoadTime(Integer.parseInt(""+param.get("errLoadTime")));
+			monTransaction.setStatus(Integer.parseInt(""+param.get("status")));
+			monTransaction.setTransactionCode(""+param.get("transactionCode"));
+			monTransaction.setUptDate(new Date());
+			if(monTransaction.getRegDate() == null) monTransaction.setRegDate(new Date());
+			monTransaction.setCodeDatas(objectMapper.readValue(param.get("codeDatas").toString(), new TypeReference<List<MonCodeData>>(){}));
 			
 		} catch (Exception e) {
 			
@@ -92,7 +76,7 @@ public class TransactionController {
 			
 		}
 		
-		return tblMonTransaction;
+		return monTransaction;
 	}
 	
 	/**
@@ -106,7 +90,7 @@ public class TransactionController {
     	
     	try {
 
-    		List<TblMonTransaction> transactionList = tblMonTransactionRepository.findAll();
+    		List<MonTransaction> transactionList = tblMonTransactionRepository.findAll();
     		result.put("transactionList", transactionList);
     		result.put("result", "success");
     		
@@ -132,7 +116,7 @@ public class TransactionController {
 
     	try {
 
-    		tblMonTransactionRepository.save(setTblMonTransaction(new TblMonTransaction(), param));
+    		tblMonTransactionRepository.save(setTblMonTransaction(new MonTransaction(), param));
 			result.put("result", "success");
 			
 		} catch (Exception e) {
@@ -158,7 +142,7 @@ public class TransactionController {
     		
 
 
-    		TblMonTransaction existsTransaction = tblMonTransactionRepository.findBySeq(seq);
+    		MonTransaction existsTransaction = tblMonTransactionRepository.findBySeq(seq);
 
     		result.put("data", existsTransaction);
     		result.put("result", "success");
@@ -186,7 +170,7 @@ public class TransactionController {
     	
     	try {
 
-    		TblMonTransaction existsTransaction = tblMonTransactionRepository.findBySeq(seq);
+    		MonTransaction existsTransaction = tblMonTransactionRepository.findBySeq(seq);
     		
     		if(existsTransaction != null) {
 
@@ -224,7 +208,7 @@ public class TransactionController {
     	try {
 
 
-    		TblMonTransaction existsTransaction = tblMonTransactionRepository.findBySeq(seq);
+    		MonTransaction existsTransaction = tblMonTransactionRepository.findBySeq(seq);
     		
     		if(existsTransaction != null) {
     			
@@ -252,12 +236,12 @@ public class TransactionController {
 	 * 
 	 */
     @ResponseBody
-	@RequestMapping(value="/transactionCheck", method=RequestMethod.POST)
+	@RequestMapping(value="/transactionCheck", method= RequestMethod.POST)
 	public Map<String, Object> transactionCheck(MultipartFile transactionFile) {
     	Map<String, Object> result = new HashMap<String, Object>();
 
     	try {
-    		List<TblMonCodeData> codeDatas = new ArrayList<TblMonCodeData>();
+    		List<MonCodeData> codeDatas = new ArrayList<MonCodeData>();
     		
 		    /*
 		     * READ CODE FILE
@@ -274,10 +258,10 @@ public class TransactionController {
 		    	 */
 		    	if(line.indexOf("@Test") > 0) check = true;
 		    	if(check == true) {
-		    		TblMonCodeData tblMonCodeData = transactionService.getCodeData(line);
-		    		if(tblMonCodeData != null) {
-		    			codeDatas.add(tblMonCodeData);
-			    		logger.debug(tblMonCodeData.getAction()+" "+tblMonCodeData.getSelector_type()+ "  "+tblMonCodeData.getSelector_value()+"     "+tblMonCodeData.getValue());
+		    		MonCodeData monCodeData = transactionService.getCodeData(line);
+		    		if(monCodeData != null) {
+		    			codeDatas.add(monCodeData);
+			    		log.debug(monCodeData.getAction()+" "+ monCodeData.getSelector_type()+ "  "+ monCodeData.getSelector_value()+"     "+ monCodeData.getValue());
 		    		}
 
 		    	}
@@ -312,7 +296,7 @@ public class TransactionController {
     	
     	try {
 
-    		TblMonTransaction existsTransaction = tblMonTransactionRepository.findBySeq(seq);
+    		MonTransaction existsTransaction = tblMonTransactionRepository.findBySeq(seq);
     		
     		if(existsTransaction != null) {
     			
@@ -320,8 +304,8 @@ public class TransactionController {
 				Map<String, Object> data = transactionService.errorCheckTransaction(existsTransaction, logData);
 				result.put(""+existsTransaction.getSeq(), data);
 
-				TblMonResult tblMonResult = resultService.saveResult(data);
-				resultService.sendResultByProperties(tblMonResult);
+				MonResult monResult = resultService.saveResult(data);
+				resultService.sendResultByProperties(monResult);
 
     		}
     		

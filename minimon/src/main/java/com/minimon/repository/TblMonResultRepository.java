@@ -1,15 +1,14 @@
 package com.minimon.repository;
 
-import java.util.List;
-
+import com.minimon.entity.MonResult;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.minimon.entity.TblMonResult;
+import java.util.List;
 
 @Repository
-public interface TblMonResultRepository extends JpaRepository<TblMonResult, String> {
+public interface TblMonResultRepository extends JpaRepository<MonResult, String> {
 
-	List<TblMonResult> findByTypeOrderByRegDateAsc(String type);
+	List<MonResult> findByTypeOrderByRegDateAsc(String type);
 	
 }

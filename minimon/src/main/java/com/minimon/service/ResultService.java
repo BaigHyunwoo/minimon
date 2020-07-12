@@ -1,10 +1,10 @@
 package com.minimon.service;
 
 import com.minimon.MinimonApplication;
-import com.minimon.entity.TblMonResult;
+import com.minimon.entity.MonResult;
 import com.minimon.exceptionHandler.MyException;
 import com.minimon.repository.TblMonResultRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
@@ -13,53 +13,51 @@ import java.util.Map;
 import java.util.Properties;
 
 @Service
+@RequiredArgsConstructor
 public class ResultService {
 
-	@Autowired
-	EmailService emailService;
+    private final EmailService emailService;
+    private final SmsService smsService;
 
-	@Autowired
-	SmsService smsService;
+    private final TblMonResultRepository tblMonResultRepository;
 
-	@Autowired
-	TblMonResultRepository tblMonResultRepository;
+    private String className = this.getClass().toString();
 
-	private String className = this.getClass().toString();
+    public MonResult saveResult(Map<String, Object> result) throws Exception {
 
-	public TblMonResult saveResult(Map<String, Object> result) throws Exception {
+        MonResult monResult = new MonResult();
 
-		TblMonResult tblMonResult = new TblMonResult();
-		
-		try {
+        try {
 
-			tblMonResult.setMon_seq(Integer.parseInt(""+result.get("seq")));
-			tblMonResult.setTitle(""+result.get("title"));
-			tblMonResult.setResult(""+result.get("result"));
-			tblMonResult.setType(""+result.get("type"));
-			tblMonResult.setRegDate(new Date());
-			tblMonResult.setLoadTime(Double.parseDouble(""+result.get("check_loadTime")));
-			tblMonResult.setResponse(result.toString());
-			tblMonResultRepository.save(tblMonResult);
-			
-		}catch(Exception e) {
-			throw new MyException("CLASS : " + className + " - METHOD : " +  new Object(){}.getClass().getEnclosingMethod().getName()  + " "
-					+ "- TYPE = [Function]/  Function - saveResult", className, 11);
-         
-		}
-		
-		return tblMonResult;
-		
-	}
+            monResult.setMon_seq(Integer.parseInt("" + result.get("seq")));
+            monResult.setTitle("" + result.get("title"));
+            monResult.setResult("" + result.get("result"));
+            monResult.setType("" + result.get("type"));
+            monResult.setRegDate(new Date());
+            monResult.setLoadTime(Double.parseDouble("" + result.get("check_loadTime")));
+            monResult.setResponse(result.toString());
+            tblMonResultRepository.save(monResult);
 
-	public void sendResultByProperties(TblMonResult tblMonResult) throws Exception {
-		Properties properties = new Properties();
-		FileInputStream fis = new FileInputStream(MinimonApplication.getDriverPath()+"/users.properties");
-		properties.load(new java.io.BufferedInputStream(fis));
-		String users = properties.getProperty("users");
-		for (String user : users.split(",")) {
-			smsService.sendSimpleMessage(user, tblMonResult);
-		}
+        } catch (Exception e) {
+            throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {
+            }.getClass().getEnclosingMethod().getName() + " "
+                    + "- TYPE = [Function]/  Function - saveResult", className, 11);
 
-	}
-	
+        }
+
+        return monResult;
+
+    }
+
+    public void sendResultByProperties(MonResult monResult) throws Exception {
+        Properties properties = new Properties();
+        FileInputStream fis = new FileInputStream(MinimonApplication.getDriverPath() + "/users.properties");
+        properties.load(new java.io.BufferedInputStream(fis));
+        String users = properties.getProperty("users");
+        for (String user : users.split(",")) {
+            smsService.sendSimpleMessage(user, monResult);
+        }
+
+    }
+
 }

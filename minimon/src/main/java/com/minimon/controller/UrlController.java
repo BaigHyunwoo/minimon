@@ -1,14 +1,13 @@
 package com.minimon.controller;
 
-import com.minimon.entity.TblMonResult;
-import com.minimon.entity.TblMonUrl;
+import com.minimon.entity.MonResult;
+import com.minimon.entity.MonUrl;
 import com.minimon.service.EmailService;
 import com.minimon.service.ResultService;
 import com.minimon.service.UrlService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -23,40 +22,38 @@ import java.util.Optional;
  * @author 백현우
  */
 @RestController
+@RequiredArgsConstructor
 public class UrlController {
 
-    @Autowired
-    UrlService urlService;
+    private final UrlService urlService;
 
-    @Autowired
-    EmailService emailService;
+    private final EmailService emailService;
 
-    @Autowired
-    ResultService resultService;
+    private final ResultService resultService;
 
-    private TblMonUrl setTblMonUrl(TblMonUrl tblMonUrl, Map<String, Object> param) throws ParseException {
+    private MonUrl setTblMonUrl(MonUrl monUrl, Map<String, Object> param) throws ParseException {
         SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd");
-        tblMonUrl.setTitle(param.get("title").toString());
-        tblMonUrl.setUrl(param.get("url").toString());
-        tblMonUrl.setTimer(Integer.parseInt(param.get("timer").toString()));
-        tblMonUrl.setTimeout(Integer.parseInt(param.get("timeout").toString()));
-        tblMonUrl.setUseable(Integer.parseInt(param.get("useable").toString()));
-        tblMonUrl.setLoadTime(Double.parseDouble(param.get("loadTime").toString()));
-        tblMonUrl.setErrLoadTime(Integer.parseInt(param.get("errLoadTime").toString()));
-        tblMonUrl.setPayLoad(Double.parseDouble(param.get("payLoad").toString()));
-        tblMonUrl.setPayLoadPer(Integer.parseInt(param.get("payLoadPer").toString()));
-        tblMonUrl.setStatus(Integer.parseInt(param.get("status").toString()));
-        tblMonUrl.setLoadTimeCheck(Integer.parseInt(param.get("url_loadTimeCheck").toString()));
-        tblMonUrl.setPayLoadCheck(Integer.parseInt(param.get("url_payLoadCheck").toString()));
-        tblMonUrl.setStartDate(transFormat.parse(param.get("url_start_date").toString()));
-        tblMonUrl.setEndDate(transFormat.parse(param.get("url_end_date").toString()));
-        tblMonUrl.setStartHour(Integer.parseInt(param.get("url_start_hour").toString()));
-        tblMonUrl.setEndHour(Integer.parseInt(param.get("url_end_hour").toString()));
-        tblMonUrl.setTextCheck(Integer.parseInt(param.get("textCheck").toString()));
-        tblMonUrl.setTextCheckValue((param.get("textCheckValue").toString()));
-        tblMonUrl.setUptDate(new Date());
-        if (tblMonUrl.getRegDate() == null) tblMonUrl.setRegDate(new Date());
-        return tblMonUrl;
+        monUrl.setTitle(param.get("title").toString());
+        monUrl.setUrl(param.get("url").toString());
+        monUrl.setTimer(Integer.parseInt(param.get("timer").toString()));
+        monUrl.setTimeout(Integer.parseInt(param.get("timeout").toString()));
+        monUrl.setUseable(Integer.parseInt(param.get("useable").toString()));
+        monUrl.setLoadTime(Double.parseDouble(param.get("loadTime").toString()));
+        monUrl.setErrLoadTime(Integer.parseInt(param.get("errLoadTime").toString()));
+        monUrl.setPayLoad(Double.parseDouble(param.get("payLoad").toString()));
+        monUrl.setPayLoadPer(Integer.parseInt(param.get("payLoadPer").toString()));
+        monUrl.setStatus(Integer.parseInt(param.get("status").toString()));
+        monUrl.setLoadTimeCheck(Integer.parseInt(param.get("url_loadTimeCheck").toString()));
+        monUrl.setPayLoadCheck(Integer.parseInt(param.get("url_payLoadCheck").toString()));
+        monUrl.setStartDate(transFormat.parse(param.get("url_start_date").toString()));
+        monUrl.setEndDate(transFormat.parse(param.get("url_end_date").toString()));
+        monUrl.setStartHour(Integer.parseInt(param.get("url_start_hour").toString()));
+        monUrl.setEndHour(Integer.parseInt(param.get("url_end_hour").toString()));
+        monUrl.setTextCheck(Integer.parseInt(param.get("textCheck").toString()));
+        monUrl.setTextCheckValue((param.get("textCheckValue").toString()));
+        monUrl.setUptDate(new Date());
+        if (monUrl.getRegDate() == null) monUrl.setRegDate(new Date());
+        return monUrl;
     }
 
     /**
@@ -90,7 +87,7 @@ public class UrlController {
 
         try {
 
-            urlService.saveUrl(setTblMonUrl(new TblMonUrl(), param));
+            urlService.saveUrl(setTblMonUrl(new MonUrl(), param));
             result.put("result", "success");
 
         } catch (Exception e) {
@@ -135,9 +132,9 @@ public class UrlController {
         try {
 
 
-            Optional.ofNullable(urlService.getUrl(seq)).ifPresent(tblMonUrl -> {
+            Optional.ofNullable(urlService.getUrl(seq)).ifPresent(monUrl -> {
                 try {
-                    urlService.saveUrl(setTblMonUrl(tblMonUrl, param));
+                    urlService.saveUrl(setTblMonUrl(monUrl, param));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -215,7 +212,7 @@ public class UrlController {
 
         try {
 
-            TblMonUrl existsUrl = urlService.getUrl(seq);
+            MonUrl existsUrl = urlService.getUrl(seq);
 
             if (existsUrl != null) {
 
@@ -223,8 +220,8 @@ public class UrlController {
                 Map<String, Object> data = urlService.errorCheckUrl(existsUrl, logData);
                 result.put(existsUrl.getUrl(), data);
 
-                TblMonResult tblMonResult = resultService.saveResult(data);
-                resultService.sendResultByProperties(tblMonResult);
+                MonResult monResult = resultService.saveResult(data);
+                resultService.sendResultByProperties(monResult);
 
             }
 

@@ -1,12 +1,13 @@
 package com.minimon.controller;
 
-import com.minimon.entity.TblMonApi;
-import com.minimon.entity.TblMonApiParam;
-import com.minimon.entity.TblMonResult;
+import com.minimon.entity.MonApi;
+import com.minimon.entity.MonApiParam;
+import com.minimon.entity.MonResult;
 import com.minimon.repository.TblMonApiRepository;
 import com.minimon.service.ApiService;
 import com.minimon.service.ResultService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
@@ -19,56 +20,55 @@ import java.util.*;
  *
  * @author 백현우
  */
+@Slf4j
 @RestController
+@RequiredArgsConstructor
 public class ApiController {
 
-    @Autowired
-    ApiService apiService;
+    private final ApiService apiService;
 
-    @Autowired
-    ResultService resultService;
+    private final ResultService resultService;
 
-    @Autowired
-    TblMonApiRepository tblMonApiRepository;
+    private final TblMonApiRepository tblMonApiRepository;
 
     /**
      * API DTO Set
      */
-    private TblMonApi setTblMonApi(TblMonApi tblMonApi, Map<String, Object> param) throws ParseException {
+    private MonApi setTblMonApi(MonApi monApi, Map<String, Object> param) throws ParseException {
         SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd");
-        tblMonApi.setTitle("" + param.get("title"));
-        tblMonApi.setUrl("" + param.get("url"));
-        tblMonApi.setTimer(Integer.parseInt("" + param.get("timer")));
-        tblMonApi.setStartDate(transFormat.parse(param.get("api_start_date").toString()));
-        tblMonApi.setEndDate(transFormat.parse(param.get("api_end_date").toString()));
-        tblMonApi.setStartHour(Integer.parseInt(param.get("api_start_hour").toString()));
-        tblMonApi.setEndHour(Integer.parseInt(param.get("api_end_hour").toString()));
-        tblMonApi.setTimeout(Integer.parseInt("" + param.get("timeout")));
-        tblMonApi.setUseable(Integer.parseInt("" + param.get("api_useable")));
-        tblMonApi.setLoadTime(Double.parseDouble("" + param.get("loadTime")));
-        tblMonApi.setErrLoadTime(Integer.parseInt("" + param.get("errLoadTime")));
-        tblMonApi.setPayLoad(Double.parseDouble("" + param.get("payLoad")));
-        tblMonApi.setPayLoadPer(Integer.parseInt("" + param.get("payLoadPer")));
-        tblMonApi.setLoadTimeCheck(Integer.parseInt("" + param.get("api_loadTimeCheck")));
-        tblMonApi.setPayLoadCheck(Integer.parseInt("" + param.get("api_payLoadCheck")));
-        tblMonApi.setResponseCheck(Integer.parseInt("" + param.get("api_responseCheck")));
-        tblMonApi.setStatus(Integer.parseInt("" + param.get("status")));
-        tblMonApi.setData_type("" + param.get("data_type"));
-        tblMonApi.setMethod("" + param.get("method"));
-        tblMonApi.setResponse("" + param.get("response"));
-        tblMonApi.setUptDate(new Date());
-        if (tblMonApi.getRegDate() == null) tblMonApi.setRegDate(new Date());
-        tblMonApi.setApiParams(setTblMonApiParams(param));
+        monApi.setTitle("" + param.get("title"));
+        monApi.setUrl("" + param.get("url"));
+        monApi.setTimer(Integer.parseInt("" + param.get("timer")));
+        monApi.setStartDate(transFormat.parse(param.get("api_start_date").toString()));
+        monApi.setEndDate(transFormat.parse(param.get("api_end_date").toString()));
+        monApi.setStartHour(Integer.parseInt(param.get("api_start_hour").toString()));
+        monApi.setEndHour(Integer.parseInt(param.get("api_end_hour").toString()));
+        monApi.setTimeout(Integer.parseInt("" + param.get("timeout")));
+        monApi.setUseable(Integer.parseInt("" + param.get("api_useable")));
+        monApi.setLoadTime(Double.parseDouble("" + param.get("loadTime")));
+        monApi.setErrLoadTime(Integer.parseInt("" + param.get("errLoadTime")));
+        monApi.setPayLoad(Double.parseDouble("" + param.get("payLoad")));
+        monApi.setPayLoadPer(Integer.parseInt("" + param.get("payLoadPer")));
+        monApi.setLoadTimeCheck(Integer.parseInt("" + param.get("api_loadTimeCheck")));
+        monApi.setPayLoadCheck(Integer.parseInt("" + param.get("api_payLoadCheck")));
+        monApi.setResponseCheck(Integer.parseInt("" + param.get("api_responseCheck")));
+        monApi.setStatus(Integer.parseInt("" + param.get("status")));
+        monApi.setData_type("" + param.get("data_type"));
+        monApi.setMethod("" + param.get("method"));
+        monApi.setResponse("" + param.get("response"));
+        monApi.setUptDate(new Date());
+        if (monApi.getRegDate() == null) monApi.setRegDate(new Date());
+        monApi.setApiParams(setTblMonApiParams(param));
 
-        return tblMonApi;
+        return monApi;
     }
 
 
     /**
      * API DTO Set
      */
-    private ArrayList<TblMonApiParam> setTblMonApiParams(Map<String, Object> param) {
-        ArrayList<TblMonApiParam> apiParams = new ArrayList<TblMonApiParam>();
+    private ArrayList<MonApiParam> setTblMonApiParams(Map<String, Object> param) {
+        ArrayList<MonApiParam> apiParams = new ArrayList<MonApiParam>();
 
         try {
 
@@ -78,12 +78,12 @@ public class ApiController {
             String[] values = ("" + param.get("values")).substring(1, ("" + param.get("values")).length() - 1).split(",");
 
             for (int i = 0; i < keys.length; i++) {
-                TblMonApiParam tblMonApiParam = new TblMonApiParam();
-                tblMonApiParam.setParam_key(keys[i].replaceAll("\"", ""));
-                tblMonApiParam.setParam_value(values[i].replaceAll("\"", ""));
-                if (tblMonApiParam.getRegDate() == null) tblMonApiParam.setRegDate(new Date());
-                tblMonApiParam.setUptDate(new Date());
-                apiParams.add(tblMonApiParam);
+                MonApiParam monApiParam = new MonApiParam();
+                monApiParam.setParam_key(keys[i].replaceAll("\"", ""));
+                monApiParam.setParam_value(values[i].replaceAll("\"", ""));
+                if (monApiParam.getRegDate() == null) monApiParam.setRegDate(new Date());
+                monApiParam.setUptDate(new Date());
+                apiParams.add(monApiParam);
             }
 
         } catch (Exception e) {
@@ -103,7 +103,7 @@ public class ApiController {
 
         try {
 
-            List<TblMonApi> apiList = tblMonApiRepository.findAll();
+            List<MonApi> apiList = tblMonApiRepository.findAll();
             result.put("apiList", apiList);
             result.put("result", "success");
 
@@ -127,7 +127,7 @@ public class ApiController {
 
         try {
 
-            tblMonApiRepository.save(setTblMonApi(new TblMonApi(), param));
+            tblMonApiRepository.save(setTblMonApi(new MonApi(), param));
             result.put("result", "success");
 
         } catch (Exception e) {
@@ -149,8 +149,8 @@ public class ApiController {
 
         try {
 
-            TblMonApi TblMonApi = tblMonApiRepository.findBySeq(seq);
-            result.put("data", TblMonApi);
+            MonApi MonApi = tblMonApiRepository.findBySeq(seq);
+            result.put("data", MonApi);
             result.put("result", "success");
 
 
@@ -173,7 +173,7 @@ public class ApiController {
 
         try {
 
-            TblMonApi existsApi = tblMonApiRepository.findBySeq(seq);
+            MonApi existsApi = tblMonApiRepository.findBySeq(seq);
 
             if (existsApi != null) {
 
@@ -204,7 +204,7 @@ public class ApiController {
 
         try {
 
-            TblMonApi existsApi = tblMonApiRepository.findBySeq(seq);
+            MonApi existsApi = tblMonApiRepository.findBySeq(seq);
 
             if (existsApi != null) {
 
@@ -234,8 +234,8 @@ public class ApiController {
         HashMap<String, Object> result = new HashMap<String, Object>();
 
         try {
-            TblMonApi tblMonApi = setTblMonApi(new TblMonApi(), param);
-            result.put("data", apiService.executeApi(tblMonApi));
+            MonApi monApi = setTblMonApi(new MonApi(), param);
+            result.put("data", apiService.executeApi(monApi));
             result.put("result", "success");
 
         } catch (Exception e) {
@@ -256,7 +256,7 @@ public class ApiController {
         HashMap<String, Object> result = new HashMap<String, Object>();
         try {
 
-            TblMonApi existsApi = tblMonApiRepository.findBySeq(seq);
+            MonApi existsApi = tblMonApiRepository.findBySeq(seq);
 
             if (existsApi != null) {
 
@@ -264,8 +264,8 @@ public class ApiController {
                 Map<String, Object> data = apiService.errorCheckApi(existsApi, logData);
                 result.put(existsApi.getUrl(), data);
 
-                TblMonResult tblMonResult = resultService.saveResult(data);
-                resultService.sendResultByProperties(tblMonResult);
+                MonResult monResult = resultService.saveResult(data);
+                resultService.sendResultByProperties(monResult);
             }
 
             result.put("data", seq);

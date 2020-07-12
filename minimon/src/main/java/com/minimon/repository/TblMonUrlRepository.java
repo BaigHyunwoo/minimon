@@ -1,18 +1,17 @@
 package com.minimon.repository;
 
-import java.util.Date;
-import java.util.List;
-
+import com.minimon.entity.MonUrl;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.minimon.entity.TblMonUrl;
+import java.util.Date;
+import java.util.List;
 
 @Repository
-public interface TblMonUrlRepository extends JpaRepository<TblMonUrl, String> {
+public interface TblMonUrlRepository extends JpaRepository<MonUrl, String> {
 
-	TblMonUrl findBySeq(int seq);
+	MonUrl findBySeq(int seq);
 
-	List<TblMonUrl> findByUseableAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndStartHourLessThanEqualAndEndHourGreaterThanEqual(
+	List<MonUrl> findByUseableAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndStartHourLessThanEqualAndEndHourGreaterThanEqual(
 			int useable, Date startDate, Date endDate, int startHour, int endHour);
 }

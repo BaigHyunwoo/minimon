@@ -2,14 +2,13 @@ package com.minimon.service;
 
 import com.minimon.common.CommonUtils;
 import com.minimon.common.SeleniumHandler;
-import com.minimon.entity.TblMonCodeData;
-import com.minimon.entity.TblMonTransaction;
+import com.minimon.entity.MonCodeData;
+import com.minimon.entity.MonTransaction;
 import com.minimon.exceptionHandler.MyException;
 import com.minimon.repository.TblMonTransactionRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -17,26 +16,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
+@RequiredArgsConstructor
 @Service
 public class TransactionService {
 
-    @Autowired
-    TblMonTransactionRepository tblMonTransactionRepository;
+    private final TblMonTransactionRepository tblMonTransactionRepository;
 
     private String className = this.getClass().toString();
-    private Logger logger = LoggerFactory.getLogger(TransactionService.class);
 
     /**
      * transaction 모니터링 검사 실행
-     *
-     * @exception 핸들러로 처리	CODE 11
      */
-    public Map<String, Object> checkTransactions(List<TblMonTransaction> tblMonTransactions) throws Exception {
+    public Map<String, Object> checkTransactions(List<MonTransaction> monTransactions) throws Exception {
         Map<String, Object> checkData = new HashMap<String, Object>();
 
         try {
 
-            for (TblMonTransaction transaction : tblMonTransactions) {
+            for (MonTransaction transaction : monTransactions) {
                 Map<String, Object> logData = executeTransaction(transaction.getCodeDatas());
                 checkData.put("" + transaction.getSeq(), errorCheckTransaction(transaction, logData));
             }
@@ -54,7 +51,7 @@ public class TransactionService {
     }
 
 
-    public List<TblMonTransaction> findTransactionUseable() {
+    public List<MonTransaction> findTransactionUseable() {
         Date now = new Date();
         int hours = now.getHours();
         return tblMonTransactionRepository.findByUseableAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndStartHourLessThanEqualAndEndHourGreaterThanEqual(
@@ -63,8 +60,6 @@ public class TransactionService {
 
     /**
      * transaction 모니터링 검사 상태 검사
-     *
-     * @exception 핸들러로 처리	CODE 12
      */
     public int checkStatus(Map<String, Object> logData) throws Exception {
 
@@ -96,10 +91,8 @@ public class TransactionService {
 
     /**
      * transaction 에러 검사
-     *
-     * @exception 핸들러로 처리	CODE 13
      */
-    public Map<String, Object> errorCheckTransaction(TblMonTransaction transaction, Map<String, Object> logData) throws Exception {
+    public Map<String, Object> errorCheckTransaction(MonTransaction transaction, Map<String, Object> logData) throws Exception {
         Map<String, Object> checkData = new HashMap<String, Object>();
 
         try {
@@ -154,10 +147,8 @@ public class TransactionService {
 
     /**
      * transaction Code 실행
-     *
-     * @exception 핸들러로 처리	CODE 14
      */
-    public Map<String, Object> executeTransaction(List<TblMonCodeData> codeDatas) throws Exception {
+    public Map<String, Object> executeTransaction(List<MonCodeData> codeDatas) throws Exception {
         Map<String, Object> logData = new HashMap<String, Object>();
         EventFiringWebDriver driver = null;
 
@@ -169,8 +160,8 @@ public class TransactionService {
             long startTime = System.currentTimeMillis();
             for (int i = 0; i < codeDatas.size(); i++) {
 
-                TblMonCodeData tblMonCodeData = codeDatas.get(i);
-                logData.put("" + i, selenium.executeAction(selenium, driver, tblMonCodeData.getAction(), tblMonCodeData.getSelector_type(), tblMonCodeData.getSelector_value(), tblMonCodeData.getValue()));
+                MonCodeData monCodeData = codeDatas.get(i);
+                logData.put("" + i, selenium.executeAction(selenium, driver, monCodeData.getAction(), monCodeData.getSelector_type(), monCodeData.getSelector_value(), monCodeData.getValue()));
 
             }
             long endTime = System.currentTimeMillis();
@@ -180,7 +171,7 @@ public class TransactionService {
             logData.put("status", checkStatus(logData));
 
 
-            logger.debug(logData.toString());
+            log.debug(logData.toString());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -201,11 +192,9 @@ public class TransactionService {
 
     /**
      * transaction Code 분석
-     *
-     * @exception 핸들러로 처리	CODE 15
      */
-    public TblMonCodeData getCodeData(String line) throws Exception {
-        TblMonCodeData tblMonCodeData = null;
+    public MonCodeData getCodeData(String line) throws Exception {
+        MonCodeData monCodeData = null;
 
         try {
 
@@ -216,11 +205,11 @@ public class TransactionService {
                 String selector_value = getCodeSelectorValue(line, action);
                 String value = getCodeValue(line, action, selector_type);
 
-                tblMonCodeData = new TblMonCodeData();
-                tblMonCodeData.setAction(action);
-                tblMonCodeData.setSelector_type(selector_type);
-                tblMonCodeData.setSelector_value(selector_value);
-                tblMonCodeData.setValue(value);
+                monCodeData = new MonCodeData();
+                monCodeData.setAction(action);
+                monCodeData.setSelector_type(selector_type);
+                monCodeData.setSelector_value(selector_value);
+                monCodeData.setValue(value);
             }
 
         } catch (Exception e) {
@@ -232,7 +221,7 @@ public class TransactionService {
 
         }
 
-        return tblMonCodeData;
+        return monCodeData;
 
     }
 

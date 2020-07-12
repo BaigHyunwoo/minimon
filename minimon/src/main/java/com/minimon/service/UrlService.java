@@ -2,37 +2,35 @@ package com.minimon.service;
 
 import com.minimon.common.CommonUtils;
 import com.minimon.common.SeleniumHandler;
-import com.minimon.entity.TblMonUrl;
+import com.minimon.entity.MonUrl;
 import com.minimon.exceptionHandler.MyException;
 import com.minimon.repository.TblMonUrlRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class UrlService {
 
-    @Autowired
-    TblMonUrlRepository tblMonUrlRepository;
+    private final TblMonUrlRepository tblMonUrlRepository;
 
     private String className = this.getClass().toString();
-
-    private Logger logger = LoggerFactory.getLogger(UrlService.class);
 
 
     /**
      * URL 모니터링 검사 실행
      */
-    public Map<String, Object> checkUrls(List<TblMonUrl> urls) throws Exception {
+    public Map<String, Object> checkUrls(List<MonUrl> urls) throws Exception {
         Map<String, Object> checkData = new HashMap<String, Object>();
 
         try {
 
-            for (TblMonUrl url : urls) {
+            for (MonUrl url : urls) {
                 Map<String, Object> logData = executeUrl(url.getUrl(), url.getTimeout());
                 checkData.put(url.getUrl(), errorCheckUrl(url, logData));
             }
@@ -47,7 +45,7 @@ public class UrlService {
         return checkData;
     }
 
-    public List<TblMonUrl> findUrl() {
+    public List<MonUrl> findUrl() {
         Date now = new Date();
         int hours = now.getHours();
         return tblMonUrlRepository.findByUseableAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndStartHourLessThanEqualAndEndHourGreaterThanEqual(
@@ -73,7 +71,7 @@ public class UrlService {
             );
             logData.put("source", selenium.getSource(driver));
 
-            logger.debug(logData.toString());
+            log.debug(logData.toString());
 
 
         } catch (Exception e) {
@@ -94,7 +92,7 @@ public class UrlService {
     /**
      * URL 에러 검사
      */
-    public Map<String, Object> errorCheckUrl(TblMonUrl url, Map<String, Object> logData) throws Exception {
+    public Map<String, Object> errorCheckUrl(MonUrl url, Map<String, Object> logData) throws Exception {
         Map<String, Object> checkData = new HashMap<String, Object>();
 
         try {
@@ -121,7 +119,7 @@ public class UrlService {
         return checkData;
     }
 
-    public String errCheck(int status, double totalLoadTime, double totalPayLoad, String source, TblMonUrl url) {
+    public String errCheck(int status, double totalLoadTime, double totalPayLoad, String source, MonUrl url) {
         if (status >= 400)
             return status + " ERR";
         else if (url.getLoadTimeCheck() == 1 && totalLoadTime >= url.getErrLoadTime())
@@ -136,19 +134,19 @@ public class UrlService {
             return "SUCCESS";
     }
 
-    public void saveUrl(TblMonUrl tblMonUrl) {
-        tblMonUrlRepository.save(tblMonUrl);
+    public void saveUrl(MonUrl monUrl) {
+        tblMonUrlRepository.save(monUrl);
     }
 
-    public List<TblMonUrl> getUrlList() {
+    public List<MonUrl> getUrlList() {
         return tblMonUrlRepository.findAll();
     }
 
-    public TblMonUrl getUrl(int seq) {
+    public MonUrl getUrl(int seq) {
         return tblMonUrlRepository.findBySeq(seq);
     }
 
     public void remove(int seq) {
-        Optional.of(getUrl(seq)).ifPresent(tblMonUrl -> tblMonUrlRepository.delete(tblMonUrl));
+        Optional.of(getUrl(seq)).ifPresent(monUrl -> tblMonUrlRepository.delete(monUrl));
     }
 }

@@ -1,16 +1,14 @@
 package com.minimon.common;
 
 import com.minimon.MinimonApplication;
-import com.minimon.controller.MainController;
-import com.minimon.entity.TblMonResult;
+import com.minimon.entity.MonResult;
 import com.minimon.exceptionHandler.MyException;
-import com.minimon.repository.TblMonApiRepository;
-import com.minimon.repository.TblMonTransactionRepository;
-import com.minimon.repository.TblMonUrlRepository;
-import com.minimon.service.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.minimon.service.ApiService;
+import com.minimon.service.ResultService;
+import com.minimon.service.TransactionService;
+import com.minimon.service.UrlService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,41 +23,16 @@ import java.util.Map;
  *
  * @author 백현우
  */
+@Slf4j
 @RestController
 @EnableScheduling
+@RequiredArgsConstructor
 public class ExecuteTool {
-
-    @Autowired
-    TblMonUrlRepository tblMonUrlRepository;
-
-    @Autowired
-    TblMonApiRepository tblMonApiRepository;
-
-    @Autowired
-    TblMonTransactionRepository tblMonTransactionRepository;
-
-    @Autowired
-    ResultService resultService;
-
-    @Autowired
-    UrlService urlService;
-
-    @Autowired
-    ApiService apiService;
-
-    @Autowired
-    TransactionService transactionService;
-
-    @Autowired
-    EmailService emailService;
-
-    @Autowired
-    SmsService smsService;
-
-    private Logger logger = LoggerFactory.getLogger(MainController.class);
-
+    private final ResultService resultService;
+    private final UrlService urlService;
+    private final ApiService apiService;
+    private final TransactionService transactionService;
     private String className = this.getClass().toString();
-
 
     /**
      * 모니터링 실행
@@ -74,9 +47,9 @@ public class ExecuteTool {
                 resultList.add(urlService.checkUrls(urlService.findUrl()));
                 resultList.add(transactionService.checkTransactions(transactionService.findTransactionUseable()));
                 check(resultList);
-                logger.info("Monitoring Execute Complete");
+                log.info("Monitoring Execute Complete");
             } else {
-                logger.info("Please save your webDriverPath at the main page");
+                log.info("Please save your webDriverPath at the main page");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -100,13 +73,13 @@ public class ExecuteTool {
                 for (Object value : result.values()) {
                     Map<String, Object> checkLog = (Map<String, Object>) value;
                     if (checkLog.get("result").equals("SUCCESS") == false) {
-                        TblMonResult tblMonResult = resultService.saveResult(checkLog);
-                        resultService.sendResultByProperties(tblMonResult);
+                        MonResult monResult = resultService.saveResult(checkLog);
+                        resultService.sendResultByProperties(monResult);
                     }
                 }
             }
 
-            logger.debug("Monitoring check Complete");
+            log.debug("Monitoring check Complete");
 
         } catch (Exception e) {
             throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {

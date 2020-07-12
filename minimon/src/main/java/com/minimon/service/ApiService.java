@@ -1,10 +1,12 @@
 package com.minimon.service;
 
 import com.minimon.common.CommonUtils;
-import com.minimon.entity.TblMonApi;
-import com.minimon.entity.TblMonApiParam;
+import com.minimon.entity.MonApi;
+import com.minimon.entity.MonApiParam;
 import com.minimon.exceptionHandler.MyException;
 import com.minimon.repository.TblMonApiRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -12,26 +14,22 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.*;
 
+@Slf4j
+@RequiredArgsConstructor
 @Service
 public class ApiService {
 
-    @Autowired
-    TblMonApiRepository tblMonApiRepository;
+    private final TblMonApiRepository tblMonApiRepository;
 
     private String className = this.getClass().toString();
-    private Logger logger = LoggerFactory.getLogger(ApiService.class);
 
-
-    public List<TblMonApi> findApi() {
+    public List<MonApi> findApi() {
         Date now = new Date();
         int hours = now.getHours();
         return tblMonApiRepository.findByUseableAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndStartHourLessThanEqualAndEndHourGreaterThanEqual(
@@ -41,12 +39,12 @@ public class ApiService {
     /**
      * API 모니터링 검사 실행
      */
-    public Map<String, Object> checkApis(List<TblMonApi> apis) throws Exception {
+    public Map<String, Object> checkApis(List<MonApi> apis) throws Exception {
         Map<String, Object> checkData = new HashMap<String, Object>();
 
         try {
 
-            for (TblMonApi api : apis) {
+            for (MonApi api : apis) {
                 Map<String, Object> logData = executeApi(api);
                 checkData.put("" + api.getSeq(), errorCheckApi(api, logData));
             }
@@ -67,14 +65,14 @@ public class ApiService {
     /**
      * API 실행
      */
-    public Map<String, Object> executeApi(TblMonApi api) throws Exception {
+    public Map<String, Object> executeApi(MonApi api) throws Exception {
         Map<String, Object> logData = new HashMap<String, Object>();
 
         try {
 
             logData = httpSending(api);
 
-            logger.debug(logData.toString());
+            log.debug(logData.toString());
 
 
         } catch (Exception e) {
@@ -91,7 +89,7 @@ public class ApiService {
     /**
      * URL 에러 검사
      */
-    public Map<String, Object> errorCheckApi(TblMonApi api, Map<String, Object> logData) throws Exception {
+    public Map<String, Object> errorCheckApi(MonApi api, Map<String, Object> logData) throws Exception {
         Map<String, Object> checkData = new HashMap<String, Object>();
 
         try {
@@ -121,7 +119,7 @@ public class ApiService {
     }
 
 
-    public String errCheck(int status, double totalLoadTime, double totalPayLoad, String response, TblMonApi api) {
+    public String errCheck(int status, double totalLoadTime, double totalPayLoad, String response, MonApi api) {
         if (status >= 400)
             return status + " ERR";
         else if (api.getLoadTimeCheck() == 1 && totalLoadTime >= api.getErrLoadTime())
@@ -139,7 +137,7 @@ public class ApiService {
      * HTTP SENDING
      */
     @SuppressWarnings("deprecation")
-    public Map<String, Object> httpSending(TblMonApi api) throws Exception {
+    public Map<String, Object> httpSending(MonApi api) throws Exception {
         Map<String, Object> result = new HashMap<String, Object>();
 
         try {
@@ -148,8 +146,8 @@ public class ApiService {
 
             List<NameValuePair> params = new ArrayList<NameValuePair>();
 
-            for (TblMonApiParam tblMonApiParam : api.getApiParams()) {
-                params.add(new BasicNameValuePair(tblMonApiParam.getParam_key(), tblMonApiParam.getParam_value()));
+            for (MonApiParam monApiParam : api.getApiParams()) {
+                params.add(new BasicNameValuePair(monApiParam.getParam_key(), monApiParam.getParam_value()));
             }
 
             long st = System.currentTimeMillis();
