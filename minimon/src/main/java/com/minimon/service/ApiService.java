@@ -4,7 +4,7 @@ import com.minimon.common.CommonUtils;
 import com.minimon.entity.MonApi;
 import com.minimon.entity.MonApiParam;
 import com.minimon.exceptionHandler.MyException;
-import com.minimon.repository.TblMonApiRepository;
+import com.minimon.repository.MonApiRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
@@ -25,14 +25,14 @@ import java.util.*;
 @Service
 public class ApiService {
 
-    private final TblMonApiRepository tblMonApiRepository;
+    private final MonApiRepository monApiRepository;
 
     private String className = this.getClass().toString();
 
     public List<MonApi> findApi() {
         Date now = new Date();
         int hours = now.getHours();
-        return tblMonApiRepository.findByUseableAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndStartHourLessThanEqualAndEndHourGreaterThanEqual(
+        return monApiRepository.findByUseableAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndStartHourLessThanEqualAndEndHourGreaterThanEqual(
                 1, now, now, hours, hours);
     }
 

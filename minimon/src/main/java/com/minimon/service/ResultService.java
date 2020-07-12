@@ -3,7 +3,7 @@ package com.minimon.service;
 import com.minimon.MinimonApplication;
 import com.minimon.entity.MonResult;
 import com.minimon.exceptionHandler.MyException;
-import com.minimon.repository.TblMonResultRepository;
+import com.minimon.repository.MonResultRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ public class ResultService {
     private final EmailService emailService;
     private final SmsService smsService;
 
-    private final TblMonResultRepository tblMonResultRepository;
+    private final MonResultRepository monResultRepository;
 
     private String className = this.getClass().toString();
 
@@ -36,7 +36,7 @@ public class ResultService {
             monResult.setRegDate(new Date());
             monResult.setLoadTime(Double.parseDouble("" + result.get("check_loadTime")));
             monResult.setResponse(result.toString());
-            tblMonResultRepository.save(monResult);
+            monResultRepository.save(monResult);
 
         } catch (Exception e) {
             throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {

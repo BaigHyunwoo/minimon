@@ -3,7 +3,7 @@ package com.minimon.controller;
 import com.minimon.entity.MonApi;
 import com.minimon.entity.MonApiParam;
 import com.minimon.entity.MonResult;
-import com.minimon.repository.TblMonApiRepository;
+import com.minimon.repository.MonApiRepository;
 import com.minimon.service.ApiService;
 import com.minimon.service.ResultService;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ public class ApiController {
 
     private final ResultService resultService;
 
-    private final TblMonApiRepository tblMonApiRepository;
+    private final MonApiRepository monApiRepository;
 
     /**
      * API DTO Set
@@ -103,7 +103,7 @@ public class ApiController {
 
         try {
 
-            List<MonApi> apiList = tblMonApiRepository.findAll();
+            List<MonApi> apiList = monApiRepository.findAll();
             result.put("apiList", apiList);
             result.put("result", "success");
 
@@ -127,7 +127,7 @@ public class ApiController {
 
         try {
 
-            tblMonApiRepository.save(setTblMonApi(new MonApi(), param));
+            monApiRepository.save(setTblMonApi(new MonApi(), param));
             result.put("result", "success");
 
         } catch (Exception e) {
@@ -149,7 +149,7 @@ public class ApiController {
 
         try {
 
-            MonApi MonApi = tblMonApiRepository.findBySeq(seq);
+            MonApi MonApi = monApiRepository.findBySeq(seq);
             result.put("data", MonApi);
             result.put("result", "success");
 
@@ -173,11 +173,11 @@ public class ApiController {
 
         try {
 
-            MonApi existsApi = tblMonApiRepository.findBySeq(seq);
+            MonApi existsApi = monApiRepository.findBySeq(seq);
 
             if (existsApi != null) {
 
-                tblMonApiRepository.save(setTblMonApi(existsApi, param));
+                monApiRepository.save(setTblMonApi(existsApi, param));
 
             }
 
@@ -204,11 +204,11 @@ public class ApiController {
 
         try {
 
-            MonApi existsApi = tblMonApiRepository.findBySeq(seq);
+            MonApi existsApi = monApiRepository.findBySeq(seq);
 
             if (existsApi != null) {
 
-                tblMonApiRepository.delete(existsApi);
+                monApiRepository.delete(existsApi);
 
             }
 
@@ -256,7 +256,7 @@ public class ApiController {
         HashMap<String, Object> result = new HashMap<String, Object>();
         try {
 
-            MonApi existsApi = tblMonApiRepository.findBySeq(seq);
+            MonApi existsApi = monApiRepository.findBySeq(seq);
 
             if (existsApi != null) {
 

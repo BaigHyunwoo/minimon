@@ -3,10 +3,9 @@ package com.minimon.controller;
 import com.minimon.MinimonApplication;
 import com.minimon.entity.MonApi;
 import com.minimon.entity.MonTransaction;
-import com.minimon.entity.MonUrl;
-import com.minimon.repository.TblMonApiRepository;
-import com.minimon.repository.TblMonTransactionRepository;
-import com.minimon.repository.TblMonUrlRepository;
+import com.minimon.repository.MonApiRepository;
+import com.minimon.repository.MonTransactionRepository;
+import com.minimon.service.UrlService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,12 +28,11 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 public class MainController {
+    private final UrlService urlService;
 
-    private final TblMonUrlRepository tblMonUrlRepository;
+    private final MonApiRepository monApiRepository;
 
-    private final TblMonApiRepository tblMonApiRepository;
-
-    private final TblMonTransactionRepository tblMonTransactionRepository;
+    private final MonTransactionRepository monTransactionRepository;
 
     /**
      * 메인 화면 접근
@@ -42,13 +40,12 @@ public class MainController {
     @RequestMapping(path = "/index", method = RequestMethod.GET)
     public ModelAndView main(@RequestParam Map<String, Object> map) {
 
-        List<MonUrl> urlList = tblMonUrlRepository.findAll();
-        List<MonApi> apiList = tblMonApiRepository.findAll();
-        List<MonTransaction> transactionList = tblMonTransactionRepository.findAll();
+        List<MonApi> apiList = monApiRepository.findAll();
+        List<MonTransaction> transactionList = monTransactionRepository.findAll();
 
 
         ModelAndView mav = new ModelAndView("index");
-        mav.addObject("urlList", urlList);
+        mav.addObject("urlList", urlService.getMonUrls());
         mav.addObject("apiList", apiList);
         mav.addObject("transactionList", transactionList);
         mav.addObject("status", 200);

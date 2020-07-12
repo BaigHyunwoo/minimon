@@ -1,6 +1,6 @@
 package com.minimon.repository;
 
-import com.minimon.entity.MonApi;
+import com.minimon.entity.MonUrl;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -8,11 +8,10 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-public interface TblMonApiRepository extends JpaRepository<MonApi, String> {
+public interface MonUrlRepository extends JpaRepository<MonUrl, String> {
 
-	MonApi findBySeq(int seq);
+	MonUrl findBySeq(int seq);
 
-	List<MonApi> findByUseableAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndStartHourLessThanEqualAndEndHourGreaterThanEqual(
+	List<MonUrl> findByUseableAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndStartHourLessThanEqualAndEndHourGreaterThanEqual(
 			int useable, Date startDate, Date endDate, int startHour, int endHour);
-
 }

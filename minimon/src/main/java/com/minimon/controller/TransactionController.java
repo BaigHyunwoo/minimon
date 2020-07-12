@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.minimon.entity.MonCodeData;
 import com.minimon.entity.MonResult;
 import com.minimon.entity.MonTransaction;
-import com.minimon.repository.TblMonTransactionRepository;
+import com.minimon.repository.MonTransactionRepository;
 import com.minimon.service.EmailService;
 import com.minimon.service.ResultService;
 import com.minimon.service.TransactionService;
@@ -35,7 +35,7 @@ import java.util.*;
 @RestController
 public class TransactionController {
 
-    private final TblMonTransactionRepository tblMonTransactionRepository;
+    private final MonTransactionRepository monTransactionRepository;
 
 	private final TransactionService transactionService;
 
@@ -90,7 +90,7 @@ public class TransactionController {
     	
     	try {
 
-    		List<MonTransaction> transactionList = tblMonTransactionRepository.findAll();
+    		List<MonTransaction> transactionList = monTransactionRepository.findAll();
     		result.put("transactionList", transactionList);
     		result.put("result", "success");
     		
@@ -116,7 +116,7 @@ public class TransactionController {
 
     	try {
 
-    		tblMonTransactionRepository.save(setTblMonTransaction(new MonTransaction(), param));
+    		monTransactionRepository.save(setTblMonTransaction(new MonTransaction(), param));
 			result.put("result", "success");
 			
 		} catch (Exception e) {
@@ -142,7 +142,7 @@ public class TransactionController {
     		
 
 
-    		MonTransaction existsTransaction = tblMonTransactionRepository.findBySeq(seq);
+    		MonTransaction existsTransaction = monTransactionRepository.findBySeq(seq);
 
     		result.put("data", existsTransaction);
     		result.put("result", "success");
@@ -170,11 +170,11 @@ public class TransactionController {
     	
     	try {
 
-    		MonTransaction existsTransaction = tblMonTransactionRepository.findBySeq(seq);
+    		MonTransaction existsTransaction = monTransactionRepository.findBySeq(seq);
     		
     		if(existsTransaction != null) {
 
-    			tblMonTransactionRepository.save(setTblMonTransaction(existsTransaction, param));
+    			monTransactionRepository.save(setTblMonTransaction(existsTransaction, param));
     			
     		}
     		
@@ -208,11 +208,11 @@ public class TransactionController {
     	try {
 
 
-    		MonTransaction existsTransaction = tblMonTransactionRepository.findBySeq(seq);
+    		MonTransaction existsTransaction = monTransactionRepository.findBySeq(seq);
     		
     		if(existsTransaction != null) {
     			
-    			tblMonTransactionRepository.delete(existsTransaction);
+    			monTransactionRepository.delete(existsTransaction);
     			
     		}
     		
@@ -296,7 +296,7 @@ public class TransactionController {
     	
     	try {
 
-    		MonTransaction existsTransaction = tblMonTransactionRepository.findBySeq(seq);
+    		MonTransaction existsTransaction = monTransactionRepository.findBySeq(seq);
     		
     		if(existsTransaction != null) {
     			

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TblMonResultRepository extends JpaRepository<MonResult, String> {
+public interface MonResultRepository extends JpaRepository<MonResult, String> {
 
 	List<MonResult> findByTypeOrderByRegDateAsc(String type);
 	

@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-public interface TblMonTransactionRepository extends JpaRepository<MonTransaction, String> {
+public interface MonTransactionRepository extends JpaRepository<MonTransaction, String> {
 
 	MonTransaction findBySeq(int seq);
 

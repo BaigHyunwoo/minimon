@@ -2,11 +2,13 @@ package com.minimon;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 
+@EnableCaching
 @SpringBootApplication
 public class MinimonApplication {
 
-	static String driverPath = "D:/minimon/";
+	static String driverPath = "C:\\chromedriver";
 
 	public static String getDriverPath() {
 		return driverPath;

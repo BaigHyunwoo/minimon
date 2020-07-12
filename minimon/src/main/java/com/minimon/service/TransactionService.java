@@ -5,7 +5,7 @@ import com.minimon.common.SeleniumHandler;
 import com.minimon.entity.MonCodeData;
 import com.minimon.entity.MonTransaction;
 import com.minimon.exceptionHandler.MyException;
-import com.minimon.repository.TblMonTransactionRepository;
+import com.minimon.repository.MonTransactionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
@@ -21,7 +21,7 @@ import java.util.Map;
 @Service
 public class TransactionService {
 
-    private final TblMonTransactionRepository tblMonTransactionRepository;
+    private final MonTransactionRepository monTransactionRepository;
 
     private String className = this.getClass().toString();
 
@@ -54,7 +54,7 @@ public class TransactionService {
     public List<MonTransaction> findTransactionUseable() {
         Date now = new Date();
         int hours = now.getHours();
-        return tblMonTransactionRepository.findByUseableAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndStartHourLessThanEqualAndEndHourGreaterThanEqual(
+        return monTransactionRepository.findByUseableAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndStartHourLessThanEqualAndEndHourGreaterThanEqual(
                 1, now, now, hours, hours);
     }
 

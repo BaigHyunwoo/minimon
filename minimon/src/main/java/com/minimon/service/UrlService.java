@@ -4,10 +4,12 @@ import com.minimon.common.CommonUtils;
 import com.minimon.common.SeleniumHandler;
 import com.minimon.entity.MonUrl;
 import com.minimon.exceptionHandler.MyException;
-import com.minimon.repository.TblMonUrlRepository;
+import com.minimon.repository.MonUrlRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -17,9 +19,14 @@ import java.util.*;
 @RequiredArgsConstructor
 public class UrlService {
 
-    private final TblMonUrlRepository tblMonUrlRepository;
+    private final MonUrlRepository monUrlRepository;
 
     private String className = this.getClass().toString();
+
+    @Cacheable(value = "main", key = "'list'")
+    public List<MonUrl> getMonUrls() {
+        return monUrlRepository.findAll();
+    }
 
 
     /**
@@ -48,7 +55,7 @@ public class UrlService {
     public List<MonUrl> findUrl() {
         Date now = new Date();
         int hours = now.getHours();
-        return tblMonUrlRepository.findByUseableAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndStartHourLessThanEqualAndEndHourGreaterThanEqual(
+        return monUrlRepository.findByUseableAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndStartHourLessThanEqualAndEndHourGreaterThanEqual(
                 1, now, now, hours, hours);
     }
 
@@ -135,18 +142,18 @@ public class UrlService {
     }
 
     public void saveUrl(MonUrl monUrl) {
-        tblMonUrlRepository.save(monUrl);
+        monUrlRepository.save(monUrl);
     }
 
     public List<MonUrl> getUrlList() {
-        return tblMonUrlRepository.findAll();
+        return monUrlRepository.findAll();
     }
 
     public MonUrl getUrl(int seq) {
-        return tblMonUrlRepository.findBySeq(seq);
+        return monUrlRepository.findBySeq(seq);
     }
 
     public void remove(int seq) {
-        Optional.of(getUrl(seq)).ifPresent(monUrl -> tblMonUrlRepository.delete(monUrl));
+        Optional.of(getUrl(seq)).ifPresent(monUrl -> monUrlRepository.delete(monUrl));
     }
 }
