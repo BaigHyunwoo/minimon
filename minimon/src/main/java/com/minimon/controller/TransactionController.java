@@ -38,8 +38,6 @@ public class TransactionController {
 
 	private final TransactionService transactionService;
 
-    private final EmailService emailService;
-
 	private final ResultService resultService;
 
 	/**

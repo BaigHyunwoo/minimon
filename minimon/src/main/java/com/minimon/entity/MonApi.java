@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,8 +14,8 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name="tbl_mon_api")
-public class MonApi {
+@Table(name="MON_API")
+public class MonApi implements Serializable {
 
 	/*
 	 * Setting Info

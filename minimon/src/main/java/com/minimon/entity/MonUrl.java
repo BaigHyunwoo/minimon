@@ -6,13 +6,14 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "tbl_mon_url")
-public class MonUrl {
+@Table(name = "MON_URL")
+public class MonUrl implements Serializable {
 
     /*
      * Setting Info

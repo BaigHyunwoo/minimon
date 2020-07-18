@@ -6,12 +6,13 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "tbl_mon_api_param")
+@Table(name = "MON_API_PARAM")
 public class MonApiParam {
 
     @Id

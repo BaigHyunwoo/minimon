@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,8 +14,8 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "tbl_mon_transaction")
-public class MonTransaction {
+@Table(name = "MON_TRANSACTION")
+public class MonTransaction implements Serializable {
 
     /*
      * Setting Info

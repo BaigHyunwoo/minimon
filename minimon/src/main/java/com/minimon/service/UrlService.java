@@ -23,7 +23,7 @@ public class UrlService {
 
     private String className = this.getClass().toString();
 
-    @Cacheable(value = "main", key = "'list'")
+    @Cacheable(value = "list", key = "'url'")
     public List<MonUrl> getMonUrls() {
         return monUrlRepository.findAll();
     }
@@ -141,8 +141,14 @@ public class UrlService {
             return "SUCCESS";
     }
 
+    @CacheEvict(value = "list", key = "'url'")
     public void saveUrl(MonUrl monUrl) {
         monUrlRepository.save(monUrl);
+    }
+
+    @CacheEvict(value = "list", key = "'url'")
+    public void remove(int seq) {
+        Optional.of(getUrl(seq)).ifPresent(monUrl -> monUrlRepository.delete(monUrl));
     }
 
     public List<MonUrl> getUrlList() {
@@ -153,7 +159,4 @@ public class UrlService {
         return monUrlRepository.findBySeq(seq);
     }
 
-    public void remove(int seq) {
-        Optional.of(getUrl(seq)).ifPresent(monUrl -> monUrlRepository.delete(monUrl));
-    }
 }

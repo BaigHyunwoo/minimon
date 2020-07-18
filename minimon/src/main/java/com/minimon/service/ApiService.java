@@ -14,6 +14,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -28,6 +29,11 @@ public class ApiService {
     private final MonApiRepository monApiRepository;
 
     private String className = this.getClass().toString();
+
+    @Cacheable(value = "list", key = "'api'")
+    public List<MonApi> getApis() {
+        return monApiRepository.findAll();
+    }
 
     public List<MonApi> findApi() {
         Date now = new Date();

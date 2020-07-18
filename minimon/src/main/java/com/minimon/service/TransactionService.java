@@ -9,6 +9,7 @@ import com.minimon.repository.MonTransactionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -24,6 +25,11 @@ public class TransactionService {
     private final MonTransactionRepository monTransactionRepository;
 
     private String className = this.getClass().toString();
+
+    @Cacheable(value = "list", key = "'transaction'")
+    public List<MonTransaction> getTransactions() {
+        return monTransactionRepository.findAll();
+    }
 
     /**
      * transaction 모니터링 검사 실행

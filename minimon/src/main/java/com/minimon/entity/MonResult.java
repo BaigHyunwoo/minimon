@@ -11,7 +11,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
-@Table(name = "tbl_mon_result")
+@Table(name = "MON_RESULT")
 public class MonResult {
 
     @Id

@@ -26,8 +26,6 @@ public class UrlController {
 
     private final UrlService urlService;
 
-    private final EmailService emailService;
-
     private final ResultService resultService;
 
     private MonUrl setTblMonUrl(MonUrl monUrl, Map<String, Object> param) throws ParseException {

@@ -5,6 +5,8 @@ import com.minimon.entity.MonApi;
 import com.minimon.entity.MonTransaction;
 import com.minimon.repository.MonApiRepository;
 import com.minimon.repository.MonTransactionRepository;
+import com.minimon.service.ApiService;
+import com.minimon.service.TransactionService;
 import com.minimon.service.UrlService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,25 +31,18 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class MainController {
     private final UrlService urlService;
-
-    private final MonApiRepository monApiRepository;
-
-    private final MonTransactionRepository monTransactionRepository;
+    private final ApiService apiService;
+    private final TransactionService transactionService;
 
     /**
      * 메인 화면 접근
      */
     @RequestMapping(path = "/index", method = RequestMethod.GET)
     public ModelAndView main(@RequestParam Map<String, Object> map) {
-
-        List<MonApi> apiList = monApiRepository.findAll();
-        List<MonTransaction> transactionList = monTransactionRepository.findAll();
-
-
         ModelAndView mav = new ModelAndView("index");
         mav.addObject("urlList", urlService.getMonUrls());
-        mav.addObject("apiList", apiList);
-        mav.addObject("transactionList", transactionList);
+        mav.addObject("apiList", apiService.getApis());
+        mav.addObject("transactionList", transactionService.getTransactions());
         mav.addObject("status", 200);
         return mav;
     }
