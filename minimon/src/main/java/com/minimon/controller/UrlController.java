@@ -2,7 +2,6 @@ package com.minimon.controller;
 
 import com.minimon.entity.MonResult;
 import com.minimon.entity.MonUrl;
-import com.minimon.service.EmailService;
 import com.minimon.service.ResultService;
 import com.minimon.service.UrlService;
 import lombok.RequiredArgsConstructor;

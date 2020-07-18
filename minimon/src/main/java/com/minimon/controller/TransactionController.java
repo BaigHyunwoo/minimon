@@ -6,7 +6,6 @@ import com.minimon.entity.MonCodeData;
 import com.minimon.entity.MonResult;
 import com.minimon.entity.MonTransaction;
 import com.minimon.repository.MonTransactionRepository;
-import com.minimon.service.EmailService;
 import com.minimon.service.ResultService;
 import com.minimon.service.TransactionService;
 import lombok.RequiredArgsConstructor;

@@ -1,10 +1,12 @@
 package com.minimon.service;
 
 import com.minimon.MinimonApplication;
+import com.minimon.common.SendingHttp;
 import com.minimon.entity.MonResult;
 import com.minimon.exceptionHandler.MyException;
 import com.minimon.repository.MonResultRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
@@ -12,13 +14,10 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ResultService {
-
-    private final EmailService emailService;
-    private final SmsService smsService;
-
     private final MonResultRepository monResultRepository;
 
     private String className = this.getClass().toString();
@@ -54,8 +53,16 @@ public class ResultService {
         FileInputStream fis = new FileInputStream(MinimonApplication.getDriverPath() + "/users.properties");
         properties.load(new java.io.BufferedInputStream(fis));
         String users = properties.getProperty("users");
+        String destination = properties.getProperty("destination");
+        String text = new StringBuffer()
+                .append("\n" + monResult.getRegDate() + " ")
+                .append("\n" + monResult.getType() + " : " + monResult.getTitle() + " ")
+                .append("\nRESULT : " + monResult.getResult() + " ")
+                .toString();
         for (String user : users.split(",")) {
-            smsService.sendSimpleMessage(user, monResult);
+            SendingHttp sendingHttp = new SendingHttp();
+            sendingHttp.sendingMassage(destination, text, user);
+            log.info("SEND API : " + user + "  Body : " + text);
         }
 
     }
