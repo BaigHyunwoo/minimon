@@ -15,17 +15,10 @@ import java.util.Map;
 import java.util.Optional;
 
 
-/**
- * 메인 서버
- *
- * @author 백현우
- */
 @RestController
 @RequiredArgsConstructor
 public class UrlController {
-
     private final UrlService urlService;
-
     private final ResultService resultService;
 
     private MonUrl setTblMonUrl(MonUrl monUrl, Map<String, Object> param) throws ParseException {
@@ -53,32 +46,16 @@ public class UrlController {
         return monUrl;
     }
 
-    /**
-     * URL LIST  호출
-     */
-    @RequestMapping(path = "/url", method = RequestMethod.GET)
+    @GetMapping(path = "/url")
     public HashMap<String, Object> getUrls() {
         HashMap<String, Object> result = new HashMap<String, Object>();
-
-        try {
-
-            result.put("urlList", urlService.getUrlList());
-            result.put("result", "success");
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-
-        }
-
+        result.put("urlList", urlService.getUrlList());
+        result.put("result", "success");
         return result;
     }
 
 
-    /**
-     * URL 생성
-     */
-    @RequestMapping(path = "/url", method = RequestMethod.POST)
+    @PostMapping(path = "/url")
     public HashMap<String, Object> createUrl(@RequestParam Map<String, Object> param) {
         HashMap<String, Object> result = new HashMap<String, Object>();
 
@@ -97,10 +74,7 @@ public class UrlController {
     }
 
 
-    /**
-     * URL INFO  호출
-     */
-    @RequestMapping(path = "/url/{seq}", method = RequestMethod.GET)
+    @GetMapping(path = "/url/{seq}")
     public HashMap<String, Object> getUrl(@PathVariable("seq") int seq) {
         HashMap<String, Object> result = new HashMap<String, Object>();
 
@@ -118,11 +92,7 @@ public class UrlController {
         return result;
     }
 
-
-    /**
-     * URL 업데이트
-     */
-    @RequestMapping(path = "/url/{seq}", method = RequestMethod.PUT)
+    @PutMapping(path = "/url/{seq}")
     public HashMap<String, Object> updateUrl(@PathVariable("seq") int seq, @RequestParam Map<String, Object> param) {
         HashMap<String, Object> result = new HashMap<String, Object>();
 
@@ -151,11 +121,7 @@ public class UrlController {
         return result;
     }
 
-
-    /**
-     * URL 삭제
-     */
-    @RequestMapping(path = "/url/{seq}", method = RequestMethod.DELETE)
+    @DeleteMapping(path = "/url/{seq}")
     public HashMap<String, Object> delete(@PathVariable("seq") int seq) {
         HashMap<String, Object> result = new HashMap<String, Object>();
 
@@ -177,11 +143,7 @@ public class UrlController {
         return result;
     }
 
-
-    /**
-     * URL CHECK
-     */
-    @RequestMapping(path = "/urlCheck", method = RequestMethod.POST)
+    @PostMapping(path = "/url/check")
     public Map<String, Object> urlCheck(@RequestParam Map<String, Object> data) {
         Map<String, Object> result = new HashMap<String, Object>();
 
@@ -199,11 +161,7 @@ public class UrlController {
         return result;
     }
 
-
-    /**
-     * URL  검사 실행
-     */
-    @RequestMapping(path = "/urlExecute/{seq}", method = RequestMethod.GET)
+    @PostMapping(path = "/url/{seq}/execute")
     public HashMap<String, Object> urlExecute(@PathVariable("seq") int seq) {
         HashMap<String, Object> result = new HashMap<String, Object>();
 
