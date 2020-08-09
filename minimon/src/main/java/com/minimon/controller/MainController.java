@@ -71,4 +71,15 @@ public class MainController {
         return result;
     }
 
+
+
+    /**
+     * 응답 결과
+     */
+    @RequestMapping(path = "/main/result", method = RequestMethod.POST)
+    public void resultReceiver(@RequestParam Map<String, Object> param) {
+        log.info("====RESULT====");
+        log.info(param.toString());
+    }
+
 }

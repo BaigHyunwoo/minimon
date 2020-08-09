@@ -19,7 +19,6 @@ import java.util.Properties;
 @RequiredArgsConstructor
 public class ResultService {
     private final MonResultRepository monResultRepository;
-
     private String className = this.getClass().toString();
 
     public MonResult saveResult(Map<String, Object> result) throws Exception {
@@ -45,26 +44,22 @@ public class ResultService {
         }
 
         return monResult;
-
     }
 
     public void sendResultByProperties(MonResult monResult) throws Exception {
         Properties properties = new Properties();
-        FileInputStream fis = new FileInputStream(MinimonApplication.getDriverPath() + "/users.properties");
+        FileInputStream fis = new FileInputStream(MinimonApplication.getDriverPath() + "/location.properties");
         properties.load(new java.io.BufferedInputStream(fis));
-        String users = properties.getProperty("users");
-        String destination = properties.getProperty("destination");
+        String location = properties.getProperty("location");
         String text = new StringBuffer()
                 .append("\n" + monResult.getRegDate() + " ")
                 .append("\n" + monResult.getType() + " : " + monResult.getTitle() + " ")
                 .append("\nRESULT : " + monResult.getResult() + " ")
                 .toString();
-        for (String user : users.split(",")) {
-            SendingHttp sendingHttp = new SendingHttp();
-            sendingHttp.sendingMassage(destination, text, user);
-            log.info("SEND API : " + user + "  Body : " + text);
-        }
 
+        SendingHttp sendingHttp = new SendingHttp();
+        sendingHttp.sendingMassage(location, text);
+        log.info("SEND API : " + location + "  Body : " + text);
     }
 
 }
