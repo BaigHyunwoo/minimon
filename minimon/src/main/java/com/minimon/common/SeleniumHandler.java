@@ -1,7 +1,6 @@
 package com.minimon.common;
 
 import com.minimon.MinimonApplication;
-import com.minimon.exceptionHandler.MyException;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.json.JSONObject;
 import org.openqa.selenium.*;
@@ -28,11 +27,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 
-/**
- * 셀레니움 관리
- *
- * @author 백현우
- */
 public class SeleniumHandler {
 
     private String className = this.getClass().toString();
@@ -76,12 +70,6 @@ public class SeleniumHandler {
         return whNow.iterator().next();
     }
 
-    /**
-     * Selenium loadTime Checker
-     * AbstractWebDriverEventListener Class 를 return 받는다.
-     *
-     * @author 백현우
-     */
     public class WebDriverEventListenerClass extends AbstractWebDriverEventListener {
 
         long startTime, endTime;
@@ -100,15 +88,6 @@ public class SeleniumHandler {
         }
     }
 
-    /**
-     * Selenium Web driver 기본 세팅
-     * 셀리니움을 사용하기 위하여 기본 셋팅을 하고
-     * 주어진 URL에 따라 드라이버를 구동한다
-     * 직접 Driver Path를 받아오는 경우를 처리
-     *
-     * @return driver 구동
-     * @author 백현우
-     */
     public EventFiringWebDriver setUp() throws Exception {
 
         EventFiringWebDriver driver = null;
@@ -138,23 +117,12 @@ public class SeleniumHandler {
 
         } catch (Exception e) {
             if (driver != null) driver.quit();
-            throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {
-            }.getClass().getEnclosingMethod().getName()
-                    + " - TYPE = [Function]/  Function - "
-                    + e.getStackTrace()[0].getMethodName(), className, 11);
         }
 
         return driver;
     }
 
 
-    /**
-     * Selenium Web driver를 이용하여 URL 접근
-     * 주어진 URL에 따라 드라이버를 구동
-     *
-     * @param url 접근 할 URL
-     * @author 백현우
-     */
     public double connectUrl(String url, EventFiringWebDriver driver, int timeout) throws Exception {
 
         // 타임아웃 셋팅
@@ -188,13 +156,6 @@ public class SeleniumHandler {
     }
 
 
-    /**
-     * Selenium Web driver를 이용하여 페이지 접근 후 로거 호출
-     *
-     * @param driver 실제 구동되는 드라이버
-     * @return 주어진 URL의 로거 반환
-     * @author 백현우
-     */
     public LogEntries getLog(EventFiringWebDriver driver) throws Exception {
         LogEntries logs = null;
 
@@ -209,66 +170,23 @@ public class SeleniumHandler {
             return logs;
 
         } catch (Exception e) {
-            throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {
-            }.getClass().getEnclosingMethod().getName()
-                    + " - TYPE = [Function]/  Function - "
-                    + e.getStackTrace()[0].getMethodName(), className, 12);
+            e.printStackTrace();
         }
 
         return logs;
     }
 
+    public String getSource(WebDriver driver) {
 
-    /**
-     * 현재 페이지의 소스 호출
-     *
-     * @author 백현우
-     */
-    public String getSource(WebDriver driver) throws Exception {
-        try {
-
-            return driver.getPageSource();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {
-            }.getClass().getEnclosingMethod().getName()
-                    + " - TYPE = [Function]/  Function - "
-                    + e.getStackTrace()[0].getMethodName(), className, 13);
-
-        }
+        return driver.getPageSource();
     }
 
-
-    /**
-     * 리소스의 Message 추출
-     *
-     * @author 백현우
-     */
-    public JSONObject getResourceMessage(LogEntry entry) throws Exception {
-
-        try {
-
-            JSONObject json = new JSONObject(entry.getMessage());
-            return json.getJSONObject("message");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {
-            }.getClass().getEnclosingMethod().getName()
-                    + " - TYPE = [Function]/  Function - "
-                    + e.getStackTrace()[0].getMethodName(), className, 14);
-
-        }
+    public JSONObject getResourceMessage(LogEntry entry) {
+        JSONObject json = new JSONObject(entry.getMessage());
+        return json.getJSONObject("message");
     }
 
-
-    /**
-     * log 분석
-     */
-    public Map<String, Object> expectionLog(LogEntries logs, String currentURL) throws MyException {
+    public Map<String, Object> expectionLog(LogEntries logs, String currentURL) {
         Map<String, Object> returnData = new HashMap<String, Object>();
 
         try {
@@ -291,19 +209,11 @@ public class SeleniumHandler {
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {
-            }.getClass().getEnclosingMethod().getName()
-                    + " - TYPE = [Function]/  Function - "
-                    + e.getStackTrace()[0].getMethodName(), className, 15);
-
         }
         return returnData;
     }
 
 
-    /**
-     * 리소스의 DATA 분석 및 반환
-     */
     public void setLogData(JSONObject message, int resourceCnt, String currentURL) throws Exception {
 
         try {
@@ -344,18 +254,10 @@ public class SeleniumHandler {
         } catch (Exception e) {
             e.printStackTrace();
 
-            throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {
-            }.getClass().getEnclosingMethod().getName()
-                    + " - TYPE = [Function]/  Function - "
-                    + e.getStackTrace()[0].getMethodName(), className, 16);
-
         }
     }
 
 
-    /**
-     * Selenium 액션 실행
-     */
     public String executeAction(SeleniumHandler selenium, EventFiringWebDriver driver, String action, String selector_type, String selector_value, String value) throws Exception {
 
         String result = "";
@@ -438,11 +340,6 @@ public class SeleniumHandler {
             e.printStackTrace();
 
             result = e.getMessage();
-
-            throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {
-            }.getClass().getEnclosingMethod().getName()
-                    + " - TYPE = [Function]/  Function - "
-                    + e.getStackTrace()[0].getMethodName(), className, 17);
         }
 
         return result;

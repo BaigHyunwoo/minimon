@@ -3,7 +3,6 @@ package com.minimon.service;
 import com.minimon.common.CommonUtils;
 import com.minimon.entity.MonApi;
 import com.minimon.entity.MonApiParam;
-import com.minimon.exceptionHandler.MyException;
 import com.minimon.repository.MonApiRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,84 +41,38 @@ public class ApiService {
                 1, now, now, hours, hours);
     }
 
-    /**
-     * API 모니터링 검사 실행
-     */
     public Map<String, Object> checkApis(List<MonApi> apis) throws Exception {
         Map<String, Object> checkData = new HashMap<String, Object>();
-
-        try {
-
-            for (MonApi api : apis) {
-                Map<String, Object> logData = executeApi(api);
-                checkData.put("" + api.getSeq(), errorCheckApi(api, logData));
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {
-            }.getClass().getEnclosingMethod().getName() + " "
-                    + "- TYPE = [Function]/  Function - execute", className, 11);
-
+        for (MonApi api : apis) {
+            Map<String, Object> logData = executeApi(api);
+            checkData.put("" + api.getSeq(), errorCheckApi(api, logData));
         }
-
         return checkData;
     }
 
-
-    /**
-     * API 실행
-     */
     public Map<String, Object> executeApi(MonApi api) throws Exception {
         Map<String, Object> logData = new HashMap<String, Object>();
-
-        try {
-
-            logData = httpSending(api);
-
-            log.debug(logData.toString());
-
-
-        } catch (Exception e) {
-            throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {
-            }.getClass().getEnclosingMethod().getName() + " "
-                    + "- TYPE = [Function]/  Function - execute", className, 12);
-
-        }
-
+        logData = httpSending(api);
+        log.debug(logData.toString());
         return logData;
     }
 
-
-    /**
-     * URL 에러 검사
-     */
     public Map<String, Object> errorCheckApi(MonApi api, Map<String, Object> logData) throws Exception {
         Map<String, Object> checkData = new HashMap<String, Object>();
 
-        try {
-
-            int status = Integer.parseInt("" + logData.get("status"));
-            double loadTime = Double.parseDouble("" + logData.get("loadTime"));
-            double payLoad = Double.parseDouble("" + logData.get("payLoad"));
-            String response = "" + logData.get("response");
+        int status = Integer.parseInt("" + logData.get("status"));
+        double loadTime = Double.parseDouble("" + logData.get("loadTime"));
+        double payLoad = Double.parseDouble("" + logData.get("payLoad"));
+        String response = "" + logData.get("response");
 
 
-            checkData.put("url", api.getUrl());
-            checkData.put("method", api.getMethod());
-            checkData.put("seq", api.getSeq());
-            checkData.put("title", api.getTitle());
-            checkData.put("type", "API");
-            checkData.put("check_loadTime", loadTime);
-            checkData.put("result", errCheck(status, loadTime, payLoad, response, api));
-
-        } catch (Exception e) {
-            throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {
-            }.getClass().getEnclosingMethod().getName() + " "
-                    + "- TYPE = [Function]/  Function - execute", className, 13);
-
-        }
+        checkData.put("url", api.getUrl());
+        checkData.put("method", api.getMethod());
+        checkData.put("seq", api.getSeq());
+        checkData.put("title", api.getTitle());
+        checkData.put("type", "API");
+        checkData.put("check_loadTime", loadTime);
+        checkData.put("result", errCheck(status, loadTime, payLoad, response, api));
 
         return checkData;
     }
@@ -139,140 +92,102 @@ public class ApiService {
             return "SUCCESS";
     }
 
-    /**
-     * HTTP SENDING
-     */
-    @SuppressWarnings("deprecation")
     public Map<String, Object> httpSending(MonApi api) throws Exception {
         Map<String, Object> result = new HashMap<String, Object>();
 
-        try {
 
-            HttpClient httpclient = HttpClients.createDefault();
+        HttpClient httpclient = HttpClients.createDefault();
 
-            List<NameValuePair> params = new ArrayList<NameValuePair>();
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
 
-            for (MonApiParam monApiParam : api.getApiParams()) {
-                params.add(new BasicNameValuePair(monApiParam.getParam_key(), monApiParam.getParam_value()));
-            }
-
-            long st = System.currentTimeMillis();
-            HttpResponse response = httpclient.execute(httpRequest(api.getMethod(), api.getUrl(), params));
-            long ed = System.currentTimeMillis();
-
-            result = getApiLogData(st, ed, response);
-            httpclient.getConnectionManager().shutdown();
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-            throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {
-            }.getClass().getEnclosingMethod().getName() + " "
-                    + "- TYPE = [Function]/  Function - execute", className, 14);
-
+        for (MonApiParam monApiParam : api.getApiParams()) {
+            params.add(new BasicNameValuePair(monApiParam.getParam_key(), monApiParam.getParam_value()));
         }
+
+        long st = System.currentTimeMillis();
+        HttpResponse response = httpclient.execute(httpRequest(api.getMethod(), api.getUrl(), params));
+        long ed = System.currentTimeMillis();
+
+        result = getApiLogData(st, ed, response);
 
         return result;
     }
 
 
-    /**
-     * GET HTTP LOG DATA
-     */
     public Map<String, Object> getApiLogData(long st, long ed, HttpResponse response) throws Exception {
         Map<String, Object> result = new HashMap<String, Object>();
         BufferedReader reader = null;
 
-        try {
 
-            long loadTime = ed - st;
-            long payLoad = response.getEntity().getContentLength();
-            int status = response.getStatusLine().getStatusCode();
+        long loadTime = ed - st;
+        long payLoad = response.getEntity().getContentLength();
+        int status = response.getStatusLine().getStatusCode();
 
-            StringBuffer responseData = new StringBuffer();
-            if (status >= 200 && status < 400) {
-                String inputLine = "";
+        StringBuffer responseData = new StringBuffer();
+        if (status >= 200 && status < 400) {
+            String inputLine = "";
 
-                reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+            reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 
-                while ((inputLine = reader.readLine()) != null) {
-                    responseData.append(inputLine);
-                }
-
-                reader.close();
-
-                payLoad = response.getEntity().getContentLength();
-                if (payLoad == -1) payLoad = CommonUtils.getByteLength(responseData.toString());
+            while ((inputLine = reader.readLine()) != null) {
+                responseData.append(inputLine);
             }
 
-            result.put("loadTime", loadTime);
-            result.put("status", status);
-            result.put("payLoad", payLoad);
-            result.put("response", responseData.toString());
+            reader.close();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {
-            }.getClass().getEnclosingMethod().getName() + " "
-                    + "- TYPE = [Function]/  Function - execute", className, 15);
+            payLoad = response.getEntity().getContentLength();
+            if (payLoad == -1) payLoad = CommonUtils.getByteLength(responseData.toString());
         }
+
+        result.put("loadTime", loadTime);
+        result.put("status", status);
+        result.put("payLoad", payLoad);
+        result.put("response", responseData.toString());
 
         return result;
     }
 
 
-    /**
-     * HTTP REQUEST
-     */
     public HttpUriRequest httpRequest(String method, String url, List<NameValuePair> params) throws Exception {
         HttpUriRequest http = null;
 
-        try {
 
-            if (method.equals("GET") == true) {
+        if (method.equals("GET") == true) {
 
-                HttpGet httpget = new HttpGet(url);
+            HttpGet httpget = new HttpGet(url);
 
-                http = httpget;
-            } else if (method.equals("POST") == true) {
+            http = httpget;
+        } else if (method.equals("POST") == true) {
 
-                HttpPost httppost = new HttpPost(url);
+            HttpPost httppost = new HttpPost(url);
 
-                httppost.setEntity(new UrlEncodedFormEntity(params));
+            httppost.setEntity(new UrlEncodedFormEntity(params));
 
-                http = httppost;
+            http = httppost;
 
-            } else if (method.equals("PUT") == true) {
+        } else if (method.equals("PUT") == true) {
 
-                HttpPut httpput = new HttpPut(url);
+            HttpPut httpput = new HttpPut(url);
 
-                httpput.setEntity(new UrlEncodedFormEntity(params));
+            httpput.setEntity(new UrlEncodedFormEntity(params));
 
-                http = httpput;
+            http = httpput;
 
-            } else if (method.equals("DELETE") == true) {
+        } else if (method.equals("DELETE") == true) {
 
-                HttpDelete httpdelete = new HttpDelete(url);
+            HttpDelete httpdelete = new HttpDelete(url);
 
-                http = httpdelete;
+            http = httpdelete;
 
-            } else if (method.equals("PATCH") == true) {
+        } else if (method.equals("PATCH") == true) {
 
-                HttpPatch httppatch = new HttpPatch(url);
+            HttpPatch httppatch = new HttpPatch(url);
 
-                httppatch.setEntity(new UrlEncodedFormEntity(params));
+            httppatch.setEntity(new UrlEncodedFormEntity(params));
 
-                http = httppatch;
+            http = httppatch;
 
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {
-            }.getClass().getEnclosingMethod().getName() + " "
-                    + "- TYPE = [Function]/  Function - execute", className, 16);
         }
-
         return http;
     }
 

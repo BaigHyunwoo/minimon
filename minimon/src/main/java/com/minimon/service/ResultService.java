@@ -3,7 +3,6 @@ package com.minimon.service;
 import com.minimon.MinimonApplication;
 import com.minimon.common.SendingHttp;
 import com.minimon.entity.MonResult;
-import com.minimon.exceptionHandler.MyException;
 import com.minimon.repository.MonResultRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,24 +23,14 @@ public class ResultService {
     public MonResult saveResult(Map<String, Object> result) throws Exception {
 
         MonResult monResult = new MonResult();
-
-        try {
-
-            monResult.setMon_seq(Integer.parseInt("" + result.get("seq")));
-            monResult.setTitle("" + result.get("title"));
-            monResult.setResult("" + result.get("result"));
-            monResult.setType("" + result.get("type"));
-            monResult.setRegDate(new Date());
-            monResult.setLoadTime(Double.parseDouble("" + result.get("check_loadTime")));
-            monResult.setResponse(result.toString());
-            monResultRepository.save(monResult);
-
-        } catch (Exception e) {
-            throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {
-            }.getClass().getEnclosingMethod().getName() + " "
-                    + "- TYPE = [Function]/  Function - saveResult", className, 11);
-
-        }
+        monResult.setMon_seq(Integer.parseInt("" + result.get("seq")));
+        monResult.setTitle("" + result.get("title"));
+        monResult.setResult("" + result.get("result"));
+        monResult.setType("" + result.get("type"));
+        monResult.setRegDate(new Date());
+        monResult.setLoadTime(Double.parseDouble("" + result.get("check_loadTime")));
+        monResult.setResponse(result.toString());
+        monResultRepository.save(monResult);
 
         return monResult;
     }

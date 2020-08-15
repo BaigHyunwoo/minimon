@@ -4,7 +4,6 @@ import com.minimon.common.CommonUtils;
 import com.minimon.common.SeleniumHandler;
 import com.minimon.entity.MonCodeData;
 import com.minimon.entity.MonTransaction;
-import com.minimon.exceptionHandler.MyException;
 import com.minimon.repository.MonTransactionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,26 +30,13 @@ public class TransactionService {
         return monTransactionRepository.findAll();
     }
 
-    /**
-     * transaction 모니터링 검사 실행
-     */
-    public Map<String, Object> checkTransactions(List<MonTransaction> monTransactions) throws Exception {
+    public Map<String, Object> checkTransactions(List<MonTransaction> monTransactions) {
         Map<String, Object> checkData = new HashMap<String, Object>();
 
-        try {
 
-            for (MonTransaction transaction : monTransactions) {
-                Map<String, Object> logData = executeTransaction(transaction.getCodeDatas());
-                checkData.put("" + transaction.getSeq(), errorCheckTransaction(transaction, logData));
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {
-            }.getClass().getEnclosingMethod().getName() + " "
-                    + "- TYPE = [Function]/  Function - execute", className, 11);
-
+        for (MonTransaction transaction : monTransactions) {
+            Map<String, Object> logData = executeTransaction(transaction.getCodeDatas());
+            checkData.put("" + transaction.getSeq(), errorCheckTransaction(transaction, logData));
         }
 
         return checkData;
@@ -64,15 +50,11 @@ public class TransactionService {
                 1, now, now, hours, hours);
     }
 
-    /**
-     * transaction 모니터링 검사 상태 검사
-     */
-    public int checkStatus(Map<String, Object> logData) throws Exception {
+    public int checkStatus(Map<String, Object> logData) {
 
         int status = 200;
 
         try {
-
             for (String key : logData.keySet()) {
 
                 if (logData.get(key).equals("ERR") == true) status = 500;
@@ -85,76 +67,54 @@ public class TransactionService {
 
             e.printStackTrace();
 
-            throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {
-            }.getClass().getEnclosingMethod().getName() + " "
-                    + "- TYPE = [Function]/  Function - execute", className, 11);
-
         }
 
         return status;
     }
 
-
-    /**
-     * transaction 에러 검사
-     */
-    public Map<String, Object> errorCheckTransaction(MonTransaction transaction, Map<String, Object> logData) throws Exception {
+    public Map<String, Object> errorCheckTransaction(MonTransaction transaction, Map<String, Object> logData) {
         Map<String, Object> checkData = new HashMap<String, Object>();
 
-        try {
-
-            String result = "SUCCESS";
-            int status = Integer.parseInt("" + logData.get("status"));
-            double loadTime = Double.parseDouble("" + logData.get("loadTime"));
+        String result = "SUCCESS";
+        int status = Integer.parseInt("" + logData.get("status"));
+        double loadTime = Double.parseDouble("" + logData.get("loadTime"));
 
 
-            /*
-             * CHECK
-             */
-            if (transaction.getStatus() == status) checkData.put("status", "SUCCESS");
-            else {
-                checkData.put("status", "ERR");
-                result = "status ERR";
-            }
-
-            if (loadTime <= CommonUtils.getPerData(transaction.getLoadTime(), transaction.getErrLoadTime(), 1))
-                checkData.put("loadTime", "SUCCESS");
-            else {
-                checkData.put("loadTime", " ERR");
-                result = "loadTime ERR";
-            }
-
-
-            /*
-             * SET PARAM
-             */
-            checkData.put("logData", logData);
-            checkData.put("check_loadTime", loadTime);
-            checkData.put("check_status", status);
-            checkData.put("origin_loadTime", transaction.getLoadTime());
-            checkData.put("origin_status", transaction.getStatus());
-            checkData.put("seq", transaction.getSeq());
-            checkData.put("type", "TRANSACTION");
-            checkData.put("title", transaction.getTitle());
-            checkData.put("result", result);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {
-            }.getClass().getEnclosingMethod().getName() + " "
-                    + "- TYPE = [Function]/  Function - execute", className, 13);
-
+        /*
+         * CHECK
+         */
+        if (transaction.getStatus() == status) checkData.put("status", "SUCCESS");
+        else {
+            checkData.put("status", "ERR");
+            result = "status ERR";
         }
+
+        if (loadTime <= CommonUtils.getPerData(transaction.getLoadTime(), transaction.getErrLoadTime(), 1))
+            checkData.put("loadTime", "SUCCESS");
+        else {
+            checkData.put("loadTime", " ERR");
+            result = "loadTime ERR";
+        }
+
+
+        /*
+         * SET PARAM
+         */
+        checkData.put("logData", logData);
+        checkData.put("check_loadTime", loadTime);
+        checkData.put("check_status", status);
+        checkData.put("origin_loadTime", transaction.getLoadTime());
+        checkData.put("origin_status", transaction.getStatus());
+        checkData.put("seq", transaction.getSeq());
+        checkData.put("type", "TRANSACTION");
+        checkData.put("title", transaction.getTitle());
+        checkData.put("result", result);
 
         return checkData;
     }
 
 
-    /**
-     * transaction Code 실행
-     */
-    public Map<String, Object> executeTransaction(List<MonCodeData> codeDatas) throws Exception {
+    public Map<String, Object> executeTransaction(List<MonCodeData> codeDatas) {
         Map<String, Object> logData = new HashMap<String, Object>();
         EventFiringWebDriver driver = null;
 
@@ -182,10 +142,6 @@ public class TransactionService {
         } catch (Exception e) {
             e.printStackTrace();
 
-            throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {
-            }.getClass().getEnclosingMethod().getName() + " "
-                    + "- TYPE = [Function]/  Function - execute", className, 14);
-
         } finally {
 
             if (driver != null) driver.quit();
@@ -199,32 +155,21 @@ public class TransactionService {
     /**
      * transaction Code 분석
      */
-    public MonCodeData getCodeData(String line) throws Exception {
+    public MonCodeData getCodeData(String line) {
         MonCodeData monCodeData = null;
 
-        try {
+        String action = getCodeAction(line);
+        if (action != null) {
 
-            String action = getCodeAction(line);
-            if (action != null) {
+            String selector_type = getCodeSelectorType(line);
+            String selector_value = getCodeSelectorValue(line, action);
+            String value = getCodeValue(line, action, selector_type);
 
-                String selector_type = getCodeSelectorType(line);
-                String selector_value = getCodeSelectorValue(line, action);
-                String value = getCodeValue(line, action, selector_type);
-
-                monCodeData = new MonCodeData();
-                monCodeData.setAction(action);
-                monCodeData.setSelector_type(selector_type);
-                monCodeData.setSelector_value(selector_value);
-                monCodeData.setValue(value);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {
-            }.getClass().getEnclosingMethod().getName() + " "
-                    + "- TYPE = [Function]/  Function - execute", className, 15);
-
+            monCodeData = new MonCodeData();
+            monCodeData.setAction(action);
+            monCodeData.setSelector_type(selector_type);
+            monCodeData.setSelector_value(selector_value);
+            monCodeData.setValue(value);
         }
 
         return monCodeData;

@@ -2,7 +2,6 @@ package com.minimon.common;
 
 import com.minimon.MinimonApplication;
 import com.minimon.entity.MonResult;
-import com.minimon.exceptionHandler.MyException;
 import com.minimon.service.ApiService;
 import com.minimon.service.ResultService;
 import com.minimon.service.TransactionService;
@@ -40,26 +39,16 @@ public class ExecuteTool {
     @Scheduled(cron = "0 0/5 * * * *")
     public void execute() throws Exception {
 
-        try {
-            if (MinimonApplication.getDriverPath().length() > 1) {
-                List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
-                resultList.add(apiService.checkApis(apiService.findApi()));
-                resultList.add(urlService.checkUrls(urlService.findUrl()));
-                resultList.add(transactionService.checkTransactions(transactionService.findTransactionUseable()));
-                check(resultList);
-                log.info("Monitoring Execute Complete");
-            } else {
-                log.info("Please save your webDriverPath at the main page");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {
-            }.getClass().getEnclosingMethod().getName() + " "
-                    + "- TYPE = [Function]/  Function - execute", className, 11);
-
+        if (MinimonApplication.getDriverPath().length() > 1) {
+            List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
+            resultList.add(apiService.checkApis(apiService.findApi()));
+            resultList.add(urlService.checkUrls(urlService.findUrl()));
+            resultList.add(transactionService.checkTransactions(transactionService.findTransactionUseable()));
+            check(resultList);
+            log.info("Monitoring Execute Complete");
+        } else {
+            log.info("Please save your webDriverPath at the main page");
         }
-
     }
 
 
@@ -68,25 +57,17 @@ public class ExecuteTool {
      */
     public void check(List<Map<String, Object>> resultList) throws Exception {
 
-        try {
-            for (Map<String, Object> result : resultList) {
-                for (Object value : result.values()) {
-                    Map<String, Object> checkLog = (Map<String, Object>) value;
-                    if (checkLog.get("result").equals("SUCCESS") == false) {
-                        MonResult monResult = resultService.saveResult(checkLog);
-                        resultService.sendResultByProperties(monResult);
-                    }
+        for (Map<String, Object> result : resultList) {
+            for (Object value : result.values()) {
+                Map<String, Object> checkLog = (Map<String, Object>) value;
+                if (checkLog.get("result").equals("SUCCESS") == false) {
+                    MonResult monResult = resultService.saveResult(checkLog);
+                    resultService.sendResultByProperties(monResult);
                 }
             }
-
-            log.debug("Monitoring check Complete");
-
-        } catch (Exception e) {
-            throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {
-            }.getClass().getEnclosingMethod().getName() + " "
-                    + "- TYPE = [Function]/  Function - check", className, 12);
-
         }
+
+        log.debug("Monitoring check Complete");
 
     }
 

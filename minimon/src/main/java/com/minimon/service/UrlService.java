@@ -3,7 +3,6 @@ package com.minimon.service;
 import com.minimon.common.CommonUtils;
 import com.minimon.common.SeleniumHandler;
 import com.minimon.entity.MonUrl;
-import com.minimon.exceptionHandler.MyException;
 import com.minimon.repository.MonUrlRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,20 +34,10 @@ public class UrlService {
     public Map<String, Object> checkUrls(List<MonUrl> urls) throws Exception {
         Map<String, Object> checkData = new HashMap<String, Object>();
 
-        try {
-
-            for (MonUrl url : urls) {
-                Map<String, Object> logData = executeUrl(url.getUrl(), url.getTimeout());
-                checkData.put(url.getUrl(), errorCheckUrl(url, logData));
-            }
-
-        } catch (Exception e) {
-            throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {
-            }.getClass().getEnclosingMethod().getName() + " "
-                    + "- TYPE = [Function]/  Function - execute", className, 11);
-
+        for (MonUrl url : urls) {
+            Map<String, Object> logData = executeUrl(url.getUrl(), url.getTimeout());
+            checkData.put(url.getUrl(), errorCheckUrl(url, logData));
         }
-
         return checkData;
     }
 
@@ -59,69 +48,41 @@ public class UrlService {
                 1, now, now, hours, hours);
     }
 
-    /**
-     * URL 실행
-     */
     public Map<String, Object> executeUrl(String url, int timeout) throws Exception {
         Map<String, Object> logData = new HashMap<String, Object>();
         EventFiringWebDriver driver = null;
 
-        try {
+        SeleniumHandler selenium = new SeleniumHandler();
+        driver = selenium.setUp();
 
-            SeleniumHandler selenium = new SeleniumHandler();
-            driver = selenium.setUp();
+        selenium.connectUrl(url, driver, timeout);
+        logData = selenium.expectionLog(
+                selenium.getLog(driver),
+                driver.getCurrentUrl()
+        );
+        logData.put("source", selenium.getSource(driver));
 
-            selenium.connectUrl(url, driver, timeout);
-            logData = selenium.expectionLog(
-                    selenium.getLog(driver),
-                    driver.getCurrentUrl()
-            );
-            logData.put("source", selenium.getSource(driver));
-
-            log.debug(logData.toString());
-
-
-        } catch (Exception e) {
-            throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {
-            }.getClass().getEnclosingMethod().getName() + " "
-                    + "- TYPE = [Function]/  Function - execute", className, 12);
-
-        } finally {
-
-            if (driver != null) driver.quit();
-
-        }
+        log.debug(logData.toString());
+        if (driver != null) driver.quit();
 
         return logData;
     }
 
 
-    /**
-     * URL 에러 검사
-     */
     public Map<String, Object> errorCheckUrl(MonUrl url, Map<String, Object> logData) throws Exception {
         Map<String, Object> checkData = new HashMap<String, Object>();
 
-        try {
+        int status = Integer.parseInt("" + logData.get("status"));
+        double totalLoadTime = Double.parseDouble("" + logData.get("totalLoadTime"));
+        double totalPayLoad = Double.parseDouble("" + logData.get("totalPayLoad"));
+        String source = logData.get("source").toString();
 
-            int status = Integer.parseInt("" + logData.get("status"));
-            double totalLoadTime = Double.parseDouble("" + logData.get("totalLoadTime"));
-            double totalPayLoad = Double.parseDouble("" + logData.get("totalPayLoad"));
-            String source = logData.get("source").toString();
-
-            checkData.put("url", url.getUrl());
-            checkData.put("seq", url.getSeq());
-            checkData.put("type", "URL");
-            checkData.put("title", url.getTitle());
-            checkData.put("check_loadTime", totalLoadTime);
-            checkData.put("result", errCheck(status, totalLoadTime, totalPayLoad, source, url));
-
-        } catch (Exception e) {
-            throw new MyException("CLASS : " + className + " - METHOD : " + new Object() {
-            }.getClass().getEnclosingMethod().getName() + " "
-                    + "- TYPE = [Function]/  Function - execute", className, 11);
-
-        }
+        checkData.put("url", url.getUrl());
+        checkData.put("seq", url.getSeq());
+        checkData.put("type", "URL");
+        checkData.put("title", url.getTitle());
+        checkData.put("check_loadTime", totalLoadTime);
+        checkData.put("result", errCheck(status, totalLoadTime, totalPayLoad, source, url));
 
         return checkData;
     }
@@ -136,8 +97,7 @@ public class UrlService {
             return "PAYLOAD ERR";
         else if (url.getTextCheck() == 1 && source.indexOf(url.getTextCheckValue()) >= 0) {
             return "TEXT ERR";
-        }
-        else
+        } else
             return "SUCCESS";
     }
 
