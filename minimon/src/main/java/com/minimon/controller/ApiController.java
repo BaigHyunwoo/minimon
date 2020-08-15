@@ -6,6 +6,7 @@ import com.minimon.entity.MonResult;
 import com.minimon.repository.MonApiRepository;
 import com.minimon.service.ApiService;
 import com.minimon.service.ResultService;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -14,15 +15,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-
-/**
- * 메인 서버
- *
- * @author 백현우
- */
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@Api(value = "ApiController")
 public class ApiController {
 
     private final ApiService apiService;

@@ -4,6 +4,7 @@ import com.minimon.entity.MonResult;
 import com.minimon.entity.MonUrl;
 import com.minimon.service.ResultService;
 import com.minimon.service.UrlService;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
+@Api(value = "UrlController")
 public class UrlController {
     private final UrlService urlService;
     private final ResultService resultService;

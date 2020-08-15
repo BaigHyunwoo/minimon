@@ -8,6 +8,7 @@ import com.minimon.entity.MonTransaction;
 import com.minimon.repository.MonTransactionRepository;
 import com.minimon.service.ResultService;
 import com.minimon.service.TransactionService;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -20,18 +21,10 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 
-/**
- * 
- * 메인 서버 
- * 
- * 
- * 
- * @author 백현우
- *
- */
 @Slf4j
 @RequiredArgsConstructor
 @RestController
+@Api(value = "TAController")
 public class TransactionController {
 
     private final MonTransactionRepository monTransactionRepository;
