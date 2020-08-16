@@ -1,4 +1,4 @@
-package com.minimon;
+package com.minimon.enums;
 
 
 import lombok.AllArgsConstructor;

@@ -3,6 +3,7 @@ package com.minimon.service;
 import com.minimon.common.CommonUtils;
 import com.minimon.entity.MonApi;
 import com.minimon.entity.MonApiParam;
+import com.minimon.entity.MonResult;
 import com.minimon.repository.MonApiRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -24,14 +26,39 @@ import java.util.*;
 @RequiredArgsConstructor
 @Service
 public class ApiService {
-
+    private final ResultService resultService;
     private final MonApiRepository monApiRepository;
 
-    private String className = this.getClass().toString();
+    public MonApi getApi(int seq) {
+        return monApiRepository.findBySeq(seq);
+    }
 
     @Cacheable(value = "list", key = "'api'")
     public List<MonApi> getApis() {
         return monApiRepository.findAll();
+    }
+
+    @CacheEvict(value = "list", key = "'api'")
+    public void saveApi(MonApi monApi) {
+        monApiRepository.save(monApi);
+    }
+
+    @CacheEvict(value = "list", key = "'api'")
+    public boolean editApi(MonApi monApiVO) {
+        Optional<MonApi> optionalMonApi = Optional.ofNullable(getApi(monApiVO.getSeq()));
+        optionalMonApi.ifPresent(monUrl -> {
+            monApiRepository.save(monApiVO);
+        });
+        return optionalMonApi.isPresent();
+    }
+
+    @CacheEvict(value = "list", key = "'api'")
+    public boolean remove(int seq) {
+        Optional<MonApi> optionalMonApi = Optional.ofNullable(getApi(seq));
+        optionalMonApi.ifPresent(monApi -> {
+            monApiRepository.delete(monApi);
+        });
+        return optionalMonApi.isPresent();
     }
 
     public List<MonApi> findApi() {
@@ -50,11 +77,22 @@ public class ApiService {
         return checkData;
     }
 
+    public boolean executeApi(int seq) {
+        Optional<MonApi> optionalMonApi = Optional.ofNullable(monApiRepository.findBySeq(seq));
+        optionalMonApi.ifPresent(monApi -> {
+            try {
+                resultService.sendResultByProperties(resultService.saveResult(errorCheckApi(monApi, executeApi(monApi))));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        return optionalMonApi.isPresent();
+
+    }
+
     public Map<String, Object> executeApi(MonApi api) throws Exception {
-        Map<String, Object> logData = new HashMap<String, Object>();
-        logData = httpSending(api);
-        log.debug(logData.toString());
-        return logData;
+        return httpSending(api);
     }
 
     public Map<String, Object> errorCheckApi(MonApi api, Map<String, Object> logData) throws Exception {

@@ -1,6 +1,6 @@
 package com.minimon.service;
 
-import com.minimon.MonErrorCode;
+import com.minimon.enums.MonErrorCode;
 import com.minimon.common.CommonUtils;
 import com.minimon.common.SeleniumHandler;
 import com.minimon.entity.MonUrl;

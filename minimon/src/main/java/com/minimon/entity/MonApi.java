@@ -2,6 +2,7 @@ package com.minimon.entity;
 
 import com.sun.istack.NotNull;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -14,12 +15,10 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
 @Table(name="MON_API")
 public class MonApi implements Serializable {
 
-	/*
-	 * Setting Info
-	 */
 	@Id
 	@GeneratedValue(strategy= GenerationType.AUTO, generator="native")
 	@GenericGenerator(name = "native",strategy = "native")
@@ -83,9 +82,6 @@ public class MonApi implements Serializable {
     @JoinColumn(name = "tbl_mon_api_seq")
     private List<MonApiParam> apiParams = new ArrayList<MonApiParam>();
     
-    /*
-     * Origin Data Info
-     */
     @NotNull
     private int status;
 

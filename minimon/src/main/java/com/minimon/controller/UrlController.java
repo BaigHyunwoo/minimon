@@ -22,18 +22,18 @@ public class UrlController {
     }
 
     @PostMapping(path = "")
-    public MonUrl createUrl(@RequestBody MonUrl monUrl) {
+    public MonUrl create(@RequestBody MonUrl monUrl) {
         urlService.saveUrl(monUrl);
         return monUrl;
     }
 
     @GetMapping(path = "/{seq}")
-    public MonUrl getUrl(@PathVariable("seq") int seq) {
+    public MonUrl get(@PathVariable("seq") int seq) {
         return urlService.getUrl(seq);
     }
 
     @PutMapping(path = "")
-    public boolean updateUrl(@RequestBody MonUrl monUrl) {
+    public boolean update(@RequestBody MonUrl monUrl) {
         return urlService.editUrl(monUrl);
     }
 
@@ -43,12 +43,12 @@ public class UrlController {
     }
 
     @PostMapping(path = "/check")
-    public Map<String, Object> urlCheck(@RequestParam Map<String, Object> data) throws Exception {
+    public Map<String, Object> check(@RequestParam Map<String, Object> data) throws Exception {
         return urlService.executeUrl(data.get("url").toString(), Integer.parseInt(data.get("timeout").toString()));
     }
 
-    @PostMapping(path = "/url/{seq}/execute")
-    public boolean urlExecute(@PathVariable("seq") int seq) {
+    @PostMapping(path = "/{seq}/execute")
+    public boolean execute(@PathVariable("seq") int seq) {
         return urlService.executeUrl(seq);
     }
 }

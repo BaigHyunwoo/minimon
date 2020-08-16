@@ -16,12 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
-/**
- * 모니터링 동작 관리
- *
- * @author 백현우
- */
 @Slf4j
 @RestController
 @EnableScheduling
@@ -33,9 +27,6 @@ public class ExecuteTool {
     private final TransactionService transactionService;
     private String className = this.getClass().toString();
 
-    /**
-     * 모니터링 실행
-     */
     @Scheduled(cron = "0 0/5 * * * *")
     public void execute() throws Exception {
 
@@ -51,10 +42,6 @@ public class ExecuteTool {
         }
     }
 
-
-    /**
-     * 모니터링 실행 결과 전송
-     */
     public void check(List<Map<String, Object>> resultList) throws Exception {
 
         for (Map<String, Object> result : resultList) {
@@ -70,6 +57,4 @@ public class ExecuteTool {
         log.debug("Monitoring check Complete");
 
     }
-
-
 }
