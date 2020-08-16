@@ -2,6 +2,7 @@ package com.minimon.entity;
 
 import com.sun.istack.NotNull;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -12,12 +13,10 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
 @Table(name = "MON_URL")
 public class MonUrl implements Serializable {
 
-    /*
-     * Setting Info
-     */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
@@ -73,10 +72,6 @@ public class MonUrl implements Serializable {
 
     private String textCheckValue;
 
-
-    /*
-     * Origin Data Info
-     */
     @NotNull
     private int status;
 

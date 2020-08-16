@@ -1,5 +1,6 @@
 package com.minimon.service;
 
+import com.minimon.MonErrorCode;
 import com.minimon.common.CommonUtils;
 import com.minimon.common.SeleniumHandler;
 import com.minimon.entity.MonUrl;
@@ -17,20 +18,45 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class UrlService {
-
+    private final ResultService resultService;
     private final MonUrlRepository monUrlRepository;
 
-    private String className = this.getClass().toString();
+    public List<MonUrl> getUrlList() {
+        return monUrlRepository.findAll();
+    }
+
+    public MonUrl getUrl(int seq) {
+        return monUrlRepository.findBySeq(seq);
+    }
 
     @Cacheable(value = "list", key = "'url'")
     public List<MonUrl> getMonUrls() {
         return monUrlRepository.findAll();
     }
 
+    @CacheEvict(value = "list", key = "'url'")
+    public void saveUrl(MonUrl monUrl) {
+        monUrlRepository.save(monUrl);
+    }
 
-    /**
-     * URL 모니터링 검사 실행
-     */
+    @CacheEvict(value = "list", key = "'url'")
+    public boolean editUrl(MonUrl monUrlVO) {
+        Optional<MonUrl> optionalMonUrl = Optional.ofNullable(getUrl(monUrlVO.getSeq()));
+        optionalMonUrl.ifPresent(monUrl -> {
+            monUrlRepository.save(monUrlVO);
+        });
+        return optionalMonUrl.isPresent();
+    }
+
+    @CacheEvict(value = "list", key = "'url'")
+    public boolean remove(int seq) {
+        Optional<MonUrl> optionalMonUrl = Optional.ofNullable(getUrl(seq));
+        optionalMonUrl.ifPresent(monUrl -> {
+            monUrlRepository.delete(monUrl);
+        });
+        return optionalMonUrl.isPresent();
+    }
+
     public Map<String, Object> checkUrls(List<MonUrl> urls) throws Exception {
         Map<String, Object> checkData = new HashMap<String, Object>();
 
@@ -48,6 +74,23 @@ public class UrlService {
                 1, now, now, hours, hours);
     }
 
+    public boolean executeUrl(int seq) {
+        Optional<MonUrl> optionalMonUrl = Optional.ofNullable(getUrl(seq));
+        optionalMonUrl.ifPresent(monUrl -> {
+            try {
+
+                resultService.sendResultByProperties(
+                        resultService.saveResult(
+                                errorCheckUrl(monUrl,
+                                        executeUrl(monUrl.getUrl(), monUrl.getTimeout()))));
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        return optionalMonUrl.isPresent();
+    }
+
     public Map<String, Object> executeUrl(String url, int timeout) throws Exception {
         Map<String, Object> logData = new HashMap<String, Object>();
         EventFiringWebDriver driver = null;
@@ -61,15 +104,14 @@ public class UrlService {
                 driver.getCurrentUrl()
         );
         logData.put("source", selenium.getSource(driver));
-
         log.debug(logData.toString());
-        if (driver != null) driver.quit();
 
+        if (driver != null) driver.quit();
         return logData;
     }
 
 
-    public Map<String, Object> errorCheckUrl(MonUrl url, Map<String, Object> logData) throws Exception {
+    public Map<String, Object> errorCheckUrl(MonUrl url, Map<String, Object> logData) {
         Map<String, Object> checkData = new HashMap<String, Object>();
 
         int status = Integer.parseInt("" + logData.get("status"));
@@ -91,32 +133,14 @@ public class UrlService {
         if (status >= 400)
             return status + " ERR";
         else if (url.getLoadTimeCheck() == 1 && totalLoadTime >= url.getErrLoadTime())
-            return "LOAD TIME ERR";
+            return MonErrorCode.LOAD_TIME.getCode();
         else if (url.getPayLoadCheck() == 1 && (CommonUtils.getPerData(url.getPayLoad(), url.getPayLoadPer(), 2) > totalPayLoad
                 || totalPayLoad > CommonUtils.getPerData(url.getPayLoad(), url.getPayLoadPer(), 1)))
-            return "PAYLOAD ERR";
+            return MonErrorCode.PAYLOAD.getCode();
         else if (url.getTextCheck() == 1 && source.indexOf(url.getTextCheckValue()) >= 0) {
-            return "TEXT ERR";
+            return MonErrorCode.TEXT.getCode();
         } else
-            return "SUCCESS";
-    }
-
-    @CacheEvict(value = "list", key = "'url'")
-    public void saveUrl(MonUrl monUrl) {
-        monUrlRepository.save(monUrl);
-    }
-
-    @CacheEvict(value = "list", key = "'url'")
-    public void remove(int seq) {
-        Optional.of(getUrl(seq)).ifPresent(monUrl -> monUrlRepository.delete(monUrl));
-    }
-
-    public List<MonUrl> getUrlList() {
-        return monUrlRepository.findAll();
-    }
-
-    public MonUrl getUrl(int seq) {
-        return monUrlRepository.findBySeq(seq);
+            return MonErrorCode.SUCCESS.getCode();
     }
 
 }
