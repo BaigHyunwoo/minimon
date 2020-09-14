@@ -18,7 +18,8 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@Api(value = "UrlController")
+@RequestMapping("/url")
+@Api(tags = {"Url Controller"})
 public class UrlController {
     private final UrlService urlService;
     private final ResultService resultService;
@@ -48,7 +49,7 @@ public class UrlController {
         return monUrl;
     }
 
-    @GetMapping(path = "/url")
+    @GetMapping(path = "")
     public HashMap<String, Object> getUrls() {
         HashMap<String, Object> result = new HashMap<String, Object>();
         result.put("urlList", urlService.getUrlList());
@@ -57,7 +58,7 @@ public class UrlController {
     }
 
 
-    @PostMapping(path = "/url")
+    @PostMapping(path = "")
     public HashMap<String, Object> createUrl(@RequestParam Map<String, Object> param) {
         HashMap<String, Object> result = new HashMap<String, Object>();
 
@@ -76,7 +77,7 @@ public class UrlController {
     }
 
 
-    @GetMapping(path = "/url/{seq}")
+    @GetMapping(path = "/{seq}")
     public HashMap<String, Object> getUrl(@PathVariable("seq") int seq) {
         HashMap<String, Object> result = new HashMap<String, Object>();
 
@@ -94,7 +95,7 @@ public class UrlController {
         return result;
     }
 
-    @PutMapping(path = "/url/{seq}")
+    @PutMapping(path = "/{seq}")
     public HashMap<String, Object> updateUrl(@PathVariable("seq") int seq, @RequestParam Map<String, Object> param) {
         HashMap<String, Object> result = new HashMap<String, Object>();
 
@@ -123,7 +124,7 @@ public class UrlController {
         return result;
     }
 
-    @DeleteMapping(path = "/url/{seq}")
+    @DeleteMapping(path = "/{seq}")
     public HashMap<String, Object> delete(@PathVariable("seq") int seq) {
         HashMap<String, Object> result = new HashMap<String, Object>();
 
@@ -145,7 +146,7 @@ public class UrlController {
         return result;
     }
 
-    @PostMapping(path = "/url/check")
+    @PostMapping(path = "/check")
     public Map<String, Object> urlCheck(@RequestParam Map<String, Object> data) {
         Map<String, Object> result = new HashMap<String, Object>();
 
@@ -163,7 +164,7 @@ public class UrlController {
         return result;
     }
 
-    @PostMapping(path = "/url/{seq}/execute")
+    @PostMapping(path = "/{seq}/execute")
     public HashMap<String, Object> urlExecute(@PathVariable("seq") int seq) {
         HashMap<String, Object> result = new HashMap<String, Object>();
 

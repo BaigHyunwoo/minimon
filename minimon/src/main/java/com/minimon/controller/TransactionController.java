@@ -24,7 +24,8 @@ import java.util.*;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@Api(value = "TAController")
+@RequestMapping("")
+@Api(tags = {"Transaction Controller"})
 public class TransactionController {
 
     private final MonTransactionRepository monTransactionRepository;
@@ -74,7 +75,7 @@ public class TransactionController {
 	 * TRANSACTION LIST  호출
 	 * 
 	 */
-    @RequestMapping(path = "/transaction", method= RequestMethod.GET)
+    @RequestMapping(path = "", method= RequestMethod.GET)
 	public HashMap<String, Object> getUrls() {
     	HashMap<String, Object> result = new HashMap<String, Object>();
     	
@@ -100,7 +101,7 @@ public class TransactionController {
 	 * transaction 생성
 	 * 
 	 */
-	@RequestMapping(path = "/transaction", method= RequestMethod.POST)
+	@RequestMapping(path = "", method= RequestMethod.POST)
 	public HashMap<String, Object> createTransaction(@RequestParam Map<String, Object> param) {
     	HashMap<String, Object> result = new HashMap<String, Object>();
 
@@ -124,7 +125,7 @@ public class TransactionController {
 	 * transaction INFO  호출
 	 * 
 	 */
-    @RequestMapping(path = "/transaction/{seq}", method= RequestMethod.GET)
+    @RequestMapping(path = "/{seq}", method= RequestMethod.GET)
 	public HashMap<String, Object> getTransaction(@PathVariable("seq") int seq) {
     	HashMap<String, Object> result = new HashMap<String, Object>();
     	
@@ -154,7 +155,7 @@ public class TransactionController {
 	 * transaction 업데이트
 	 * 
 	 */
-    @RequestMapping(path = "/transaction/{seq}", method= RequestMethod.PUT)
+    @RequestMapping(path = "/{seq}", method= RequestMethod.PUT)
 	public HashMap<String, Object> updateTransaction(@PathVariable("seq") int seq, @RequestParam Map<String, Object> param) {
     	HashMap<String, Object> result = new HashMap<String, Object>();
     	
@@ -191,7 +192,7 @@ public class TransactionController {
 	 * transaction 삭제
 	 * 
 	 */
-    @RequestMapping(path = "/transaction/{seq}", method= RequestMethod.DELETE)
+    @RequestMapping(path = "/{seq}", method= RequestMethod.DELETE)
 	public HashMap<String, Object> delete(@PathVariable("seq") int seq) {
     	HashMap<String, Object> result = new HashMap<String, Object>();
     	
@@ -226,7 +227,7 @@ public class TransactionController {
 	 * 
 	 */
     @ResponseBody
-	@RequestMapping(value="/transactionCheck", method= RequestMethod.POST)
+	@RequestMapping(value="/check", method= RequestMethod.POST)
 	public Map<String, Object> transactionCheck(MultipartFile transactionFile) {
     	Map<String, Object> result = new HashMap<String, Object>();
 
@@ -280,7 +281,7 @@ public class TransactionController {
 	 * transaction  검사 실행
 	 * 
 	 */
-    @RequestMapping(path = "/transactionExecute/{seq}", method= RequestMethod.GET)
+    @RequestMapping(path = "/execute/{seq}", method= RequestMethod.GET)
 	public HashMap<String, Object> transactionExecute(@PathVariable("seq") int seq) {
     	HashMap<String, Object> result = new HashMap<String, Object>();
     	

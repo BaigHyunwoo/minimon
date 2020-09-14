@@ -14,10 +14,11 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@Api(value = "ResultController")
+@RequestMapping("/result")
+@Api(tags = {"Result Controller"})
 public class ResultController {
 
-    @PostMapping(path = "/result")
+    @PostMapping(path = "")
     public void resultReceiver(@RequestParam Map<String, Object> param) {
         log.info("====RESULT====");
         log.info(param.toString());

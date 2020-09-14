@@ -18,7 +18,8 @@ import java.util.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@Api(value = "ApiController")
+@RequestMapping("")
+@Api(tags = {"Api Controller"})
 public class ApiController {
 
     private final ApiService apiService;
@@ -93,7 +94,7 @@ public class ApiController {
     /**
      * API LIST  호출
      */
-    @RequestMapping(path = "/api", method = RequestMethod.GET)
+    @RequestMapping(path = "", method = RequestMethod.GET)
     public HashMap<String, Object> getUrls() {
         HashMap<String, Object> result = new HashMap<String, Object>();
 
@@ -117,7 +118,7 @@ public class ApiController {
     /**
      * API 생성
      */
-    @RequestMapping(path = "/api", method = RequestMethod.POST)
+    @RequestMapping(path = "", method = RequestMethod.POST)
     public HashMap<String, Object> createAPi(@RequestParam Map<String, Object> param) {
         HashMap<String, Object> result = new HashMap<String, Object>();
 
@@ -139,7 +140,7 @@ public class ApiController {
     /**
      * API INFO  호출
      */
-    @RequestMapping(path = "/api/{seq}", method = RequestMethod.GET)
+    @RequestMapping(path = "/{seq}", method = RequestMethod.GET)
     public HashMap<String, Object> getApi(@PathVariable("seq") int seq) {
         HashMap<String, Object> result = new HashMap<String, Object>();
 
@@ -163,7 +164,7 @@ public class ApiController {
     /**
      * API 업데이트
      */
-    @RequestMapping(path = "/api/{seq}", method = RequestMethod.PUT)
+    @RequestMapping(path = "/{seq}", method = RequestMethod.PUT)
     public HashMap<String, Object> updateApi(@PathVariable("seq") int seq, @RequestParam Map<String, Object> param) {
         HashMap<String, Object> result = new HashMap<String, Object>();
 
@@ -194,7 +195,7 @@ public class ApiController {
     /**
      * API 삭제
      */
-    @RequestMapping(path = "/api/{seq}", method = RequestMethod.DELETE)
+    @RequestMapping(path = "/{seq}", method = RequestMethod.DELETE)
     public HashMap<String, Object> delete(@PathVariable("seq") int seq) {
         HashMap<String, Object> result = new HashMap<String, Object>();
 
@@ -225,7 +226,7 @@ public class ApiController {
     /**
      * API CHECK
      */
-    @RequestMapping(path = "/apiCheck", method = RequestMethod.POST)
+    @RequestMapping(path = "check", method = RequestMethod.POST)
     public HashMap<String, Object> apiCheck(@RequestParam Map<String, Object> param) {
         HashMap<String, Object> result = new HashMap<String, Object>();
 
@@ -247,7 +248,7 @@ public class ApiController {
     /**
      * API  검사 실행
      */
-    @RequestMapping(path = "/apiExecute/{seq}", method = RequestMethod.GET)
+    @RequestMapping(path = "execute/{seq}", method = RequestMethod.GET)
     public HashMap<String, Object> apiExecute(@PathVariable("seq") int seq) {
         HashMap<String, Object> result = new HashMap<String, Object>();
         try {

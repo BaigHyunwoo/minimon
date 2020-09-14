@@ -16,7 +16,8 @@ import java.util.HashMap;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@Api(value = "MainController")
+@RequestMapping("/main")
+@Api(tags = {"Main Controller"})
 public class MainController {
     private final UrlService urlService;
     private final ApiService apiService;
