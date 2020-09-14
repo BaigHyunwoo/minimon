@@ -5,10 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.minimon.entity.MonCodeData;
 import com.minimon.entity.MonResult;
 import com.minimon.entity.MonTransaction;
+import com.minimon.entity.MonUrl;
 import com.minimon.repository.MonTransactionRepository;
 import com.minimon.service.ResultService;
 import com.minimon.service.TransactionService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -72,7 +74,8 @@ public class TransactionController {
     /**
      * TRANSACTION LIST  호출
      */
-    @RequestMapping(path = "", method = RequestMethod.GET)
+    @ApiOperation(value = "목록 조회", response = MonTransaction.class)
+    @GetMapping(path = "")
     public HashMap<String, Object> getUrls() {
         HashMap<String, Object> result = new HashMap<String, Object>();
 
@@ -96,7 +99,8 @@ public class TransactionController {
     /**
      * transaction 생성
      */
-    @RequestMapping(path = "", method = RequestMethod.POST)
+    @ApiOperation(value = "생성", response = Map.class)
+    @PostMapping(path = "")
     public HashMap<String, Object> createTransaction(@RequestParam Map<String, Object> param) {
         HashMap<String, Object> result = new HashMap<String, Object>();
 
@@ -118,7 +122,8 @@ public class TransactionController {
     /**
      * transaction INFO  호출
      */
-    @RequestMapping(path = "/{seq}", method = RequestMethod.GET)
+    @ApiOperation(value = "조회", response = Map.class)
+    @GetMapping(path = "/{seq}")
     public HashMap<String, Object> getTransaction(@PathVariable("seq") int seq) {
         HashMap<String, Object> result = new HashMap<String, Object>();
 
@@ -144,7 +149,8 @@ public class TransactionController {
     /**
      * transaction 업데이트
      */
-    @RequestMapping(path = "/{seq}", method = RequestMethod.PUT)
+    @ApiOperation(value = "수정", response = Map.class)
+    @PutMapping(path = "/{seq}")
     public HashMap<String, Object> updateTransaction(@PathVariable("seq") int seq, @RequestParam Map<String, Object> param) {
         HashMap<String, Object> result = new HashMap<String, Object>();
 
@@ -175,7 +181,8 @@ public class TransactionController {
     /**
      * transaction 삭제
      */
-    @RequestMapping(path = "/{seq}", method = RequestMethod.DELETE)
+    @ApiOperation(value = "삭제", response = Map.class)
+    @DeleteMapping(path = "/{seq}")
     public HashMap<String, Object> delete(@PathVariable("seq") int seq) {
         HashMap<String, Object> result = new HashMap<String, Object>();
 
@@ -208,7 +215,8 @@ public class TransactionController {
      * Upload transaction Code
      */
     @ResponseBody
-    @RequestMapping(value = "/check", method = RequestMethod.POST)
+    @ApiOperation(value = "검사 테스트", response = Map.class)
+    @PostMapping(value = "/check")
     public Map<String, Object> transactionCheck(MultipartFile transactionFile) {
         Map<String, Object> result = new HashMap<String, Object>();
 
@@ -260,7 +268,8 @@ public class TransactionController {
     /**
      * transaction  검사 실행
      */
-    @RequestMapping(path = "/execute/{seq}", method = RequestMethod.GET)
+    @ApiOperation(value = "검사 실행", response = Map.class)
+    @GetMapping(path = "/execute/{seq}")
     public HashMap<String, Object> transactionExecute(@PathVariable("seq") int seq) {
         HashMap<String, Object> result = new HashMap<String, Object>();
 

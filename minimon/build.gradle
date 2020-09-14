@@ -41,13 +41,6 @@ dependencies {
 	compile group: 'io.springfox', name: 'springfox-swagger2', version: '3.0.0'
 	compile(group: 'io.springfox', name: 'springfox-swagger-ui', version: '3.0.0')
 
-//	compile(group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2') {
-//		exclude module: 'swagger-annotations' exclude module: 'swagger-models'
-//	}
-//	compile("io.swagger:swagger-annotations:1.5.21")
-//	compile("io.swagger:swagger-models:1.5.21")
-//	compile(group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2')
-
 	compile group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.6.0'
 	runtimeOnly 'com.h2database:h2'
 

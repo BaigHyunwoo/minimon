@@ -46,7 +46,7 @@ public class UrlController {
         return urlService.editUrl(monUrl);
     }
 
-    @ApiOperation(value = "URL 삭제", response = Boolean.class)
+    @ApiOperation(value = "URL 삭제", response = boolean.class)
     @DeleteMapping(path = "/{seq}")
     public boolean delete(@PathVariable("seq") int seq) {
         return urlService.remove(seq);
