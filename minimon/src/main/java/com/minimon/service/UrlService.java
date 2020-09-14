@@ -25,21 +25,22 @@ public class UrlService {
         return monUrlRepository.findAll();
     }
 
+    @Cacheable(value = "URL", key = "#seq", unless = "#result == null")
     public MonUrl getUrl(int seq) {
         return monUrlRepository.findBySeq(seq);
     }
 
-    @Cacheable(value = "list", key = "'url'")
+    @Cacheable(value = "URL", unless = "#result == null")
     public List<MonUrl> getMonUrls() {
         return monUrlRepository.findAll();
     }
 
-    @CacheEvict(value = "list", key = "'url'")
+    @CacheEvict(value = "URL", key = "#monUrl.seq")
     public void saveUrl(MonUrl monUrl) {
         monUrlRepository.save(monUrl);
     }
 
-    @CacheEvict(value = "list", key = "'url'")
+    @CacheEvict(value = "URL", key = "#monUrlVO.seq")
     public boolean editUrl(MonUrl monUrlVO) {
         Optional<MonUrl> optionalMonUrl = Optional.ofNullable(getUrl(monUrlVO.getSeq()));
         optionalMonUrl.ifPresent(monUrl -> {
@@ -48,7 +49,7 @@ public class UrlService {
         return optionalMonUrl.isPresent();
     }
 
-    @CacheEvict(value = "list", key = "'url'")
+    @CacheEvict(value = "URL", key = "#seq")
     public boolean remove(int seq) {
         Optional<MonUrl> optionalMonUrl = Optional.ofNullable(getUrl(seq));
         optionalMonUrl.ifPresent(monUrl -> {
