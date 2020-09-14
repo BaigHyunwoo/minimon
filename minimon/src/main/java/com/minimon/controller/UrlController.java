@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 
-@RestController(value = "url")
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/url")
 @Api(tags = {"Url Controller"})

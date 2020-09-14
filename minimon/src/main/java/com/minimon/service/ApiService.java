@@ -95,7 +95,6 @@ public class ApiService {
             }
         }
         return monResult;
-
     }
 
     public Map<String, Object> executeApi(MonApi api) throws Exception {
