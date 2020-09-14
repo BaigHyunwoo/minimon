@@ -8,6 +8,7 @@ import com.minimon.entity.MonTransaction;
 import com.minimon.repository.MonTransactionRepository;
 import com.minimon.service.ResultService;
 import com.minimon.service.TransactionService;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -20,304 +21,276 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 
-/**
- * 
- * 메인 서버 
- * 
- * 
- * 
- * @author 백현우
- *
- */
 @Slf4j
 @RequiredArgsConstructor
 @RestController
+@RequestMapping("/transaction")
+@Api(tags = {"Transaction Controller"})
 public class TransactionController {
 
     private final MonTransactionRepository monTransactionRepository;
 
-	private final TransactionService transactionService;
+    private final TransactionService transactionService;
 
-	private final ResultService resultService;
+    private final ResultService resultService;
 
-	/**
-	 * 
-	 * URL DTO Set
-	 * 
-	 */
-	private MonTransaction setTblMonTransaction(MonTransaction monTransaction, Map<String, Object> param) {
-		ObjectMapper objectMapper = new ObjectMapper();
+    /**
+     * URL DTO Set
+     */
+    private MonTransaction setTblMonTransaction(MonTransaction monTransaction, Map<String, Object> param) {
+        ObjectMapper objectMapper = new ObjectMapper();
 
-		try {
-			SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd");
-			monTransaction.setTitle(""+param.get("title"));
-			monTransaction.setTimer(Integer.parseInt(""+param.get("timer")));
-			monTransaction.setStartDate(transFormat.parse(param.get("transaction_start_date").toString()));
-			monTransaction.setEndDate(transFormat.parse(param.get("transaction_end_date").toString()));
-			monTransaction.setStartHour(Integer.parseInt(param.get("transaction_start_hour").toString()));
-			monTransaction.setEndHour(Integer.parseInt(param.get("transaction_end_hour").toString()));
-			monTransaction.setTimeout(Integer.parseInt(""+param.get("timeout")));
-			monTransaction.setUseable(Integer.parseInt(""+param.get("transaction_useable")));
-			monTransaction.setLoadTimeCheck(Integer.parseInt("" + param.get("transaction_loadTimeCheck")));
-			monTransaction.setLoadTime(Double.parseDouble(""+param.get("loadTime")));
-			monTransaction.setErrLoadTime(Integer.parseInt(""+param.get("errLoadTime")));
-			monTransaction.setStatus(Integer.parseInt(""+param.get("status")));
-			monTransaction.setTransactionCode(""+param.get("transactionCode"));
-			monTransaction.setUptDate(new Date());
-			if(monTransaction.getRegDate() == null) monTransaction.setRegDate(new Date());
-			monTransaction.setCodeDatas(objectMapper.readValue(param.get("codeDatas").toString(), new TypeReference<List<MonCodeData>>(){}));
-			
-		} catch (Exception e) {
-			
-			e.printStackTrace();
-			
-		}
-		
-		return monTransaction;
-	}
-	
-	/**
-	 * 
-	 * TRANSACTION LIST  호출
-	 * 
-	 */
-    @RequestMapping(path = "/transaction", method= RequestMethod.GET)
-	public HashMap<String, Object> getUrls() {
-    	HashMap<String, Object> result = new HashMap<String, Object>();
-    	
-    	try {
+        try {
+            SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd");
+            monTransaction.setTitle("" + param.get("title"));
+            monTransaction.setTimer(Integer.parseInt("" + param.get("timer")));
+            monTransaction.setStartDate(transFormat.parse(param.get("transaction_start_date").toString()));
+            monTransaction.setEndDate(transFormat.parse(param.get("transaction_end_date").toString()));
+            monTransaction.setStartHour(Integer.parseInt(param.get("transaction_start_hour").toString()));
+            monTransaction.setEndHour(Integer.parseInt(param.get("transaction_end_hour").toString()));
+            monTransaction.setTimeout(Integer.parseInt("" + param.get("timeout")));
+            monTransaction.setUseable(Integer.parseInt("" + param.get("transaction_useable")));
+            monTransaction.setLoadTimeCheck(Integer.parseInt("" + param.get("transaction_loadTimeCheck")));
+            monTransaction.setLoadTime(Double.parseDouble("" + param.get("loadTime")));
+            monTransaction.setErrLoadTime(Integer.parseInt("" + param.get("errLoadTime")));
+            monTransaction.setStatus(Integer.parseInt("" + param.get("status")));
+            monTransaction.setTransactionCode("" + param.get("transactionCode"));
+            monTransaction.setUptDate(new Date());
+            if (monTransaction.getRegDate() == null) monTransaction.setRegDate(new Date());
+            monTransaction.setCodeDatas(objectMapper.readValue(param.get("codeDatas").toString(), new TypeReference<List<MonCodeData>>() {
+            }));
 
-    		List<MonTransaction> transactionList = monTransactionRepository.findAll();
-    		result.put("transactionList", transactionList);
-    		result.put("result", "success");
-    		
-    		
-    	} catch (Exception e) {
-    		
-			e.printStackTrace();
-			
-		}
-		
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
+
+        return monTransaction;
+    }
+
+    /**
+     * TRANSACTION LIST  호출
+     */
+    @RequestMapping(path = "", method = RequestMethod.GET)
+    public HashMap<String, Object> getUrls() {
+        HashMap<String, Object> result = new HashMap<String, Object>();
+
+        try {
+
+            List<MonTransaction> transactionList = monTransactionRepository.findAll();
+            result.put("transactionList", transactionList);
+            result.put("result", "success");
+
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
+
         return result;
-	}
-    
+    }
 
-	/**
-	 * 
-	 * transaction 생성
-	 * 
-	 */
-	@RequestMapping(path = "/transaction", method= RequestMethod.POST)
-	public HashMap<String, Object> createTransaction(@RequestParam Map<String, Object> param) {
-    	HashMap<String, Object> result = new HashMap<String, Object>();
 
-    	try {
+    /**
+     * transaction 생성
+     */
+    @RequestMapping(path = "", method = RequestMethod.POST)
+    public HashMap<String, Object> createTransaction(@RequestParam Map<String, Object> param) {
+        HashMap<String, Object> result = new HashMap<String, Object>();
 
-    		monTransactionRepository.save(setTblMonTransaction(new MonTransaction(), param));
-			result.put("result", "success");
-			
-		} catch (Exception e) {
-			
-			e.printStackTrace();
-			
-		}
-		
+        try {
+
+            monTransactionRepository.save(setTblMonTransaction(new MonTransaction(), param));
+            result.put("result", "success");
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
+
         return result;
-	}
+    }
 
 
-	/**
-	 * 
-	 * transaction INFO  호출
-	 * 
-	 */
-    @RequestMapping(path = "/transaction/{seq}", method= RequestMethod.GET)
-	public HashMap<String, Object> getTransaction(@PathVariable("seq") int seq) {
-    	HashMap<String, Object> result = new HashMap<String, Object>();
-    	
-    	try {
-    		
+    /**
+     * transaction INFO  호출
+     */
+    @RequestMapping(path = "/{seq}", method = RequestMethod.GET)
+    public HashMap<String, Object> getTransaction(@PathVariable("seq") int seq) {
+        HashMap<String, Object> result = new HashMap<String, Object>();
+
+        try {
 
 
-    		MonTransaction existsTransaction = monTransactionRepository.findBySeq(seq);
+            MonTransaction existsTransaction = monTransactionRepository.findBySeq(seq);
 
-    		result.put("data", existsTransaction);
-    		result.put("result", "success");
-    		
-    		
-    	} catch (Exception e) {
-    		
-			e.printStackTrace();
-			
-		}
-		
+            result.put("data", existsTransaction);
+            result.put("result", "success");
+
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
+
         return result;
-	}
+    }
 
 
+    /**
+     * transaction 업데이트
+     */
+    @RequestMapping(path = "/{seq}", method = RequestMethod.PUT)
+    public HashMap<String, Object> updateTransaction(@PathVariable("seq") int seq, @RequestParam Map<String, Object> param) {
+        HashMap<String, Object> result = new HashMap<String, Object>();
 
-	/**
-	 * 
-	 * transaction 업데이트
-	 * 
-	 */
-    @RequestMapping(path = "/transaction/{seq}", method= RequestMethod.PUT)
-	public HashMap<String, Object> updateTransaction(@PathVariable("seq") int seq, @RequestParam Map<String, Object> param) {
-    	HashMap<String, Object> result = new HashMap<String, Object>();
-    	
-    	try {
+        try {
 
-    		MonTransaction existsTransaction = monTransactionRepository.findBySeq(seq);
-    		
-    		if(existsTransaction != null) {
+            MonTransaction existsTransaction = monTransactionRepository.findBySeq(seq);
 
-    			monTransactionRepository.save(setTblMonTransaction(existsTransaction, param));
-    			
-    		}
-    		
-    		result.put("data", seq);
-    		result.put("result", "success");
-    		
-    		
-    	} catch (Exception e) {
-    		
-			e.printStackTrace();
-			
-		}
-		
+            if (existsTransaction != null) {
+
+                monTransactionRepository.save(setTblMonTransaction(existsTransaction, param));
+
+            }
+
+            result.put("data", seq);
+            result.put("result", "success");
+
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
+
         return result;
-	}
-
-    
+    }
 
 
+    /**
+     * transaction 삭제
+     */
+    @RequestMapping(path = "/{seq}", method = RequestMethod.DELETE)
+    public HashMap<String, Object> delete(@PathVariable("seq") int seq) {
+        HashMap<String, Object> result = new HashMap<String, Object>();
+
+        try {
 
 
-	/**
-	 * 
-	 * transaction 삭제
-	 * 
-	 */
-    @RequestMapping(path = "/transaction/{seq}", method= RequestMethod.DELETE)
-	public HashMap<String, Object> delete(@PathVariable("seq") int seq) {
-    	HashMap<String, Object> result = new HashMap<String, Object>();
-    	
-    	try {
+            MonTransaction existsTransaction = monTransactionRepository.findBySeq(seq);
+
+            if (existsTransaction != null) {
+
+                monTransactionRepository.delete(existsTransaction);
+
+            }
+
+            result.put("data", seq);
+            result.put("result", "success");
 
 
-    		MonTransaction existsTransaction = monTransactionRepository.findBySeq(seq);
-    		
-    		if(existsTransaction != null) {
-    			
-    			monTransactionRepository.delete(existsTransaction);
-    			
-    		}
-    		
-    		result.put("data", seq);
-    		result.put("result", "success");
-    		
-    		
-    	} catch (Exception e) {
-    		
-			e.printStackTrace();
-			
-		}
-		
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
+
         return result;
-	}
+    }
 
-    
-	/**
-	 * 
-	 * Upload transaction Code
-	 * 
-	 */
+
+    /**
+     * Upload transaction Code
+     */
     @ResponseBody
-	@RequestMapping(value="/transactionCheck", method= RequestMethod.POST)
-	public Map<String, Object> transactionCheck(MultipartFile transactionFile) {
-    	Map<String, Object> result = new HashMap<String, Object>();
+    @RequestMapping(value = "/check", method = RequestMethod.POST)
+    public Map<String, Object> transactionCheck(MultipartFile transactionFile) {
+        Map<String, Object> result = new HashMap<String, Object>();
 
-    	try {
-    		List<MonCodeData> codeDatas = new ArrayList<MonCodeData>();
-    		
-		    /*
-		     * READ CODE FILE
-		     */
-			BufferedReader br;
-			String line;
-		    InputStream is = transactionFile.getInputStream();
-		    br = new BufferedReader(new InputStreamReader(is));
-		    boolean check = false;
-		    while ((line = br.readLine()) != null) {
-		    	
-		    	/*
-		    	 * TEST FUNCTION START
-		    	 */
-		    	if(line.indexOf("@Test") > 0) check = true;
-		    	if(check == true) {
-		    		MonCodeData monCodeData = transactionService.getCodeData(line);
-		    		if(monCodeData != null) {
-		    			codeDatas.add(monCodeData);
-			    		log.debug(monCodeData.getAction()+" "+ monCodeData.getSelector_type()+ "  "+ monCodeData.getSelector_value()+"     "+ monCodeData.getValue());
-		    		}
+        try {
+            List<MonCodeData> codeDatas = new ArrayList<MonCodeData>();
 
-		    	}
-		    }
+            /*
+             * READ CODE FILE
+             */
+            BufferedReader br;
+            String line;
+            InputStream is = transactionFile.getInputStream();
+            br = new BufferedReader(new InputStreamReader(is));
+            boolean check = false;
+            while ((line = br.readLine()) != null) {
 
-    		Map<String, Object> logData = transactionService.executeTransaction(codeDatas);
-    		result.put("data", logData);
-    		result.put("codeDatas", codeDatas);
-        	result.put("result", "success");
+                /*
+                 * TEST FUNCTION START
+                 */
+                if (line.indexOf("@Test") > 0) check = true;
+                if (check == true) {
+                    MonCodeData monCodeData = transactionService.getCodeData(line);
+                    if (monCodeData != null) {
+                        codeDatas.add(monCodeData);
+                        log.debug(monCodeData.getAction() + " " + monCodeData.getSelector_type() + "  " + monCodeData.getSelector_value() + "     " + monCodeData.getValue());
+                    }
 
-			
-		} catch (Exception e) {
-			
-			e.printStackTrace();
-    		result.put("result", "ERR");
-    		result.put("msg", e.getMessage());
-			
-		}
-		
+                }
+            }
+
+            Map<String, Object> logData = transactionService.executeTransaction(codeDatas);
+            result.put("data", logData);
+            result.put("codeDatas", codeDatas);
+            result.put("result", "success");
+
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            result.put("result", "ERR");
+            result.put("msg", e.getMessage());
+
+        }
+
         return result;
-	}
+    }
 
 
-	/**
-	 * 
-	 * transaction  검사 실행
-	 * 
-	 */
-    @RequestMapping(path = "/transactionExecute/{seq}", method= RequestMethod.GET)
-	public HashMap<String, Object> transactionExecute(@PathVariable("seq") int seq) {
-    	HashMap<String, Object> result = new HashMap<String, Object>();
-    	
-    	try {
+    /**
+     * transaction  검사 실행
+     */
+    @RequestMapping(path = "/execute/{seq}", method = RequestMethod.GET)
+    public HashMap<String, Object> transactionExecute(@PathVariable("seq") int seq) {
+        HashMap<String, Object> result = new HashMap<String, Object>();
 
-    		MonTransaction existsTransaction = monTransactionRepository.findBySeq(seq);
-    		
-    		if(existsTransaction != null) {
-    			
-    			Map<String, Object> logData = transactionService.executeTransaction(existsTransaction.getCodeDatas());
-				Map<String, Object> data = transactionService.errorCheckTransaction(existsTransaction, logData);
-				result.put(""+existsTransaction.getSeq(), data);
+        try {
 
-				MonResult monResult = resultService.saveResult(data);
-				resultService.sendResultByProperties(monResult);
+            MonTransaction existsTransaction = monTransactionRepository.findBySeq(seq);
 
-    		}
-    		
-    		result.put("data", seq);
-    		result.put("result", "success");
-    		
-    		
-    	} catch (Exception e) {
-    		
-			e.printStackTrace();
-			
-		}
-		
+            if (existsTransaction != null) {
+
+                Map<String, Object> logData = transactionService.executeTransaction(existsTransaction.getCodeDatas());
+                Map<String, Object> data = transactionService.errorCheckTransaction(existsTransaction, logData);
+                result.put("" + existsTransaction.getSeq(), data);
+
+                MonResult monResult = resultService.saveResult(data);
+                resultService.sendResultByProperties(monResult);
+
+            }
+
+            result.put("data", seq);
+            result.put("result", "success");
+
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
+
         return result;
-	}
+    }
 
-    
+
 }

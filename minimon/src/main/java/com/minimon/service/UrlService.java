@@ -1,9 +1,10 @@
 package com.minimon.service;
 
-import com.minimon.enums.MonErrorCode;
 import com.minimon.common.CommonUtils;
 import com.minimon.common.SeleniumHandler;
+import com.minimon.entity.MonResult;
 import com.minimon.entity.MonUrl;
+import com.minimon.enums.MonErrorCode;
 import com.minimon.repository.MonUrlRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -75,21 +76,19 @@ public class UrlService {
                 1, now, now, hours, hours);
     }
 
-    public boolean executeUrl(int seq) {
+    public MonResult executeUrl(int seq) {
         Optional<MonUrl> optionalMonUrl = Optional.ofNullable(getUrl(seq));
-        optionalMonUrl.ifPresent(monUrl -> {
+        MonResult monResult = null;
+        if (optionalMonUrl.isPresent()) {
             try {
-
-                resultService.sendResultByProperties(
-                        resultService.saveResult(
-                                errorCheckUrl(monUrl,
-                                        executeUrl(monUrl.getUrl(), monUrl.getTimeout()))));
-
+                MonUrl monUrl = optionalMonUrl.get();
+                monResult = resultService.saveResult(errorCheckUrl(monUrl, executeUrl(monUrl.getUrl(), monUrl.getTimeout())));
+                resultService.sendResultByProperties(monResult);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        });
-        return optionalMonUrl.isPresent();
+        }
+        return monResult;
     }
 
     public Map<String, Object> executeUrl(String url, int timeout) throws Exception {

@@ -4,12 +4,10 @@ import com.minimon.MinimonApplication;
 import com.minimon.service.ApiService;
 import com.minimon.service.TransactionService;
 import com.minimon.service.UrlService;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
@@ -18,6 +16,8 @@ import java.util.HashMap;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/main")
+@Api(tags = {"Main Controller"})
 public class MainController {
     private final UrlService urlService;
     private final ApiService apiService;

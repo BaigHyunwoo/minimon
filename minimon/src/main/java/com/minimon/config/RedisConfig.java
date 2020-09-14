@@ -15,7 +15,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Slf4j
 @Configuration
 @EnableCaching
-public class redisConfig {
+public class RedisConfig {
 
     @Value("${spring.redis.port}")
     private int port;

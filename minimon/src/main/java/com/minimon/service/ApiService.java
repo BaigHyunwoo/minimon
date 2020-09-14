@@ -4,6 +4,7 @@ import com.minimon.common.CommonUtils;
 import com.minimon.entity.MonApi;
 import com.minimon.entity.MonApiParam;
 import com.minimon.entity.MonResult;
+import com.minimon.entity.MonUrl;
 import com.minimon.repository.MonApiRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,10 @@ import java.util.*;
 public class ApiService {
     private final ResultService resultService;
     private final MonApiRepository monApiRepository;
+
+    public List<MonApi> getApiList() {
+        return monApiRepository.findAll();
+    }
 
     public MonApi getApi(int seq) {
         return monApiRepository.findBySeq(seq);
@@ -77,17 +82,19 @@ public class ApiService {
         return checkData;
     }
 
-    public boolean executeApi(int seq) {
+    public MonResult executeApi(int seq) {
         Optional<MonApi> optionalMonApi = Optional.ofNullable(monApiRepository.findBySeq(seq));
-        optionalMonApi.ifPresent(monApi -> {
+        MonResult monResult = null;
+        if (optionalMonApi.isPresent()) {
             try {
-                resultService.sendResultByProperties(resultService.saveResult(errorCheckApi(monApi, executeApi(monApi))));
+                MonApi monApi = optionalMonApi.get();
+                monResult = resultService.saveResult(errorCheckApi(monApi, executeApi(monApi)));
+                resultService.sendResultByProperties(monResult);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        });
-
-        return optionalMonApi.isPresent();
+        }
+        return monResult;
 
     }
 
