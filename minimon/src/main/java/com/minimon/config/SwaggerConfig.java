@@ -23,9 +23,11 @@ public class SwaggerConfig {
                 .paths(PathSelectors.any())
                 .build()
                 .tags(
+                        new Tag("Main Controller", "MAIN", sortOrder++),
                         new Tag("Url Controller", "URL", sortOrder++),
                         new Tag("Api Controller", "API", sortOrder++),
-                        new Tag("Transaction Controller", "TRANSACTION", sortOrder++)
+                        new Tag("Transaction Controller", "TRANSACTION", sortOrder++),
+                        new Tag("Result Controller", "RESULT", sortOrder++)
                 );
     }
 }
