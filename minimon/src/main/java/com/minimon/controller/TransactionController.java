@@ -24,7 +24,7 @@ import java.util.*;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("")
+@RequestMapping("/transaction")
 @Api(tags = {"Transaction Controller"})
 public class TransactionController {
 

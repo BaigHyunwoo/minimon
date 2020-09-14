@@ -5,15 +5,13 @@ import com.minimon.entity.MonUrl;
 import com.minimon.service.ResultService;
 import com.minimon.service.UrlService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
 @RestController
@@ -49,14 +47,11 @@ public class UrlController {
         return monUrl;
     }
 
+    @ApiOperation(value = "URL 목록 조회", response = MonUrl.class, responseContainer = "List")
     @GetMapping(path = "")
-    public HashMap<String, Object> getUrls() {
-        HashMap<String, Object> result = new HashMap<String, Object>();
-        result.put("urlList", urlService.getUrlList());
-        result.put("result", "success");
-        return result;
+    public List<MonUrl> getUrls() {
+        return urlService.getUrlList();
     }
-
 
     @PostMapping(path = "")
     public HashMap<String, Object> createUrl(@RequestParam Map<String, Object> param) {

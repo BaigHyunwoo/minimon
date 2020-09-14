@@ -18,7 +18,7 @@ import java.util.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("")
+@RequestMapping("/api")
 @Api(tags = {"Api Controller"})
 public class ApiController {
 

@@ -23,5 +23,4 @@ public class ResultController {
         log.info("====RESULT====");
         log.info(param.toString());
     }
-
 }

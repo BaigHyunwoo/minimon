@@ -449,44 +449,42 @@ public class SeleniumHandler {
     }
 
     public WebElement getSelector(EventFiringWebDriver driver, String selector_type, String selector_value) {
-
         WebElement webElement = null;
         WebDriverWait wait = new WebDriverWait(driver, 30);
 
         if (selector_type.equals("By.id") == true) {
 
-            webElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(selector_value)));
+            webElement = (WebElement) wait.until(webDriver -> ExpectedConditions.visibilityOfElementLocated(By.id(selector_value)));
 
         } else if (selector_type.equals("By.cssSelector") == true) {
 
-            webElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(selector_value)));
+            webElement = (WebElement) wait.until(webDriver -> ExpectedConditions.visibilityOfElementLocated(By.cssSelector(selector_value)));
 
         } else if (selector_type.equals("By.linkText") == true) {
 
-            webElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.linkText(selector_value)));
+            webElement = (WebElement) wait.until(webDriver -> ExpectedConditions.visibilityOfElementLocated(By.linkText(selector_value)));
 
         } else if (selector_type.equals("By.className") == true) {
 
-            webElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className(selector_value)));
+            webElement = (WebElement) wait.until(webDriver -> ExpectedConditions.visibilityOfElementLocated(By.className(selector_value)));
 
         } else if (selector_type.equals("By.name") == true) {
 
-            webElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name(selector_value)));
+            webElement = (WebElement) wait.until(webDriver -> ExpectedConditions.visibilityOfElementLocated(By.name(selector_value)));
 
         } else if (selector_type.equals("By.tagName") == true) {
 
-            webElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName(selector_value)));
+            webElement = (WebElement) wait.until(webDriver -> ExpectedConditions.visibilityOfElementLocated(By.tagName(selector_value)));
 
         } else if (selector_type.equals("By.xpath") == true) {
 
-            webElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(selector_value)));
+            webElement = (WebElement) wait.until(webDriver -> ExpectedConditions.visibilityOfElementLocated(By.xpath(selector_value)));
 
         } else if (selector_type.equals("By.partialLinkText") == true) {
 
-            webElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.partialLinkText(selector_value)));
+            webElement = (WebElement) wait.until(webDriver -> ExpectedConditions.visibilityOfElementLocated(By.partialLinkText(selector_value)));
 
         }
-
 
         return webElement;
     }
