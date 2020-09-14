@@ -28,3 +28,5 @@ spring:
 logging:
   level:
     root: info
+    web: trace
+    springframework.web: trace

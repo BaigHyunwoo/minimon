@@ -6,11 +6,13 @@ import com.minimon.service.ApiService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -19,7 +21,7 @@ public class ApiController {
     private final ApiService apiService;
 
 
-    @ApiOperation(value = "API 목록 조회", response = MonApi.class, responseContainer = "List")
+    @ApiOperation(value = "API 목록 조회", response = MonApi.class)
     @GetMapping(path = "")
     public List<MonApi> getApis() {
         return apiService.getApiList();
@@ -44,7 +46,7 @@ public class ApiController {
         return apiService.editApi(monApi);
     }
 
-    @ApiOperation(value = "API 삭제", response = boolean.class)
+    @ApiOperation(value = "API 삭제", response = Boolean.class)
     @DeleteMapping(path = "/{seq}")
     public boolean delete(@PathVariable("seq") int seq) {
         return apiService.remove(seq);

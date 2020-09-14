@@ -19,19 +19,6 @@ import java.util.HashMap;
 @RequestMapping("/main")
 @Api(tags = {"Main Controller"})
 public class MainController {
-    private final UrlService urlService;
-    private final ApiService apiService;
-    private final TransactionService transactionService;
-
-    @GetMapping(path = "/index")
-    public ModelAndView main() {
-        ModelAndView mav = new ModelAndView("");
-        mav.addObject("urlList", urlService.getMonUrls());
-        mav.addObject("apiList", apiService.getApis());
-        mav.addObject("transactionList", transactionService.getTransactions());
-        mav.addObject("status", 200);
-        return mav;
-    }
 
     @PostMapping(path = "/set/{driverPath}")
     public HashMap<String, Object> driver(@PathVariable String driverPath) {

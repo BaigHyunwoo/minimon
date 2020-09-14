@@ -6,12 +6,13 @@ import com.minimon.service.UrlService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 
-
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/url")
@@ -20,7 +21,7 @@ public class UrlController {
     private final UrlService urlService;
 
 
-    @ApiOperation(value = "URL 목록 조회", response = MonUrl.class, responseContainer = "List")
+    @ApiOperation(value = "URL 목록 조회", response = MonUrl.class)
     @GetMapping(path = "")
     public List<MonUrl> getUrls() {
         return urlService.getUrlList();
@@ -45,7 +46,7 @@ public class UrlController {
         return urlService.editUrl(monUrl);
     }
 
-    @ApiOperation(value = "URL 삭제", response = boolean.class)
+    @ApiOperation(value = "URL 삭제", response = Boolean.class)
     @DeleteMapping(path = "/{seq}")
     public boolean delete(@PathVariable("seq") int seq) {
         return urlService.remove(seq);
