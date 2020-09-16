@@ -59,7 +59,7 @@ public class UrlService {
         return optionalMonUrl.isPresent();
     }
 
-    public Map<String, Object> checkUrls(List<MonUrl> urls) throws Exception {
+    public Map<String, Object> checkUrls(List<MonUrl> urls) {
         Map<String, Object> checkData = new HashMap<String, Object>();
 
         for (MonUrl url : urls) {
@@ -91,18 +91,12 @@ public class UrlService {
         return monResult;
     }
 
-    public Map<String, Object> executeUrl(String url, int timeout) throws Exception {
-        Map<String, Object> logData = new HashMap<String, Object>();
-        EventFiringWebDriver driver = null;
-
+    public Map<String, Object> executeUrl(String url, int timeout) {
         SeleniumHandler selenium = new SeleniumHandler();
-        driver = selenium.setUp();
+        EventFiringWebDriver driver = selenium.setUp();
 
         selenium.connectUrl(url, driver, timeout);
-        logData = selenium.expectionLog(
-                selenium.getLog(driver),
-                driver.getCurrentUrl()
-        );
+        Map<String, Object> logData = selenium.expectionLog(selenium.getLog(driver), driver.getCurrentUrl());
         logData.put("source", selenium.getSource(driver));
         log.debug(logData.toString());
 

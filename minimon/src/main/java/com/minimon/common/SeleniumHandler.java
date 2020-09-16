@@ -85,7 +85,7 @@ public class SeleniumHandler {
         }
     }
 
-    public EventFiringWebDriver setUp() throws Exception {
+    public EventFiringWebDriver setUp() {
 
         EventFiringWebDriver driver = null;
         String driverName = "webdriver.chrome.driver";
@@ -120,11 +120,8 @@ public class SeleniumHandler {
     }
 
 
-    public double connectUrl(String url, EventFiringWebDriver driver, int timeout) throws Exception {
-
-        // 타임아웃 셋팅
+    public double connectUrl(String url, EventFiringWebDriver driver, int timeout) {
         driver.manage().timeouts().pageLoadTimeout(timeout, TimeUnit.SECONDS);
-
 
         try {
 
@@ -153,7 +150,7 @@ public class SeleniumHandler {
     }
 
 
-    public LogEntries getLog(EventFiringWebDriver driver) throws Exception {
+    public LogEntries getLog(EventFiringWebDriver driver) {
         LogEntries logs = null;
 
         try {

@@ -19,6 +19,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 
@@ -72,7 +73,7 @@ public class ApiService {
                 1, now, now, hours, hours);
     }
 
-    public Map<String, Object> checkApis(List<MonApi> apis) throws Exception {
+    public Map<String, Object> checkApis(List<MonApi> apis) {
         Map<String, Object> checkData = new HashMap<String, Object>();
         for (MonApi api : apis) {
             Map<String, Object> logData = executeApi(api);
@@ -96,11 +97,11 @@ public class ApiService {
         return monResult;
     }
 
-    public Map<String, Object> executeApi(MonApi api) throws Exception {
+    public Map<String, Object> executeApi(MonApi api) {
         return httpSending(api);
     }
 
-    public Map<String, Object> errorCheckApi(MonApi api, Map<String, Object> logData) throws Exception {
+    public Map<String, Object> errorCheckApi(MonApi api, Map<String, Object> logData) {
         Map<String, Object> checkData = new HashMap<String, Object>();
 
         int status = Integer.parseInt("" + logData.get("status"));
@@ -135,12 +136,8 @@ public class ApiService {
             return "SUCCESS";
     }
 
-    public Map<String, Object> httpSending(MonApi api) throws Exception {
-        Map<String, Object> result = new HashMap<String, Object>();
-
-
+    public Map<String, Object> httpSending(MonApi api) {
         HttpClient httpclient = HttpClients.createDefault();
-
         List<NameValuePair> params = new ArrayList<NameValuePair>();
 
         for (MonApiParam monApiParam : api.getApiParams()) {
@@ -148,16 +145,19 @@ public class ApiService {
         }
 
         long st = System.currentTimeMillis();
-        HttpResponse response = httpclient.execute(httpRequest(api.getMethod(), api.getUrl(), params));
+        HttpResponse response = null;
+        try {
+            response = httpclient.execute(httpRequest(api.getMethod(), api.getUrl(), params));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         long ed = System.currentTimeMillis();
 
-        result = getApiLogData(st, ed, response);
-
-        return result;
+        return getApiLogData(st, ed, response);
     }
 
 
-    public Map<String, Object> getApiLogData(long st, long ed, HttpResponse response) throws Exception {
+    public Map<String, Object> getApiLogData(long st, long ed, HttpResponse response) {
         Map<String, Object> result = new HashMap<String, Object>();
         BufferedReader reader = null;
 
@@ -170,13 +170,15 @@ public class ApiService {
         if (status >= 200 && status < 400) {
             String inputLine = "";
 
-            reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-
-            while ((inputLine = reader.readLine()) != null) {
-                responseData.append(inputLine);
+            try {
+                reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+                while ((inputLine = reader.readLine()) != null) {
+                    responseData.append(inputLine);
+                }
+                reader.close();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
-            reader.close();
 
             payLoad = response.getEntity().getContentLength();
             if (payLoad == -1) payLoad = CommonUtil.getByteLength(responseData.toString());
@@ -191,46 +193,50 @@ public class ApiService {
     }
 
 
-    public HttpUriRequest httpRequest(String method, String url, List<NameValuePair> params) throws Exception {
+    public HttpUriRequest httpRequest(String method, String url, List<NameValuePair> params) {
         HttpUriRequest http = null;
 
+        try {
+            if (method.equals("GET") == true) {
 
-        if (method.equals("GET") == true) {
+                HttpGet httpget = new HttpGet(url);
 
-            HttpGet httpget = new HttpGet(url);
+                http = httpget;
+            } else if (method.equals("POST") == true) {
 
-            http = httpget;
-        } else if (method.equals("POST") == true) {
+                HttpPost httppost = new HttpPost(url);
 
-            HttpPost httppost = new HttpPost(url);
+                httppost.setEntity(new UrlEncodedFormEntity(params));
 
-            httppost.setEntity(new UrlEncodedFormEntity(params));
+                http = httppost;
 
-            http = httppost;
+            } else if (method.equals("PUT") == true) {
 
-        } else if (method.equals("PUT") == true) {
+                HttpPut httpput = new HttpPut(url);
 
-            HttpPut httpput = new HttpPut(url);
+                httpput.setEntity(new UrlEncodedFormEntity(params));
 
-            httpput.setEntity(new UrlEncodedFormEntity(params));
+                http = httpput;
 
-            http = httpput;
+            } else if (method.equals("DELETE") == true) {
 
-        } else if (method.equals("DELETE") == true) {
+                HttpDelete httpdelete = new HttpDelete(url);
 
-            HttpDelete httpdelete = new HttpDelete(url);
+                http = httpdelete;
 
-            http = httpdelete;
+            } else if (method.equals("PATCH") == true) {
 
-        } else if (method.equals("PATCH") == true) {
+                HttpPatch httppatch = new HttpPatch(url);
 
-            HttpPatch httppatch = new HttpPatch(url);
+                httppatch.setEntity(new UrlEncodedFormEntity(params));
 
-            httppatch.setEntity(new UrlEncodedFormEntity(params));
+                http = httppatch;
 
-            http = httppatch;
-
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
         return http;
     }
 

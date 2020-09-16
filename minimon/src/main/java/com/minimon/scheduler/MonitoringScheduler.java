@@ -18,7 +18,6 @@ import java.util.Map;
 
 @Slf4j
 @Service
-@EnableScheduling
 @RequiredArgsConstructor
 public class MonitoringScheduler {
     private final ResultService resultService;
@@ -26,8 +25,7 @@ public class MonitoringScheduler {
     private final ApiService apiService;
     private final TransactionService transactionService;
 
-    @Scheduled(cron = "0 0/5 * * * *")
-    public void execute() throws Exception {
+    public void execute() {
         if (MinimonApplication.getDriverPath().length() > 1) {
             List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
             resultList.add(apiService.checkApis(apiService.findApi()));
@@ -40,7 +38,7 @@ public class MonitoringScheduler {
         }
     }
 
-    public void check(List<Map<String, Object>> resultList) throws Exception {
+    public void check(List<Map<String, Object>> resultList) {
         for (Map<String, Object> result : resultList) {
             for (Object value : result.values()) {
                 Map<String, Object> checkLog = (Map<String, Object>) value;

@@ -20,8 +20,7 @@ public class ResultService {
     private final MonResultRepository monResultRepository;
     private String className = this.getClass().toString();
 
-    public MonResult saveResult(Map<String, Object> result) throws Exception {
-
+    public MonResult saveResult(Map<String, Object> result) {
         MonResult monResult = new MonResult();
         monResult.setMon_seq(Integer.parseInt("" + result.get("seq")));
         monResult.setTitle("" + result.get("title"));
@@ -35,20 +34,24 @@ public class ResultService {
         return monResult;
     }
 
-    public void sendResultByProperties(MonResult monResult) throws Exception {
-        Properties properties = new Properties();
-        FileInputStream fis = new FileInputStream(MinimonApplication.getDriverPath() + "/location.properties");
-        properties.load(new java.io.BufferedInputStream(fis));
-        String location = properties.getProperty("location");
-        String text = new StringBuffer()
-                .append("\n" + monResult.getRegDate() + " ")
-                .append("\n" + monResult.getType() + " : " + monResult.getTitle() + " ")
-                .append("\nRESULT : " + monResult.getResult() + " ")
-                .toString();
+    public void sendResultByProperties(MonResult monResult) {
+        try {
+            Properties properties = new Properties();
+            FileInputStream fis = new FileInputStream(MinimonApplication.getDriverPath() + "/location.properties");
+            properties.load(new java.io.BufferedInputStream(fis));
+            String location = properties.getProperty("location");
+            String text = new StringBuffer()
+                    .append("\n" + monResult.getRegDate() + " ")
+                    .append("\n" + monResult.getType() + " : " + monResult.getTitle() + " ")
+                    .append("\nRESULT : " + monResult.getResult() + " ")
+                    .toString();
 
-        CommonSender commonSender = new CommonSender();
-        commonSender.sendingMassage(location, text);
-        log.info("SEND API : " + location + "  Body : " + text);
+            CommonSender commonSender = new CommonSender();
+            commonSender.sendingMassage(location, text);
+            log.info("SEND API : " + location + "  Body : " + text);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }
