@@ -37,8 +37,9 @@ public class UrlService {
     }
 
     @CacheEvict(value = "URL", key = "#monUrl.seq")
-    public void saveUrl(MonUrl monUrl) {
+    public MonUrl saveUrl(MonUrl monUrl) {
         monUrlRepository.save(monUrl);
+        return monUrl;
     }
 
     @CacheEvict(value = "URL", key = "#monUrlVO.seq")

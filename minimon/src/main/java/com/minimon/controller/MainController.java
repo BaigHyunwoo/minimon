@@ -1,6 +1,7 @@
 package com.minimon.controller;
 
 import com.minimon.MinimonApplication;
+import com.minimon.common.CommonResponse;
 import com.minimon.service.ApiService;
 import com.minimon.service.TransactionService;
 import com.minimon.service.UrlService;
@@ -21,11 +22,9 @@ import java.util.HashMap;
 public class MainController {
 
     @PostMapping(path = "/set/{driverPath}")
-    public HashMap<String, Object> driver(@PathVariable String driverPath) {
-        HashMap<String, Object> result = new HashMap<String, Object>();
+    public CommonResponse driver(@PathVariable String driverPath) {
         log.info("driverPath : " + driverPath);
         MinimonApplication.setDriverPath(driverPath);
-        result.put("result", "success");
-        return result;
+        return new CommonResponse();
     }
 }

@@ -5,11 +5,10 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum SchedulerTypeEnum {
-    MONITORING("MONITORING", "모니터링", "CRON", "0 0/5 * * * *");
+public enum SchedulerStatusEnum {
+    RUNNING("RUNNING", "실행"),
+    STOP("STOP", "중지");
 
     private String code;
     private String value;
-    private String activeType;
-    private String time;
 }

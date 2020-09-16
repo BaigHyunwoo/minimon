@@ -34,21 +34,23 @@ public class ApiService {
         return monApiRepository.findAll();
     }
 
+    @Cacheable(value = "API", key = "#seq", unless = "#result == null")
     public MonApi getApi(int seq) {
         return monApiRepository.findBySeq(seq);
     }
 
-    @Cacheable(value = "list", key = "'api'")
+    @Cacheable(value = "API", unless = "#result == null")
     public List<MonApi> getApis() {
         return monApiRepository.findAll();
     }
 
-    @CacheEvict(value = "list", key = "'api'")
-    public void saveApi(MonApi monApi) {
+    @CacheEvict(value = "API", key = "#monApi.seq")
+    public MonApi saveApi(MonApi monApi) {
         monApiRepository.save(monApi);
+        return monApi;
     }
 
-    @CacheEvict(value = "list", key = "'api'")
+    @CacheEvict(value = "API", key = "#monApi.seq")
     public boolean editApi(MonApi monApiVO) {
         Optional<MonApi> optionalMonApi = Optional.ofNullable(getApi(monApiVO.getSeq()));
         optionalMonApi.ifPresent(monUrl -> {
@@ -57,7 +59,7 @@ public class ApiService {
         return optionalMonApi.isPresent();
     }
 
-    @CacheEvict(value = "list", key = "'api'")
+    @CacheEvict(value = "API", key = "#monApi.seq")
     public boolean remove(int seq) {
         Optional<MonApi> optionalMonApi = Optional.ofNullable(getApi(seq));
         optionalMonApi.ifPresent(monApi -> {
