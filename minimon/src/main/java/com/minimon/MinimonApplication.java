@@ -8,7 +8,7 @@ import org.springframework.cache.annotation.EnableCaching;
 @SpringBootApplication
 public class MinimonApplication {
 
-	static String driverPath = "C:\\chromedriver";
+	static String driverPath = "D:\\minimon";
 
 	public static String getDriverPath() {
 		return driverPath;

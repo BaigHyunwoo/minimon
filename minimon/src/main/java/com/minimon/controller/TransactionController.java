@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.minimon.entity.MonCodeData;
 import com.minimon.entity.MonResult;
 import com.minimon.entity.MonTransaction;
-import com.minimon.entity.MonUrl;
 import com.minimon.repository.MonTransactionRepository;
 import com.minimon.service.ResultService;
 import com.minimon.service.TransactionService;
@@ -20,7 +19,11 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 @Slf4j
@@ -43,24 +46,20 @@ public class TransactionController {
         ObjectMapper objectMapper = new ObjectMapper();
 
         try {
-            SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd");
             monTransaction.setTitle("" + param.get("title"));
             monTransaction.setTimer(Integer.parseInt("" + param.get("timer")));
-            monTransaction.setStartDate(transFormat.parse(param.get("transaction_start_date").toString()));
-            monTransaction.setEndDate(transFormat.parse(param.get("transaction_end_date").toString()));
+            monTransaction.setStartDate(LocalDateTime.parse(param.get("transaction_start_date").toString()));
+            monTransaction.setEndDate(LocalDateTime.parse(param.get("transaction_end_date").toString()));
             monTransaction.setStartHour(Integer.parseInt(param.get("transaction_start_hour").toString()));
             monTransaction.setEndHour(Integer.parseInt(param.get("transaction_end_hour").toString()));
             monTransaction.setTimeout(Integer.parseInt("" + param.get("timeout")));
-            monTransaction.setUseable(Integer.parseInt("" + param.get("transaction_useable")));
+            monTransaction.setUseable(param.get("transaction_useable").toString());
             monTransaction.setLoadTimeCheck(Integer.parseInt("" + param.get("transaction_loadTimeCheck")));
             monTransaction.setLoadTime(Double.parseDouble("" + param.get("loadTime")));
             monTransaction.setErrLoadTime(Integer.parseInt("" + param.get("errLoadTime")));
             monTransaction.setStatus(Integer.parseInt("" + param.get("status")));
             monTransaction.setTransactionCode("" + param.get("transactionCode"));
-            monTransaction.setUptDate(new Date());
-            if (monTransaction.getRegDate() == null) monTransaction.setRegDate(new Date());
-            monTransaction.setCodeDatas(objectMapper.readValue(param.get("codeDatas").toString(), new TypeReference<List<MonCodeData>>() {
-            }));
+            monTransaction.setCodeDatas(objectMapper.readValue(param.get("codeDatas").toString(), new TypeReference<List<MonCodeData>>() {}));
 
         } catch (Exception e) {
 

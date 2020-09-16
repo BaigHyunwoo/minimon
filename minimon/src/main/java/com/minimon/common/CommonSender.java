@@ -21,47 +21,28 @@ import java.util.Map;
 
 
 public class CommonSender {
-
-
-    private String className = this.getClass().toString();
-
-
     public Map<String, Object> sendingMassage(String url, String data) throws Exception {
 
         Map<String, Object> returnMap = new HashMap<String, Object>();
-
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
 
         HttpClient httpclient = HttpClients.createDefault();
-
         HttpPost httppost = new HttpPost(url);
-
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
 
         params.add(new BasicNameValuePair("data", URLEncoder.encode(data, "UTF-8")));
 
         httppost.setEntity(new UrlEncodedFormEntity(params));
-
         HttpResponse res = httpclient.execute(httppost);
-
         HttpEntity resEntity = res.getEntity();
 
         if (resEntity != null) {
-
             String json = EntityUtils.toString(resEntity);
-
             String decodeStr = URLDecoder.decode(json, "UTF-8");
-
             ObjectMapper mapper = new ObjectMapper();
-
-            Map<String, Object> map = new HashMap<String, Object>();
-
-            map = mapper.readValue(decodeStr, new TypeReference<Map<String, Object>>() {
+            Map<String, Object> map = mapper.readValue(decodeStr, new TypeReference<Map<String, Object>>() {
             });
-
             returnMap = map;
-
         }
-
 
         return returnMap;
 

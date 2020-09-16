@@ -7,21 +7,20 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @NoArgsConstructor
-@Table(name="MON_API")
-public class MonApi implements Serializable {
+@Table(name = "MON_API")
+public class MonApi extends CommonEntity {
 
-	@Id
-	@GeneratedValue(strategy= GenerationType.AUTO, generator="native")
-	@GenericGenerator(name = "native",strategy = "native")
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
     private int seq;
 
     @NotNull
@@ -29,7 +28,7 @@ public class MonApi implements Serializable {
 
     @NotNull
     private String title;
-    
+
     @NotNull
     private int timer;
 
@@ -41,47 +40,41 @@ public class MonApi implements Serializable {
 
     @NotNull
     private int payLoadPer;
-    
-    @NotNull
-    private int useable;
-
-	@NotNull
-	private int loadTimeCheck;
-
-	@NotNull
-	private int payLoadCheck;
-
-	@NotNull
-	private int responseCheck;
-
-	@NotNull
-	private Date startDate;
-
-	@NotNull
-	private Date endDate;
-
-	@NotNull
-	private int startHour;
-
-	@NotNull
-	private int endHour;
 
     @NotNull
-    private Date regDate;
-    
-    @NotNull
-    private Date uptDate;
+    private String useable;
 
     @NotNull
-	private String method;					// http method
-	
+    private int loadTimeCheck;
+
     @NotNull
-	private String data_type;				// 요청 데이터 타입
+    private int payLoadCheck;
+
+    @NotNull
+    private int responseCheck;
+
+    @NotNull
+    private LocalDateTime startDate;
+
+    @NotNull
+    private LocalDateTime endDate;
+
+    @NotNull
+    private int startHour;
+
+    @NotNull
+    private int endHour;
+
+    @NotNull
+    private String method;                    // http method
+
+    @NotNull
+    private String data_type;                // 요청 데이터 타입
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "tbl_mon_api_seq")
     private List<MonApiParam> apiParams = new ArrayList<MonApiParam>();
-    
+
     @NotNull
     private int status;
 
@@ -92,6 +85,6 @@ public class MonApi implements Serializable {
     private double payLoad;
 
     @Lob
-	private String response;				// 검사-데이터 : 데이터
+    private String response;                // 검사-데이터 : 데이터
 
 }

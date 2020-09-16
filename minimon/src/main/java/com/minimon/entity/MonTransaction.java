@@ -6,16 +6,15 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "MON_TRANSACTION")
-public class MonTransaction implements Serializable {
+public class MonTransaction extends CommonEntity {
 
     /*
      * Setting Info
@@ -38,25 +37,19 @@ public class MonTransaction implements Serializable {
     private int errLoadTime;
 
     @NotNull
-    private int useable;
+    private String useable;
 
     @NotNull
     private int loadTimeCheck;
 
     @NotNull
-    private Date regDate;
-
-    @NotNull
-    private Date uptDate;
-
-    @NotNull
     private String transactionCode;
 
     @NotNull
-    private Date startDate;
+    private LocalDateTime startDate;
 
     @NotNull
-    private Date endDate;
+    private LocalDateTime endDate;
 
     @NotNull
     private int startHour;

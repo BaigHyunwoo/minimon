@@ -8,6 +8,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -15,7 +16,7 @@ import java.util.Date;
 @Entity
 @NoArgsConstructor
 @Table(name = "MON_URL")
-public class MonUrl implements Serializable {
+public class MonUrl extends CommonEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
@@ -41,7 +42,7 @@ public class MonUrl implements Serializable {
     private int payLoadPer;
 
     @NotNull
-    private int useable;
+    private String useable;
 
     @NotNull
     private int loadTimeCheck;
@@ -50,22 +51,16 @@ public class MonUrl implements Serializable {
     private int payLoadCheck;
 
     @NotNull
-    private Date startDate;
+    private LocalDateTime startDate;
 
     @NotNull
-    private Date endDate;
+    private LocalDateTime endDate;
 
     @NotNull
     private int startHour;
 
     @NotNull
     private int endHour;
-
-    @NotNull
-    private Date regDate;
-
-    @NotNull
-    private Date uptDate;
 
     @NotNull
     private int textCheck;

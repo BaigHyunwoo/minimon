@@ -6,14 +6,12 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.io.Serializable;
-import java.util.Date;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "MON_API_PARAM")
-public class MonApiParam {
+public class MonApiParam extends CommonEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
@@ -24,11 +22,4 @@ public class MonApiParam {
     private String param_key;
 
     private String param_value;
-
-    @NotNull
-    private Date regDate;
-
-    @NotNull
-    private Date uptDate;
-
 }
