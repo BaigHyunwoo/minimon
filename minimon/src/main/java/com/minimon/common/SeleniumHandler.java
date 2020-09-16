@@ -28,9 +28,6 @@ import java.util.logging.Level;
 
 
 public class SeleniumHandler {
-
-    private String className = this.getClass().toString();
-
     private static final Logger logger = LoggerFactory.getLogger(SeleniumHandler.class.getName());
 
     private double totalLoadTime = -1;

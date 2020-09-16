@@ -1,6 +1,6 @@
 package com.minimon.service;
 
-import com.minimon.common.CommonUtils;
+import com.minimon.common.CommonUtil;
 import com.minimon.common.SeleniumHandler;
 import com.minimon.entity.MonCodeData;
 import com.minimon.entity.MonTransaction;
@@ -89,7 +89,7 @@ public class TransactionService {
             result = "status ERR";
         }
 
-        if (loadTime <= CommonUtils.getPerData(transaction.getLoadTime(), transaction.getErrLoadTime(), 1))
+        if (loadTime <= CommonUtil.getPerData(transaction.getLoadTime(), transaction.getErrLoadTime(), 1))
             checkData.put("loadTime", "SUCCESS");
         else {
             checkData.put("loadTime", " ERR");

@@ -1,10 +1,10 @@
 package com.minimon.service;
 
-import com.minimon.common.CommonUtils;
+import com.minimon.common.CommonUtil;
 import com.minimon.common.SeleniumHandler;
 import com.minimon.entity.MonResult;
 import com.minimon.entity.MonUrl;
-import com.minimon.enums.MonErrorCode;
+import com.minimon.enums.MonitoringErrorCodeEnum;
 import com.minimon.repository.MonUrlRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -133,14 +133,14 @@ public class UrlService {
         if (status >= 400)
             return status + " ERR";
         else if (url.getLoadTimeCheck() == 1 && totalLoadTime >= url.getErrLoadTime())
-            return MonErrorCode.LOAD_TIME.getCode();
-        else if (url.getPayLoadCheck() == 1 && (CommonUtils.getPerData(url.getPayLoad(), url.getPayLoadPer(), 2) > totalPayLoad
-                || totalPayLoad > CommonUtils.getPerData(url.getPayLoad(), url.getPayLoadPer(), 1)))
-            return MonErrorCode.PAYLOAD.getCode();
+            return MonitoringErrorCodeEnum.LOAD_TIME.getCode();
+        else if (url.getPayLoadCheck() == 1 && (CommonUtil.getPerData(url.getPayLoad(), url.getPayLoadPer(), 2) > totalPayLoad
+                || totalPayLoad > CommonUtil.getPerData(url.getPayLoad(), url.getPayLoadPer(), 1)))
+            return MonitoringErrorCodeEnum.PAYLOAD.getCode();
         else if (url.getTextCheck() == 1 && source.indexOf(url.getTextCheckValue()) >= 0) {
-            return MonErrorCode.TEXT.getCode();
+            return MonitoringErrorCodeEnum.TEXT.getCode();
         } else
-            return MonErrorCode.SUCCESS.getCode();
+            return MonitoringErrorCodeEnum.SUCCESS.getCode();
     }
 
 }

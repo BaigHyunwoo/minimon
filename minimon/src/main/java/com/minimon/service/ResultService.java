@@ -1,7 +1,7 @@
 package com.minimon.service;
 
 import com.minimon.MinimonApplication;
-import com.minimon.common.SendingHttp;
+import com.minimon.common.CommonSender;
 import com.minimon.entity.MonResult;
 import com.minimon.repository.MonResultRepository;
 import lombok.RequiredArgsConstructor;
@@ -46,8 +46,8 @@ public class ResultService {
                 .append("\nRESULT : " + monResult.getResult() + " ")
                 .toString();
 
-        SendingHttp sendingHttp = new SendingHttp();
-        sendingHttp.sendingMassage(location, text);
+        CommonSender commonSender = new CommonSender();
+        commonSender.sendingMassage(location, text);
         log.info("SEND API : " + location + "  Body : " + text);
     }
 

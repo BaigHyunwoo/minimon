@@ -1,10 +1,9 @@
 package com.minimon.service;
 
-import com.minimon.common.CommonUtils;
+import com.minimon.common.CommonUtil;
 import com.minimon.entity.MonApi;
 import com.minimon.entity.MonApiParam;
 import com.minimon.entity.MonResult;
-import com.minimon.entity.MonUrl;
 import com.minimon.repository.MonApiRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -127,8 +126,8 @@ public class ApiService {
             return status + " ERR";
         else if (api.getLoadTimeCheck() == 1 && totalLoadTime >= api.getErrLoadTime())
             return "LOAD TIME ERR";
-        else if (api.getPayLoadCheck() == 1 && (CommonUtils.getPerData(api.getPayLoad(), api.getPayLoadPer(), 2) > totalPayLoad
-                || totalPayLoad > CommonUtils.getPerData(api.getPayLoad(), api.getPayLoadPer(), 1)))
+        else if (api.getPayLoadCheck() == 1 && (CommonUtil.getPerData(api.getPayLoad(), api.getPayLoadPer(), 2) > totalPayLoad
+                || totalPayLoad > CommonUtil.getPerData(api.getPayLoad(), api.getPayLoadPer(), 1)))
             return "PAYLOAD ERR";
         else if (api.getResponseCheck() == 1 && response.equals(api.getResponse()) == false)
             return "RESPONSE ERR";
@@ -180,7 +179,7 @@ public class ApiService {
             reader.close();
 
             payLoad = response.getEntity().getContentLength();
-            if (payLoad == -1) payLoad = CommonUtils.getByteLength(responseData.toString());
+            if (payLoad == -1) payLoad = CommonUtil.getByteLength(responseData.toString());
         }
 
         result.put("loadTime", loadTime);
