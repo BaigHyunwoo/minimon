@@ -17,7 +17,7 @@ public class SchedulerController {
 
     @PostMapping(path = "/run")
     @ApiOperation(value = "특정 스케줄 작업 실행")
-    public CommonResponse run(@RequestBody String schedulerType) {
+    public CommonResponse run(@RequestParam String schedulerType) {
         return new CommonResponse(customSchedulerService.run(schedulerType));
     }
 
@@ -29,7 +29,7 @@ public class SchedulerController {
 
     @PostMapping(path = "/stop")
     @ApiOperation(value = "특정 스케줄 작업 중지")
-    public CommonResponse stop(@RequestBody String schedulerType) {
+    public CommonResponse stop(@RequestParam String schedulerType) {
         return new CommonResponse(customSchedulerService.stop(schedulerType));
     }
 

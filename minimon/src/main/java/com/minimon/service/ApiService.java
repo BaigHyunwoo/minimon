@@ -4,6 +4,7 @@ import com.minimon.common.CommonUtil;
 import com.minimon.entity.MonApi;
 import com.minimon.entity.MonApiParam;
 import com.minimon.entity.MonResult;
+import com.minimon.enums.HttpRequestTypeEnum;
 import com.minimon.repository.MonApiRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,8 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.springframework.cache.annotation.CacheEvict;
@@ -99,6 +102,10 @@ public class ApiService {
         return monResult;
     }
 
+    public Map<String, Object> executeApi(String url, String method, String data) {
+        return httpSending(url, method, data);
+    }
+
     public Map<String, Object> executeApi(MonApi api) {
         return httpSending(api);
     }
@@ -149,7 +156,20 @@ public class ApiService {
         long st = System.currentTimeMillis();
         HttpResponse response = null;
         try {
-            response = httpclient.execute(httpRequest(api.getMethod(), api.getUrl(), params));
+            response = httpclient.execute(getHttpRequest(api.getMethod(), api.getUrl(), params));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        long ed = System.currentTimeMillis();
+
+        return getApiLogData(st, ed, response);
+    }
+
+    public Map<String, Object> httpSending(String url, String method, String data) {
+        long st = System.currentTimeMillis();
+        HttpResponse response = null;
+        try {
+            response = HttpClients.createDefault().execute(getHttpRequest(method, url, data));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -195,7 +215,7 @@ public class ApiService {
     }
 
 
-    public HttpUriRequest httpRequest(String method, String url, List<NameValuePair> params) {
+    public HttpUriRequest getHttpRequest(String method, String url, List<NameValuePair> params) {
         HttpUriRequest http = null;
 
         try {
@@ -235,11 +255,41 @@ public class ApiService {
                 http = httppatch;
 
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return http;
     }
 
+    public HttpUriRequest getHttpRequest(String method, String url, String data) {
+        HttpUriRequest http = null;
+
+        try {
+            switch (HttpRequestTypeEnum.valueOf(method)) {
+                case GET:
+                    HttpGet httpget = new HttpGet(url);
+                    http = httpget;
+                    break;
+                case POST:
+                    HttpPost httppost = new HttpPost(url);
+                    httppost.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
+                    http = httppost;
+                    break;
+                case PUT:
+                    HttpPut httpPut = new HttpPut(url);
+                    httpPut.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
+                    http = httpPut;
+                    break;
+                case DELETE:
+                    HttpDelete httpDelete = new HttpDelete(url);
+                    http = httpDelete;
+                    break;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return http;
+    }
 }

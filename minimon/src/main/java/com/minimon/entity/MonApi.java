@@ -75,6 +75,8 @@ public class MonApi extends CommonEntity {
     @JoinColumn(name = "tbl_mon_api_seq")
     private List<MonApiParam> apiParams = new ArrayList<MonApiParam>();
 
+    private String data;
+
     @NotNull
     private int status;
 

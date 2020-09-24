@@ -53,8 +53,8 @@ public class ApiController {
 
     @ApiOperation(value = "API 검사 테스트 실행", response = Map.class)
     @PostMapping(path = "/check")
-    public CommonResponse check(@RequestBody MonApi monApi) throws Exception {
-        return new CommonResponse(apiService.executeApi(monApi));
+    public CommonResponse check(@RequestParam String url, @RequestParam String method, @RequestBody(required = false) String data) {
+        return new CommonResponse(apiService.executeApi(url, method, data));
     }
 
     @ApiOperation(value = "API 검사 실행", response = MonResult.class)
