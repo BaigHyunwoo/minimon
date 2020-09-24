@@ -24,7 +24,7 @@ public class ApiController {
     @ApiOperation(value = "API 목록 조회", response = MonApi.class)
     @GetMapping(path = "")
     public CommonResponse getApis() {
-        return new CommonResponse(apiService.getApiList());
+        return new CommonResponse(apiService.getApis());
     }
 
     @ApiOperation(value = "API 조회", response = MonApi.class)

@@ -2,21 +2,19 @@ package com.minimon.service;
 
 import com.minimon.common.CommonUtil;
 import com.minimon.entity.MonApi;
-import com.minimon.entity.MonApiParam;
 import com.minimon.entity.MonResult;
 import com.minimon.enums.HttpRequestTypeEnum;
+import com.minimon.enums.MonitoringErrorCodeEnum;
 import com.minimon.repository.MonApiRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -33,7 +31,9 @@ public class ApiService {
     private final ResultService resultService;
     private final MonApiRepository monApiRepository;
 
-    public List<MonApi> getApiList() {
+
+    @Cacheable(value = "API", key = "'list'", unless = "#result == null")
+    public List<MonApi> getApis() {
         return monApiRepository.findAll();
     }
 
@@ -42,18 +42,13 @@ public class ApiService {
         return monApiRepository.findBySeq(seq);
     }
 
-    @Cacheable(value = "API", unless = "#result == null")
-    public List<MonApi> getApis() {
-        return monApiRepository.findAll();
-    }
-
-    @CacheEvict(value = "API", key = "#monApi.seq")
+    @CacheEvict(value = "API", key = "#monApi.seq", allEntries = true)
     public MonApi saveApi(MonApi monApi) {
         monApiRepository.save(monApi);
         return monApi;
     }
 
-    @CacheEvict(value = "API", key = "#monApi.seq")
+    @CacheEvict(value = "API", key = "#monApi.seq", allEntries = true)
     public boolean editApi(MonApi monApiVO) {
         Optional<MonApi> optionalMonApi = Optional.ofNullable(getApi(monApiVO.getSeq()));
         optionalMonApi.ifPresent(monUrl -> {
@@ -62,7 +57,7 @@ public class ApiService {
         return optionalMonApi.isPresent();
     }
 
-    @CacheEvict(value = "API", key = "#monApi.seq")
+    @CacheEvict(value = "API", key = "#monApi.seq", allEntries = true)
     public boolean remove(int seq) {
         Optional<MonApi> optionalMonApi = Optional.ofNullable(getApi(seq));
         optionalMonApi.ifPresent(monApi -> {
@@ -91,13 +86,9 @@ public class ApiService {
         Optional<MonApi> optionalMonApi = Optional.ofNullable(monApiRepository.findBySeq(seq));
         MonResult monResult = null;
         if (optionalMonApi.isPresent()) {
-            try {
-                MonApi monApi = optionalMonApi.get();
-                monResult = resultService.saveResult(errorCheckApi(monApi, executeApi(monApi)));
-                resultService.sendResultByProperties(monResult);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            MonApi monApi = optionalMonApi.get();
+            monResult = resultService.saveResult(errorCheckApi(monApi, executeApi(monApi)));
+            resultService.sendResultByProperties(monResult);
         }
         return monResult;
     }
@@ -107,7 +98,7 @@ public class ApiService {
     }
 
     public Map<String, Object> executeApi(MonApi api) {
-        return httpSending(api);
+        return httpSending(api.getUrl(), api.getMethod(), api.getData());
     }
 
     public Map<String, Object> errorCheckApi(MonApi api, Map<String, Object> logData) {
@@ -133,36 +124,16 @@ public class ApiService {
 
     public String errCheck(int status, double totalLoadTime, double totalPayLoad, String response, MonApi api) {
         if (status >= 400)
-            return status + " ERR";
+            return MonitoringErrorCodeEnum.UNKNOWN.getCode();
         else if (api.getLoadTimeCheck() == 1 && totalLoadTime >= api.getErrLoadTime())
-            return "LOAD TIME ERR";
+            return MonitoringErrorCodeEnum.LOAD_TIME.getCode();
         else if (api.getPayLoadCheck() == 1 && (CommonUtil.getPerData(api.getPayLoad(), api.getPayLoadPer(), 2) > totalPayLoad
                 || totalPayLoad > CommonUtil.getPerData(api.getPayLoad(), api.getPayLoadPer(), 1)))
-            return "PAYLOAD ERR";
+            return MonitoringErrorCodeEnum.PAYLOAD.getCode();
         else if (api.getResponseCheck() == 1 && response.equals(api.getResponse()) == false)
-            return "RESPONSE ERR";
+            return MonitoringErrorCodeEnum.RESPONSE.getCode();
         else
-            return "SUCCESS";
-    }
-
-    public Map<String, Object> httpSending(MonApi api) {
-        HttpClient httpclient = HttpClients.createDefault();
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
-
-        for (MonApiParam monApiParam : api.getApiParams()) {
-            params.add(new BasicNameValuePair(monApiParam.getParam_key(), monApiParam.getParam_value()));
-        }
-
-        long st = System.currentTimeMillis();
-        HttpResponse response = null;
-        try {
-            response = httpclient.execute(getHttpRequest(api.getMethod(), api.getUrl(), params));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        long ed = System.currentTimeMillis();
-
-        return getApiLogData(st, ed, response);
+            return MonitoringErrorCodeEnum.SUCCESS.getCode();
     }
 
     public Map<String, Object> httpSending(String url, String method, String data) {
@@ -212,54 +183,6 @@ public class ApiService {
         result.put("response", responseData.toString());
 
         return result;
-    }
-
-
-    public HttpUriRequest getHttpRequest(String method, String url, List<NameValuePair> params) {
-        HttpUriRequest http = null;
-
-        try {
-            if (method.equals("GET") == true) {
-
-                HttpGet httpget = new HttpGet(url);
-
-                http = httpget;
-            } else if (method.equals("POST") == true) {
-
-                HttpPost httppost = new HttpPost(url);
-
-                httppost.setEntity(new UrlEncodedFormEntity(params));
-
-                http = httppost;
-
-            } else if (method.equals("PUT") == true) {
-
-                HttpPut httpput = new HttpPut(url);
-
-                httpput.setEntity(new UrlEncodedFormEntity(params));
-
-                http = httpput;
-
-            } else if (method.equals("DELETE") == true) {
-
-                HttpDelete httpdelete = new HttpDelete(url);
-
-                http = httpdelete;
-
-            } else if (method.equals("PATCH") == true) {
-
-                HttpPatch httppatch = new HttpPatch(url);
-
-                httppatch.setEntity(new UrlEncodedFormEntity(params));
-
-                http = httppatch;
-
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return http;
     }
 
     public HttpUriRequest getHttpRequest(String method, String url, String data) {

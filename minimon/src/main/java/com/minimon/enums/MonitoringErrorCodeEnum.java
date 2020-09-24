@@ -11,6 +11,8 @@ public enum MonitoringErrorCodeEnum {
     LOAD_TIME("LOAD_TIME", "시간"),
     PAYLOAD("PAYLOAD", "용량"),
     TEXT("TEXT", "검색어"),
+    RESPONSE("RESPONSE", "응답"),
+    UNKNOWN("UNKNOWN", "알수 없음"),
     SUCCESS("SUCCESS", "성공");
 
     private String code;

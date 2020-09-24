@@ -1,6 +1,7 @@
 package com.minimon.entity;
 
 import com.sun.istack.NotNull;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,72 +22,86 @@ public class MonApi extends CommonEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
+    @ApiModelProperty(name = "고유 번호")
     private int seq;
 
     @NotNull
+    @ApiModelProperty(name = "URL 경로")
     private String url;
 
     @NotNull
+    @ApiModelProperty(name = "제목")
     private String title;
 
     @NotNull
+    @ApiModelProperty(name = "반복 시간")
     private int timer;
 
     @NotNull
+    @ApiModelProperty(name = "타임아웃 시간")
     private int timeout;
 
     @NotNull
+    @ApiModelProperty(name = "지연 시간 한계")
     private int errLoadTime;
 
     @NotNull
+    @ApiModelProperty(name = "용량 한계 +- %")
     private int payLoadPer;
 
     @NotNull
+    @ApiModelProperty(name = "사용 여부")
     private String useable;
 
     @NotNull
+    @ApiModelProperty(name = "지연 시간 검사 여부")
     private int loadTimeCheck;
 
     @NotNull
+    @ApiModelProperty(name = "용량 검사 여부")
     private int payLoadCheck;
 
     @NotNull
+    @ApiModelProperty(name = "응답 데이터 검사 여부")
     private int responseCheck;
 
     @NotNull
+    @ApiModelProperty(name = "시작 일")
     private LocalDateTime startDate;
 
     @NotNull
+    @ApiModelProperty(name = "종료일")
     private LocalDateTime endDate;
 
     @NotNull
+    @ApiModelProperty(name = "시작 시간")
     private int startHour;
 
     @NotNull
+    @ApiModelProperty(name = "종료 시간")
     private int endHour;
 
     @NotNull
-    private String method;                    // http method
+    @ApiModelProperty(name = "사용 http 메소드")
+    private String method;
 
-    @NotNull
-    private String data_type;                // 요청 데이터 타입
-
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "tbl_mon_api_seq")
-    private List<MonApiParam> apiParams = new ArrayList<MonApiParam>();
-
+    @ApiModelProperty(name = "요청 Body")
     private String data;
 
     @NotNull
+    @ApiModelProperty(name = "응답 코드")
     private int status;
 
     @NotNull
+    @ApiModelProperty(name = "걸린 시간")
     private double loadTime;
 
     @NotNull
+    @ApiModelProperty(name = "용량")
     private double payLoad;
 
     @Lob
-    private String response;                // 검사-데이터 : 데이터
+    @ApiModelProperty(name = "응답 데이터")
+    private String response;            
 
 }

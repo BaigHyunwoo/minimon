@@ -125,14 +125,14 @@ public class UrlService {
     }
 
     public String errCheck(int status, double totalLoadTime, double totalPayLoad, String source, MonUrl url) {
-        if (status >= 400)
-            return status + " ERR";
-        else if (url.getLoadTimeCheck() == 1 && totalLoadTime >= url.getErrLoadTime())
+        if (status >= 400) {
+            return MonitoringErrorCodeEnum.UNKNOWN.getCode();
+        } else if (url.getLoadTimeCheck() == 1 && totalLoadTime >= url.getErrLoadTime()) {
             return MonitoringErrorCodeEnum.LOAD_TIME.getCode();
-        else if (url.getPayLoadCheck() == 1 && (CommonUtil.getPerData(url.getPayLoad(), url.getPayLoadPer(), 2) > totalPayLoad
-                || totalPayLoad > CommonUtil.getPerData(url.getPayLoad(), url.getPayLoadPer(), 1)))
+        } else if (url.getPayLoadCheck() == 1 && (CommonUtil.getPerData(url.getPayLoad(), url.getPayLoadPer(), 2) > totalPayLoad
+                || totalPayLoad > CommonUtil.getPerData(url.getPayLoad(), url.getPayLoadPer(), 1))) {
             return MonitoringErrorCodeEnum.PAYLOAD.getCode();
-        else if (url.getTextCheck() == 1 && source.indexOf(url.getTextCheckValue()) >= 0) {
+        } else if (url.getTextCheck() == 1 && source.indexOf(url.getTextCheckValue()) >= 0) {
             return MonitoringErrorCodeEnum.TEXT.getCode();
         } else
             return MonitoringErrorCodeEnum.SUCCESS.getCode();
