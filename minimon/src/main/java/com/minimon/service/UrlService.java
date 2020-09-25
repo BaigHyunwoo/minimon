@@ -91,12 +91,9 @@ public class UrlService {
     public Map<String, Object> executeUrl(String url, int timeout) {
         SeleniumHandler selenium = new SeleniumHandler();
         EventFiringWebDriver driver = selenium.setUp();
-
         selenium.connectUrl(url, driver, timeout);
         Map<String, Object> logData = selenium.getResult(selenium.getLog(driver), driver.getCurrentUrl());
         logData.put("source", selenium.getSource(driver));
-        log.debug(logData.toString());
-
         if (driver != null) driver.quit();
         return logData;
     }
@@ -107,7 +104,6 @@ public class UrlService {
         double totalLoadTime = Double.parseDouble("" + logData.get("totalLoadTime"));
         double totalPayLoad = Double.parseDouble("" + logData.get("totalPayLoad"));
         String source = logData.get("source").toString();
-
         return MonResult.builder()
                 .monTypeEnum(MonTypeEnum.URL)
                 .relationSeq(url.getSeq())

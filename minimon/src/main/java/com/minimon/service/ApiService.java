@@ -144,28 +144,21 @@ public class ApiService {
 
 
     public Map<String, Object> getApiLogData(long st, long ed, HttpResponse response) {
-        Map<String, Object> result = new HashMap<String, Object>();
-        BufferedReader reader = null;
-
-
+        Map<String, Object> result = new HashMap<>();
         long loadTime = ed - st;
         long payLoad = response.getEntity().getContentLength();
         int status = response.getStatusLine().getStatusCode();
 
         StringBuffer responseData = new StringBuffer();
         if (status >= 200 && status < 400) {
-            String inputLine = "";
-
-            try {
-                reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()))){
+                String inputLine = "";
                 while ((inputLine = reader.readLine()) != null) {
                     responseData.append(inputLine);
                 }
-                reader.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
             payLoad = response.getEntity().getContentLength();
             if (payLoad == -1) payLoad = CommonUtil.getByteLength(responseData.toString());
         }
@@ -174,7 +167,6 @@ public class ApiService {
         result.put("status", status);
         result.put("payLoad", payLoad);
         result.put("response", responseData.toString());
-
         return result;
     }
 
