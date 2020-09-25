@@ -53,7 +53,7 @@ public class UrlController {
 
     @ApiOperation(value = "URL 검사 테스트 실행", response = Map.class)
     @PostMapping(path = "/check")
-    public CommonResponse check(@RequestParam Map<String, Object> data) throws Exception {
+    public CommonResponse check(@RequestParam Map<String, Object> data) {
         return new CommonResponse(urlService.executeUrl(data.get("url").toString(), Integer.parseInt(data.get("timeout").toString())));
     }
 

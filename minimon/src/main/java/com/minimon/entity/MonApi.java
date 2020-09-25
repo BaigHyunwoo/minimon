@@ -102,6 +102,6 @@ public class MonApi extends CommonEntity {
 
     @Lob
     @ApiModelProperty(name = "응답 데이터")
-    private String response;            
+    private String response;
 
 }
