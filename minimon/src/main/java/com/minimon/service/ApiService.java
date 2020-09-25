@@ -4,13 +4,12 @@ import com.minimon.common.CommonUtil;
 import com.minimon.entity.MonApi;
 import com.minimon.entity.MonResult;
 import com.minimon.enums.HttpRequestTypeEnum;
-import com.minimon.enums.MonitoringErrorCodeEnum;
+import com.minimon.enums.MonTypeEnum;
+import com.minimon.enums.MonitoringResultCodeEnum;
 import com.minimon.repository.MonApiRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -66,20 +65,20 @@ public class ApiService {
         return optionalMonApi.isPresent();
     }
 
-    public List<MonApi> findApi() {
+    public List<MonApi> findScheduledApis() {
         Date now = new Date();
         int hours = now.getHours();
         return monApiRepository.findByUseableAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndStartHourLessThanEqualAndEndHourGreaterThanEqual(
                 1, now, now, hours, hours);
     }
 
-    public Map<String, Object> checkApis(List<MonApi> apis) {
-        Map<String, Object> checkData = new HashMap<String, Object>();
-        for (MonApi api : apis) {
-            Map<String, Object> logData = executeApi(api);
-            checkData.put("" + api.getSeq(), errorCheckApi(api, logData));
-        }
-        return checkData;
+    public List<MonResult> checkApis(List<MonApi> monApis) {
+        List<MonResult> monResults = new ArrayList<>();
+        monApis.forEach(monApi -> {
+            Map<String, Object> logData = executeApi(monApi);
+            monResults.add(errorCheckApi(monApi, logData));
+        });
+        return monResults;
     }
 
     public MonResult executeApi(int seq) {
@@ -101,39 +100,34 @@ public class ApiService {
         return httpSending(api.getUrl(), api.getMethod(), api.getData());
     }
 
-    public Map<String, Object> errorCheckApi(MonApi api, Map<String, Object> logData) {
-        Map<String, Object> checkData = new HashMap<String, Object>();
-
+    public MonResult errorCheckApi(MonApi api, Map<String, Object> logData) {
         int status = Integer.parseInt("" + logData.get("status"));
         double loadTime = Double.parseDouble("" + logData.get("loadTime"));
         double payLoad = Double.parseDouble("" + logData.get("payLoad"));
         String response = "" + logData.get("response");
-
-
-        checkData.put("url", api.getUrl());
-        checkData.put("method", api.getMethod());
-        checkData.put("seq", api.getSeq());
-        checkData.put("title", api.getTitle());
-        checkData.put("type", "API");
-        checkData.put("check_loadTime", loadTime);
-        checkData.put("result", errCheck(status, loadTime, payLoad, response, api));
-
-        return checkData;
+        return MonResult.builder()
+                .monTypeEnum(MonTypeEnum.API)
+                .relationSeq(api.getSeq())
+                .title(api.getMethod() + " : " + api.getTitle())
+                .loadTime(loadTime)
+                .payload(payLoad)
+                .result(errCheck(status, loadTime, payLoad, response, api))
+                .build();
     }
 
 
     public String errCheck(int status, double totalLoadTime, double totalPayLoad, String response, MonApi api) {
         if (status >= 400)
-            return MonitoringErrorCodeEnum.UNKNOWN.getCode();
+            return MonitoringResultCodeEnum.UNKNOWN.getCode();
         else if (api.getLoadTimeCheck() == 1 && totalLoadTime >= api.getErrLoadTime())
-            return MonitoringErrorCodeEnum.LOAD_TIME.getCode();
+            return MonitoringResultCodeEnum.LOAD_TIME.getCode();
         else if (api.getPayLoadCheck() == 1 && (CommonUtil.getPerData(api.getPayLoad(), api.getPayLoadPer(), 2) > totalPayLoad
                 || totalPayLoad > CommonUtil.getPerData(api.getPayLoad(), api.getPayLoadPer(), 1)))
-            return MonitoringErrorCodeEnum.PAYLOAD.getCode();
+            return MonitoringResultCodeEnum.PAYLOAD.getCode();
         else if (api.getResponseCheck() == 1 && response.equals(api.getResponse()) == false)
-            return MonitoringErrorCodeEnum.RESPONSE.getCode();
+            return MonitoringResultCodeEnum.RESPONSE.getCode();
         else
-            return MonitoringErrorCodeEnum.SUCCESS.getCode();
+            return MonitoringResultCodeEnum.SUCCESS.getCode();
     }
 
     public Map<String, Object> httpSending(String url, String method, String data) {
@@ -145,7 +139,6 @@ public class ApiService {
             e.printStackTrace();
         }
         long ed = System.currentTimeMillis();
-
         return getApiLogData(st, ed, response);
     }
 

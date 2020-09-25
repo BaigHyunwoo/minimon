@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum MonitoringErrorCodeEnum {
+public enum MonitoringResultCodeEnum {
     TIMEOUT("TIMEOUT", "연결 시간 초과"),
     LOAD_TIME("LOAD_TIME", "시간"),
     PAYLOAD("PAYLOAD", "용량"),

@@ -180,75 +180,59 @@ public class SeleniumHandler {
         return json.getJSONObject("message");
     }
 
-    public Map<String, Object> expectionLog(LogEntries logs, String currentURL) {
-        Map<String, Object> returnData = new HashMap<String, Object>();
+    public Map<String, Object> getResult(LogEntries logs, String currentURL) {
+        Map<String, Object> returnData = new HashMap<>();
 
-        try {
-
-
-            /*
-             * RESOURCE LOOP & GET RESOURCES DATA
-             */
-            int resourceCnt = 0;
-            for (Iterator<LogEntry> it = logs.iterator(); it.hasNext(); resourceCnt++) {
-                setLogData(getResourceMessage(it.next()), resourceCnt, currentURL);
-            }
-
-            returnData.put("url", currentURL);
-            returnData.put("status", this.status);
-            returnData.put("totalPayLoad", this.totalPayLoad);
-            returnData.put("totalLoadTime", this.totalLoadTime);
-
-            logger.debug("WebDriver - Log 분석 완료");
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        for (Iterator<LogEntry> it = logs.iterator(); it.hasNext();) {
+            setLogData(getResourceMessage(it.next()), currentURL);
         }
+
+        returnData.put("url", currentURL);
+        returnData.put("status", this.status);
+        returnData.put("totalPayLoad", this.totalPayLoad);
+        returnData.put("totalLoadTime", this.totalLoadTime);
+
+        logger.debug("WebDriver - Log 분석 완료");
+
         return returnData;
     }
 
 
-    public void setLogData(JSONObject message, int resourceCnt, String currentURL) throws Exception {
+    public void setLogData(JSONObject message, String currentURL) {
 
-        try {
+        /*
+         * DATA CONVERT & CHECK
+         */
+        String methodName = message.getString("method");
 
-            /*
-             * DATA CONVERT & CHECK
-             */
-            String methodName = message.getString("method");
+        /*
+         * Log Exists Check
+         */
+        if (methodName != null && methodName.equals("Network.responseReceived") == false) return;
 
-            /*
-             * Log Exists Check
-             */
-            if (methodName != null && methodName.equals("Network.responseReceived") == false) return;
+        /*
+         * GET DATAS
+         */
+        JSONObject params = message.getJSONObject("params");
 
-            /*
-             * GET DATAS
-             */
-            JSONObject params = message.getJSONObject("params");
+        JSONObject response = params.getJSONObject("response");
 
-            JSONObject response = params.getJSONObject("response");
+        JSONObject headersObj = response.getJSONObject("headers");
 
-            JSONObject headersObj = response.getJSONObject("headers");
+        Map<String, Object> headers = new CaseInsensitiveMap<String, Object>();
 
-            Map<String, Object> headers = new CaseInsensitiveMap<String, Object>();
+        headers.putAll(headersObj.toMap());
 
-            headers.putAll(headersObj.toMap());
+        /*
+         * SET PAYLOAD
+         */
+        this.totalPayLoad += headers.containsKey("content-length") ? Double.parseDouble(headers.get("content-length").toString()) : 0;
 
-            /*
-             * SET PAYLOAD
-             */
-            this.totalPayLoad += headers.containsKey("content-length") ? Double.parseDouble(headers.get("content-length").toString()) : 0;
+        /*
+         * SET STATUS
+         */
+        this.status = currentURL.equals((String) response.get("url")) == true ? response.getInt("status") : this.status;
 
-            /*
-             * SET STATUS
-             */
-            this.status = currentURL.equals((String) response.get("url")) == true ? response.getInt("status") : this.status;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        }
     }
 
 
