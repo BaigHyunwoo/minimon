@@ -1,7 +1,6 @@
 server:
   port: 8080
 spring:
-  cache: redis
   mvc:
     view:
       suffix: .html
@@ -22,9 +21,6 @@ spring:
       enabled: true
       max-file-size: 50MB
       max-request-size: 50MB
-  redis:
-    host: localhost
-    port: 6379
 logging:
   level:
     root: info

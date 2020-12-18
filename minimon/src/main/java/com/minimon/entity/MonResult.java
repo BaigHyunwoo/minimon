@@ -13,7 +13,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Getter
 @Setter
@@ -25,7 +24,7 @@ public class MonResult {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
+    @GenericGenerator(name = "native", strategy s= "native")
     private int seq;
 
     @NotNull
@@ -37,11 +36,9 @@ public class MonResult {
     @NotNull
     private String title;
 
-
     @NotNull
     private String result;
 
-    @Lob
     private String response;
 
     private int status;
@@ -64,5 +61,4 @@ public class MonResult {
         this.loadTime = loadTime;
         this.payload = payload;
     }
-
 }

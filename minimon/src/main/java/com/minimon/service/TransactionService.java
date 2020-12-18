@@ -25,7 +25,6 @@ public class TransactionService {
 
     private String className = this.getClass().toString();
 
-    @Cacheable(value = "list", key = "'transaction'")
     public List<MonTransaction> getTransactions() {
         return monTransactionRepository.findAll();
     }
