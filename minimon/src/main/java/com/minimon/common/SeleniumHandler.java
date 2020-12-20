@@ -36,21 +36,12 @@ public class SeleniumHandler {
 
     private int status = 200;
 
+    private String driverName = "webdriver.chrome.driver";
+
     private EventFiringWebDriver driver;
+
     private Map<String, Object> vars;
     JavascriptExecutor js;
-
-    public int getStatus() {
-        return status;
-    }
-
-    public double getTotalPayLoad() {
-        return totalPayLoad;
-    }
-
-    public double getTotalLoadTime() {
-        return totalLoadTime;
-    }
 
 
     public String waitForWindow(int timeout) {
@@ -88,7 +79,6 @@ public class SeleniumHandler {
     public EventFiringWebDriver setUp() {
 
         EventFiringWebDriver driver = null;
-        String driverName = "webdriver.chrome.driver";
 
         try {
 
@@ -106,11 +96,10 @@ public class SeleniumHandler {
             options.addArguments("headless");
             options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
             driver = new EventFiringWebDriver(new ChromeDriver(options));
-            js = (JavascriptExecutor) driver;
-            vars = new HashMap<String, Object>();
+            js = driver;
+            vars = new HashMap<>();
 
             logger.debug("WebDriver - 연결 완료");
-
 
         } catch (Exception e) {
             if (driver != null) driver.quit();
@@ -137,12 +126,13 @@ public class SeleniumHandler {
             e1.printStackTrace();
 
             totalLoadTime = -1;
+            logger.info("Error - Timeout");
 
         } catch (Exception e) {
             e.printStackTrace();
 
             totalLoadTime = -2;
-            logger.info("Error - Unknown ERROR");
+            logger.info("Error - Unknown");
 
         }
 
@@ -183,7 +173,7 @@ public class SeleniumHandler {
     public Map<String, Object> getResult(LogEntries logs, String currentURL) {
         Map<String, Object> returnData = new HashMap<>();
 
-        for (Iterator<LogEntry> it = logs.iterator(); it.hasNext();) {
+        for (Iterator<LogEntry> it = logs.iterator(); it.hasNext(); ) {
             setLogData(getResourceMessage(it.next()), currentURL);
         }
 

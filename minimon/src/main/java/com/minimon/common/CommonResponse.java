@@ -14,11 +14,11 @@ public class CommonResponse {
         return new CommonResponse(ResponseEnum.FAIL.getCode(), ResponseEnum.FAIL.getValue());
     }
 
-    public static CommonResponse failOf(String errorMessage) {
+    public static CommonResponse fail(String errorMessage) {
         return new CommonResponse(ResponseEnum.FAIL.getCode(), errorMessage);
     }
 
-    public static CommonResponse failOf(int code, String errorMessage) {
+    public static CommonResponse fail(int code, String errorMessage) {
         return new CommonResponse(code, errorMessage);
     }
 
@@ -35,15 +35,6 @@ public class CommonResponse {
     public CommonResponse(int code, String message) {
         this.meta = new CommonResponseMeta(code, message);
         this.data = new Object();
-    }
-
-    public CommonResponse(int code, String message, Object result) {
-        this.meta = new CommonResponseMeta(code, message);
-        this.data = result;
-    }
-
-    public CommonResponse(CommonResponseMeta meta) {
-        this.meta = meta;
     }
 
     private void setSuccess() {

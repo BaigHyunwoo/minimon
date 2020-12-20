@@ -45,7 +45,7 @@ public class ResultService {
             commonSender.sendingMassage(location, text);
             log.info("SEND API : " + location + "  Body : " + text);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info("SEND RESULT ERROR");
         }
     }
 
