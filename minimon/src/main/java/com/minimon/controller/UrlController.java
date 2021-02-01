@@ -4,6 +4,7 @@ import com.minimon.common.CommonResponse;
 import com.minimon.entity.MonResult;
 import com.minimon.entity.MonUrl;
 import com.minimon.service.UrlService;
+import com.minimon.vo.MonUrlCheckVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -53,8 +54,8 @@ public class UrlController {
 
     @ApiOperation(value = "URL 검사 테스트 실행", response = Map.class)
     @PostMapping(path = "/check")
-    public CommonResponse check(@RequestParam Map<String, Object> data) {
-        return new CommonResponse(urlService.executeUrl(data.get("url").toString(), Integer.parseInt(data.get("timeout").toString())));
+    public CommonResponse check(@RequestBody MonUrlCheckVO monUrlCheckVO) {
+        return new CommonResponse(urlService.executeUrl(monUrlCheckVO.getUrl(), monUrlCheckVO.getTimeout()));
     }
 
     @ApiOperation(value = "URL 검사 실행", response = MonResult.class)

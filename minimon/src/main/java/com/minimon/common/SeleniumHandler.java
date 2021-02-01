@@ -41,6 +41,7 @@ public class SeleniumHandler {
     private EventFiringWebDriver driver;
 
     private Map<String, Object> vars;
+
     JavascriptExecutor js;
 
 
@@ -98,10 +99,11 @@ public class SeleniumHandler {
             driver = new EventFiringWebDriver(new ChromeDriver(options));
             js = driver;
             vars = new HashMap<>();
-
             logger.debug("WebDriver - 연결 완료");
 
         } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
             if (driver != null) driver.quit();
         }
 
@@ -113,27 +115,20 @@ public class SeleniumHandler {
         driver.manage().timeouts().pageLoadTimeout(timeout, TimeUnit.SECONDS);
 
         try {
-
             WebDriverEventListenerClass event = new WebDriverEventListenerClass();
-
             driver.register(event);
             driver.navigate().to(url);
             totalLoadTime = event.returnLoadTime();
-
             logger.debug("totalLoadTime : " + totalLoadTime);
 
         } catch (TimeoutException e1) {
-            e1.printStackTrace();
-
             totalLoadTime = -1;
             logger.info("Error - Timeout");
 
         } catch (Exception e) {
             e.printStackTrace();
-
             totalLoadTime = -2;
             logger.info("Error - Unknown");
-
         }
 
         return totalLoadTime;
@@ -158,11 +153,6 @@ public class SeleniumHandler {
         }
 
         return logs;
-    }
-
-    public String getSource(WebDriver driver) {
-
-        return driver.getPageSource();
     }
 
     public JSONObject getResourceMessage(LogEntry entry) {
@@ -226,11 +216,10 @@ public class SeleniumHandler {
     }
 
 
-    public String executeAction(SeleniumHandler selenium, EventFiringWebDriver driver, String action, String selector_type, String selector_value, String value) throws Exception {
+    public String executeAction(SeleniumHandler selenium, EventFiringWebDriver driver, String action, String selector_type, String selector_value, String value) {
+        String result;
 
-        String result = "";
-
-        WebElement element = null;
+        WebElement element;
 
         try {
 
@@ -297,16 +286,11 @@ public class SeleniumHandler {
 
             }
 
-
             waitHtml(driver);
-
-
             result = "SUCCESS";
 
 
         } catch (Exception e) {
-            e.printStackTrace();
-
             result = e.getMessage();
         }
 

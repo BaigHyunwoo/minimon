@@ -24,7 +24,7 @@ public class MonResult {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy s= "native")
+    @GenericGenerator(name = "native", strategy = "native")
     private int seq;
 
     @NotNull

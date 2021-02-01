@@ -2,13 +2,13 @@ package com.minimon.vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@Setter
-@ApiModel(value = "실행 정보", description = "")
+@ApiModel(value = "실행 정보")
 public class SchedulerVO {
 
     @ApiModelProperty(value = "실행 종류")

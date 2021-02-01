@@ -6,6 +6,7 @@ import com.minimon.entity.MonResult;
 import com.minimon.enums.HttpRequestTypeEnum;
 import com.minimon.enums.MonTypeEnum;
 import com.minimon.enums.MonitoringResultCodeEnum;
+import com.minimon.enums.UseStatusEnum;
 import com.minimon.repository.MonApiRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,8 +15,6 @@ import org.apache.http.client.methods.*;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -36,7 +35,7 @@ public class ApiService {
     }
 
     public MonApi getApi(int seq) {
-        return monApiRepository.findBySeq(seq);
+        return monApiRepository.findById(seq).orElse(new MonApi());
     }
 
     public MonApi saveApi(MonApi monApi) {
@@ -61,10 +60,7 @@ public class ApiService {
     }
 
     public List<MonApi> findScheduledApis() {
-        Date now = new Date();
-        int hours = now.getHours();
-        return monApiRepository.findByUseableAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndStartHourLessThanEqualAndEndHourGreaterThanEqual(
-                1, now, now, hours, hours);
+        return monApiRepository.findByMonitoringUseYnOrderByRegDateDesc(UseStatusEnum.USE.getCode());
     }
 
     public List<MonResult> checkApis(List<MonApi> monApis) {
@@ -77,8 +73,9 @@ public class ApiService {
     }
 
     public MonResult executeApi(int seq) {
-        Optional<MonApi> optionalMonApi = Optional.ofNullable(monApiRepository.findBySeq(seq));
         MonResult monResult = null;
+
+        Optional<MonApi> optionalMonApi = monApiRepository.findById(seq);
         if (optionalMonApi.isPresent()) {
             MonApi monApi = optionalMonApi.get();
             monResult = resultService.saveResult(errorCheckApi(monApi, executeApi(monApi)));
@@ -146,7 +143,7 @@ public class ApiService {
 
         StringBuffer responseData = new StringBuffer();
         if (status >= 200 && status < 400) {
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()))){
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()))) {
                 String inputLine = "";
                 while ((inputLine = reader.readLine()) != null) {
                     responseData.append(inputLine);

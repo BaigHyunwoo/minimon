@@ -5,7 +5,6 @@ import com.minimon.entity.MonResult;
 import com.minimon.enums.MonitoringResultCodeEnum;
 import com.minimon.service.ApiService;
 import com.minimon.service.ResultService;
-import com.minimon.service.TransactionService;
 import com.minimon.service.UrlService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +20,6 @@ public class MonitoringScheduler {
     private final ResultService resultService;
     private final UrlService urlService;
     private final ApiService apiService;
-    private final TransactionService transactionService;
 
     public void execute() {
         if (MinimonApplication.getDriverPath().length() > 1) {
@@ -37,7 +35,7 @@ public class MonitoringScheduler {
 
     public void check(List<MonResult> monResults) {
         monResults.forEach(monResult -> {
-            switch (MonitoringResultCodeEnum.valueOf(monResult.getResult())){
+            switch (MonitoringResultCodeEnum.valueOf(monResult.getResult())) {
                 case SUCCESS:
                     break;
                 default:

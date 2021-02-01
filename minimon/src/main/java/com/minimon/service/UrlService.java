@@ -6,6 +6,7 @@ import com.minimon.entity.MonResult;
 import com.minimon.entity.MonUrl;
 import com.minimon.enums.MonTypeEnum;
 import com.minimon.enums.MonitoringResultCodeEnum;
+import com.minimon.enums.UseStatusEnum;
 import com.minimon.repository.MonUrlRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,8 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
@@ -28,24 +31,27 @@ public class UrlService {
     }
 
     public MonUrl getUrl(int seq) {
-        return monUrlRepository.findBySeq(seq);
+        return monUrlRepository.findById(seq).orElse(new MonUrl());
     }
 
+    @Transactional
     public MonUrl saveUrl(MonUrl monUrl) {
         monUrlRepository.save(monUrl);
         return monUrl;
     }
 
+    @Transactional
     public boolean editUrl(MonUrl monUrlVO) {
-        Optional<MonUrl> optionalMonUrl = Optional.ofNullable(getUrl(monUrlVO.getSeq()));
+        Optional<MonUrl> optionalMonUrl = monUrlRepository.findById(monUrlVO.getSeq());
         optionalMonUrl.ifPresent(monUrl -> {
             monUrlRepository.save(monUrlVO);
         });
         return optionalMonUrl.isPresent();
     }
 
+    @Transactional
     public boolean remove(int seq) {
-        Optional<MonUrl> optionalMonUrl = Optional.ofNullable(getUrl(seq));
+        Optional<MonUrl> optionalMonUrl = monUrlRepository.findById(seq);
         optionalMonUrl.ifPresent(monUrl -> {
             monUrlRepository.delete(monUrl);
         });
@@ -56,24 +62,23 @@ public class UrlService {
         List<MonResult> monResults = new ArrayList<>();
         monUrls.forEach(monUrl -> {
             Map<String, Object> logData = executeUrl(monUrl.getUrl(), monUrl.getTimeout());
-            monResults.add(errorCheckUrl(monUrl, logData));
+            monResults.add(errorCheck(monUrl, logData));
         });
         return monResults;
     }
 
     public List<MonUrl> findScheduledUrls() {
-        Date now = new Date();
-        int hours = now.getHours();
-        return monUrlRepository.findByUseableAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndStartHourLessThanEqualAndEndHourGreaterThanEqual(
-                1, now, now, hours, hours);
+        return monUrlRepository.findByMonitoringUseYn(UseStatusEnum.USE.getCode());
     }
 
+    @Transactional
     public MonResult executeUrl(int seq) {
-        Optional<MonUrl> optionalMonUrl = Optional.ofNullable(getUrl(seq));
         MonResult monResult = null;
+
+        Optional<MonUrl> optionalMonUrl = monUrlRepository.findById(seq);
         if (optionalMonUrl.isPresent()) {
             MonUrl monUrl = optionalMonUrl.get();
-            monResult = resultService.saveResult(errorCheckUrl(monUrl, executeUrl(monUrl.getUrl(), monUrl.getTimeout())));
+            monResult = resultService.saveResult(errorCheck(monUrl, executeUrl(monUrl.getUrl(), monUrl.getTimeout())));
             resultService.sendResultByProperties(monResult);
         }
         return monResult;
@@ -84,13 +89,12 @@ public class UrlService {
         EventFiringWebDriver driver = selenium.setUp();
         selenium.connectUrl(url, driver, timeout);
         Map<String, Object> logData = selenium.getResult(selenium.getLog(driver), driver.getCurrentUrl());
-        logData.put("source", selenium.getSource(driver));
         if (driver != null) driver.quit();
         return logData;
     }
 
 
-    public MonResult errorCheckUrl(MonUrl url, Map<String, Object> logData) {
+    public MonResult errorCheck(MonUrl url, Map<String, Object> logData) {
         int status = Integer.parseInt("" + logData.get("status"));
         double totalLoadTime = Double.parseDouble("" + logData.get("totalLoadTime"));
         double totalPayLoad = Double.parseDouble("" + logData.get("totalPayLoad"));
@@ -101,11 +105,11 @@ public class UrlService {
                 .title(url.getTitle())
                 .loadTime(totalLoadTime)
                 .payload(totalPayLoad)
-                .result(errCheck(status, totalLoadTime, totalPayLoad, source, url))
+                .result(getResultCode(status, totalLoadTime, totalPayLoad, source, url))
                 .build();
     }
 
-    public String errCheck(int status, double totalLoadTime, double totalPayLoad, String source, MonUrl url) {
+    public String getResultCode(int status, double totalLoadTime, double totalPayLoad, String source, MonUrl url) {
         if (status >= 400) {
             return MonitoringResultCodeEnum.UNKNOWN.getCode();
         } else if (url.getLoadTimeCheck() == 1 && totalLoadTime >= url.getErrLoadTime()) {

@@ -51,7 +51,7 @@ public class MonUrl extends CommonEntity {
 
     @NotNull
     @ApiModelProperty(name = "모니터링 사용 여부")
-    private String useable;
+    private String monitoringUseYn;
 
     @NotNull
     @ApiModelProperty(name = "지연시간 검사 여부")
@@ -60,22 +60,6 @@ public class MonUrl extends CommonEntity {
     @NotNull
     @ApiModelProperty(name = "용량 검사 여부")
     private int payLoadCheck;
-
-    @NotNull
-    @ApiModelProperty(name = "시작 일")
-    private LocalDateTime startDate;
-
-    @NotNull
-    @ApiModelProperty(name = "종료 일")
-    private LocalDateTime endDate;
-
-    @NotNull
-    @ApiModelProperty(name = "시작 시간")
-    private int startHour;
-
-    @NotNull
-    @ApiModelProperty(name = "종료 시간")
-    private int endHour;
 
     @NotNull
     @ApiModelProperty(name = "텍스트 검사 여부")

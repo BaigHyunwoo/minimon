@@ -8,10 +8,6 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-public interface MonUrlRepository extends JpaRepository<MonUrl, String> {
-
-	MonUrl findBySeq(int seq);
-
-	List<MonUrl> findByUseableAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndStartHourLessThanEqualAndEndHourGreaterThanEqual(
-			int useable, Date startDate, Date endDate, int startHour, int endHour);
+public interface MonUrlRepository extends JpaRepository<MonUrl, Integer> {
+	List<MonUrl> findByMonitoringUseYn(String monitoringUseYn);
 }

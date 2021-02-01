@@ -51,7 +51,7 @@ public class MonApi extends CommonEntity {
 
     @NotNull
     @ApiModelProperty(name = "사용 여부")
-    private String useable;
+    private String monitoringUseYn;
 
     @NotNull
     @ApiModelProperty(name = "지연 시간 검사 여부")
@@ -64,22 +64,6 @@ public class MonApi extends CommonEntity {
     @NotNull
     @ApiModelProperty(name = "응답 데이터 검사 여부")
     private int responseCheck;
-
-    @NotNull
-    @ApiModelProperty(name = "시작 일")
-    private LocalDateTime startDate;
-
-    @NotNull
-    @ApiModelProperty(name = "종료일")
-    private LocalDateTime endDate;
-
-    @NotNull
-    @ApiModelProperty(name = "시작 시간")
-    private int startHour;
-
-    @NotNull
-    @ApiModelProperty(name = "종료 시간")
-    private int endHour;
 
     @NotNull
     @ApiModelProperty(name = "사용 http 메소드")
