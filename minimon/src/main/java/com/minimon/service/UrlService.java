@@ -58,6 +58,10 @@ public class UrlService {
         return optionalMonUrl.isPresent();
     }
 
+    public List<MonUrl> findScheduledUrls() {
+        return monUrlRepository.findByMonitoringUseYn(UseStatusEnum.USE.getCode());
+    }
+
     public List<MonResult> checkUrls(List<MonUrl> monUrls) {
         List<MonResult> monResults = new ArrayList<>();
         monUrls.forEach(monUrl -> {
@@ -65,10 +69,6 @@ public class UrlService {
             monResults.add(errorCheck(monUrl, logData));
         });
         return monResults;
-    }
-
-    public List<MonUrl> findScheduledUrls() {
-        return monUrlRepository.findByMonitoringUseYn(UseStatusEnum.USE.getCode());
     }
 
     @Transactional
