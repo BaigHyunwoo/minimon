@@ -59,7 +59,7 @@ public class TransactionController {
             monTransaction.setErrLoadTime(Integer.parseInt("" + param.get("errLoadTime")));
             monTransaction.setStatus(Integer.parseInt("" + param.get("status")));
             monTransaction.setTransactionCode("" + param.get("transactionCode"));
-            monTransaction.setCodeDatas(objectMapper.readValue(param.get("codeDatas").toString(), new TypeReference<List<MonCodeData>>() {}));
+            monTransaction.setCodeDataList(objectMapper.readValue(param.get("codeDatas").toString(), new TypeReference<List<MonCodeData>>() {}));
 
         } catch (Exception e) {
 
@@ -278,7 +278,7 @@ public class TransactionController {
 
             if (existsTransaction != null) {
 
-                Map<String, Object> logData = transactionService.executeTransaction(existsTransaction.getCodeDatas());
+                Map<String, Object> logData = transactionService.executeTransaction(existsTransaction.getCodeDataList());
                 Map<String, Object> data = transactionService.errorCheckTransaction(existsTransaction, logData);
                 result.put("" + existsTransaction.getSeq(), data);
 

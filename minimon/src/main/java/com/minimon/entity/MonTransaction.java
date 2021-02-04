@@ -59,8 +59,8 @@ public class MonTransaction extends CommonEntity {
 
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "tbl_mon_transaction_seq")
-    private List<MonCodeData> codeDatas = new ArrayList<MonCodeData>();
+    @JoinColumn(name = "mon_transaction_seq")
+    private List<MonCodeData> codeDataList = new ArrayList<MonCodeData>();
 
     /*
      * Origin Data Info

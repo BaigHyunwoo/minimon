@@ -17,6 +17,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -38,11 +39,13 @@ public class ApiService {
         return monApiRepository.findById(seq).orElse(new MonApi());
     }
 
+    @Transactional
     public MonApi saveApi(MonApi monApi) {
         monApiRepository.save(monApi);
         return monApi;
     }
 
+    @Transactional
     public boolean editApi(MonApi monApiVO) {
         Optional<MonApi> optionalMonApi = Optional.ofNullable(getApi(monApiVO.getSeq()));
         optionalMonApi.ifPresent(monUrl -> {
@@ -51,6 +54,7 @@ public class ApiService {
         return optionalMonApi.isPresent();
     }
 
+    @Transactional
     public boolean remove(int seq) {
         Optional<MonApi> optionalMonApi = Optional.ofNullable(getApi(seq));
         optionalMonApi.ifPresent(monApi -> {
@@ -72,6 +76,7 @@ public class ApiService {
         return monResults;
     }
 
+    @Transactional
     public MonResult executeApi(int seq) {
         MonResult monResult = null;
 

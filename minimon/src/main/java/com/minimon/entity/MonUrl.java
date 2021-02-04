@@ -62,13 +62,6 @@ public class MonUrl extends CommonEntity {
     private int payLoadCheck;
 
     @NotNull
-    @ApiModelProperty(name = "텍스트 검사 여부")
-    private int textCheck;
-
-    @ApiModelProperty(name = "텍스트 검사 값")
-    private String textCheckValue;
-
-    @NotNull
     @ApiModelProperty(name = "응답 코드")
     private int status;
 

@@ -34,7 +34,7 @@ public class TransactionService {
 
 
         for (MonTransaction transaction : monTransactions) {
-            Map<String, Object> logData = executeTransaction(transaction.getCodeDatas());
+            Map<String, Object> logData = executeTransaction(transaction.getCodeDataList());
             checkData.put("" + transaction.getSeq(), errorCheckTransaction(transaction, logData));
         }
 
@@ -113,8 +113,8 @@ public class TransactionService {
     }
 
 
-    public Map<String, Object> executeTransaction(List<MonCodeData> codeDatas) {
-        Map<String, Object> logData = new HashMap<String, Object>();
+    public Map<String, Object> executeTransaction(List<MonCodeData> codeDataList) {
+        Map<String, Object> logData = new HashMap<>();
         EventFiringWebDriver driver = null;
 
         try {
@@ -123,9 +123,9 @@ public class TransactionService {
             driver = selenium.setUp();
 
             long startTime = System.currentTimeMillis();
-            for (int i = 0; i < codeDatas.size(); i++) {
+            for (int i = 0; i < codeDataList.size(); i++) {
 
-                MonCodeData monCodeData = codeDatas.get(i);
+                MonCodeData monCodeData = codeDataList.get(i);
                 logData.put("" + i, selenium.executeAction(selenium, driver, monCodeData.getAction(), monCodeData.getSelector_type(), monCodeData.getSelector_value(), monCodeData.getValue()));
 
             }
