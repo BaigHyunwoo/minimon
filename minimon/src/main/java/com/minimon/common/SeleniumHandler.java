@@ -1,6 +1,7 @@
 package com.minimon.common;
 
 import com.minimon.MinimonApplication;
+import com.minimon.vo.MonitoringResultVO;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.json.JSONObject;
 import org.openqa.selenium.*;
@@ -29,12 +30,6 @@ import java.util.logging.Level;
 
 public class SeleniumHandler {
     private static final Logger logger = LoggerFactory.getLogger(SeleniumHandler.class.getName());
-
-    private double totalLoadTime = -1;
-
-    private double totalPayLoad = 0.0;
-
-    private int status = 200;
 
     private String driverName = "webdriver.chrome.driver";
 
@@ -111,9 +106,9 @@ public class SeleniumHandler {
     }
 
 
-    public double connectUrl(String url, EventFiringWebDriver driver, int timeout) {
+    public int connect(String url, EventFiringWebDriver driver, int timeout) {
         driver.manage().timeouts().pageLoadTimeout(timeout, TimeUnit.SECONDS);
-
+        int totalLoadTime = -1;
         try {
             WebDriverEventListenerClass event = new WebDriverEventListenerClass();
             driver.register(event);
@@ -160,25 +155,22 @@ public class SeleniumHandler {
         return json.getJSONObject("message");
     }
 
-    public Map<String, Object> getResult(LogEntries logs, String currentURL) {
-        Map<String, Object> returnData = new HashMap<>();
+    public MonitoringResultVO getResult(LogEntries logs, String currentURL, int totalLoadTime) {
+        MonitoringResultVO monitoringResultVO = MonitoringResultVO.builder()
+                .totalLoadTime(totalLoadTime)
+                .url(currentURL)
+                .build();
 
         for (Iterator<LogEntry> it = logs.iterator(); it.hasNext(); ) {
-            setLogData(getResourceMessage(it.next()), currentURL);
+            setResult(getResourceMessage(it.next()), currentURL, monitoringResultVO);
         }
-
-        returnData.put("url", currentURL);
-        returnData.put("status", this.status);
-        returnData.put("totalPayLoad", this.totalPayLoad);
-        returnData.put("totalLoadTime", this.totalLoadTime);
-
         logger.debug("WebDriver - Log 분석 완료");
 
-        return returnData;
+        return monitoringResultVO;
     }
 
 
-    public void setLogData(JSONObject message, String currentURL) {
+    public void setResult(JSONObject message, String currentURL, MonitoringResultVO monitoringResultVO) {
 
         /*
          * DATA CONVERT & CHECK
@@ -199,20 +191,22 @@ public class SeleniumHandler {
 
         JSONObject headersObj = response.getJSONObject("headers");
 
-        Map<String, Object> headers = new CaseInsensitiveMap<String, Object>();
+        Map<String, Object> headers = new CaseInsensitiveMap<>();
 
         headers.putAll(headersObj.toMap());
 
         /*
          * SET PAYLOAD
          */
-        this.totalPayLoad += headers.containsKey("content-length") ? Double.parseDouble(headers.get("content-length").toString()) : 0;
+        monitoringResultVO.setTotalPayLoad(monitoringResultVO.getTotalPayLoad() + (headers.containsKey("content-length") ? Integer.parseInt(headers.get("content-length").toString()) : 0));
+        ;
 
         /*
          * SET STATUS
          */
-        this.status = currentURL.equals((String) response.get("url")) == true ? response.getInt("status") : this.status;
-
+        if (currentURL.equals(response.get("url")) == true) {
+            monitoringResultVO.setStatus(response.getInt("status"));
+        }
     }
 
 

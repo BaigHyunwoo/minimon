@@ -8,16 +8,16 @@ import com.minimon.enums.MonTypeEnum;
 import com.minimon.enums.MonitoringResultCodeEnum;
 import com.minimon.enums.UseStatusEnum;
 import com.minimon.repository.MonUrlRepository;
+import com.minimon.vo.MonitoringResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -65,8 +65,8 @@ public class UrlService {
     public List<MonResult> checkUrls(List<MonUrl> monUrls) {
         List<MonResult> monResults = new ArrayList<>();
         monUrls.forEach(monUrl -> {
-            Map<String, Object> logData = executeUrl(monUrl.getUrl(), monUrl.getTimeout());
-            monResults.add(errorCheck(monUrl, logData));
+            MonitoringResultVO monitoringResultVO = executeUrl(monUrl.getUrl(), monUrl.getTimeout());
+            monResults.add(errorCheck(monUrl, monitoringResultVO));
         });
         return monResults;
     }
@@ -84,32 +84,34 @@ public class UrlService {
         return monResult;
     }
 
-    public Map<String, Object> executeUrl(String url, int timeout) {
+    public MonitoringResultVO executeUrl(String url, int timeout) {
         SeleniumHandler selenium = new SeleniumHandler();
         EventFiringWebDriver driver = selenium.setUp();
-        selenium.connectUrl(url, driver, timeout);
-        Map<String, Object> logData = selenium.getResult(selenium.getLog(driver), driver.getCurrentUrl());
-        if (driver != null) driver.quit();
-        return logData;
+        MonitoringResultVO monitoringResultVO;
+        try {
+            int totalLoadTime = selenium.connect(url, driver, timeout);
+            monitoringResultVO = selenium.getResult(selenium.getLog(driver), driver.getCurrentUrl(), totalLoadTime);
+        } finally {
+            if (driver != null) {
+                driver.quit();
+            }
+        }
+        return monitoringResultVO;
     }
 
 
-    public MonResult errorCheck(MonUrl url, Map<String, Object> logData) {
-        int status = Integer.parseInt("" + logData.get("status"));
-        double totalLoadTime = Double.parseDouble("" + logData.get("totalLoadTime"));
-        double totalPayLoad = Double.parseDouble("" + logData.get("totalPayLoad"));
-        String source = logData.get("source").toString();
+    public MonResult errorCheck(MonUrl url, MonitoringResultVO monitoringResultVO) {
         return MonResult.builder()
                 .monTypeEnum(MonTypeEnum.URL)
                 .relationSeq(url.getSeq())
                 .title(url.getTitle())
-                .loadTime(totalLoadTime)
-                .payload(totalPayLoad)
-                .result(getResultCode(status, totalLoadTime, totalPayLoad, source, url))
+                .loadTime(monitoringResultVO.getTotalLoadTime())
+                .payload(monitoringResultVO.getTotalPayLoad())
+                .result(getResultCode(monitoringResultVO.getStatus(), monitoringResultVO.getTotalLoadTime(), monitoringResultVO.getTotalPayLoad(), url))
                 .build();
     }
 
-    public String getResultCode(int status, double totalLoadTime, double totalPayLoad, String source, MonUrl url) {
+    public String getResultCode(int status, double totalLoadTime, double totalPayLoad, MonUrl url) {
         if (status >= 400) {
             return MonitoringResultCodeEnum.UNKNOWN.getCode();
         } else if (url.getLoadTimeCheck() == 1 && totalLoadTime >= url.getErrLoadTime()) {
@@ -117,10 +119,9 @@ public class UrlService {
         } else if (url.getPayLoadCheck() == 1 && (CommonUtil.getPerData(url.getPayLoad(), url.getPayLoadPer(), 2) > totalPayLoad
                 || totalPayLoad > CommonUtil.getPerData(url.getPayLoad(), url.getPayLoadPer(), 1))) {
             return MonitoringResultCodeEnum.PAYLOAD.getCode();
-        } else if (url.getTextCheck() == 1 && source.indexOf(url.getTextCheckValue()) >= 0) {
-            return MonitoringResultCodeEnum.TEXT.getCode();
-        } else
+        } else {
             return MonitoringResultCodeEnum.SUCCESS.getCode();
+        }
     }
 
 }
