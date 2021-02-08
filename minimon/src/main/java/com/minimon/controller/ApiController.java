@@ -4,6 +4,7 @@ import com.minimon.common.CommonResponse;
 import com.minimon.entity.MonApi;
 import com.minimon.entity.MonResult;
 import com.minimon.service.ApiService;
+import com.minimon.vo.MonitoringResultVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -62,7 +63,7 @@ public class ApiController {
         return new CommonResponse();
     }
 
-    @ApiOperation(value = "API 검사 테스트 실행", response = Map.class)
+    @ApiOperation(value = "API 검사 테스트 실행", response = MonitoringResultVO.class)
     @PostMapping(path = "/check")
     public CommonResponse check(@RequestParam String url, @RequestParam String method, @RequestBody(required = false) String data) {
         return new CommonResponse(apiService.executeApi(url, method, data));

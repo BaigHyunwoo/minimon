@@ -8,6 +8,7 @@ import com.minimon.enums.MonTypeEnum;
 import com.minimon.enums.MonitoringResultCodeEnum;
 import com.minimon.enums.UseStatusEnum;
 import com.minimon.repository.MonApiRepository;
+import com.minimon.vo.MonitoringResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
@@ -21,7 +22,9 @@ import javax.transaction.Transactional;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -70,8 +73,8 @@ public class ApiService {
     public List<MonResult> checkApis(List<MonApi> monApis) {
         List<MonResult> monResults = new ArrayList<>();
         monApis.forEach(monApi -> {
-            Map<String, Object> logData = executeApi(monApi);
-            monResults.add(errorCheckApi(monApi, logData));
+            MonitoringResultVO monitoringResultVO = executeApi(monApi);
+            monResults.add(errorCheckApi(monApi, monitoringResultVO));
         });
         return monResults;
     }
@@ -89,26 +92,27 @@ public class ApiService {
         return monResult;
     }
 
-    public Map<String, Object> executeApi(String url, String method, String data) {
+    public MonitoringResultVO executeApi(String url, String method, String data) {
         return httpSending(url, method, data);
     }
 
-    public Map<String, Object> executeApi(MonApi api) {
+    public MonitoringResultVO executeApi(MonApi api) {
         return httpSending(api.getUrl(), api.getMethod(), api.getData());
     }
 
-    public MonResult errorCheckApi(MonApi api, Map<String, Object> logData) {
-        int status = Integer.parseInt("" + logData.get("status"));
-        double loadTime = Double.parseDouble("" + logData.get("loadTime"));
-        double payLoad = Double.parseDouble("" + logData.get("payLoad"));
-        String response = "" + logData.get("response");
+    public MonResult errorCheckApi(MonApi api, MonitoringResultVO monitoringResultVO) {
         return MonResult.builder()
                 .monTypeEnum(MonTypeEnum.API)
                 .relationSeq(api.getSeq())
                 .title(api.getMethod() + " : " + api.getTitle())
-                .loadTime(loadTime)
-                .payload(payLoad)
-                .result(errCheck(status, loadTime, payLoad, response, api))
+                .loadTime(monitoringResultVO.getTotalLoadTime())
+                .payload(monitoringResultVO.getTotalPayLoad())
+                .result(errCheck(
+                        monitoringResultVO.getStatus(),
+                        monitoringResultVO.getTotalLoadTime(),
+                        monitoringResultVO.getTotalPayLoad(),
+                        monitoringResultVO.getResponse(),
+                        api))
                 .build();
     }
 
@@ -127,7 +131,7 @@ public class ApiService {
             return MonitoringResultCodeEnum.SUCCESS.getCode();
     }
 
-    public Map<String, Object> httpSending(String url, String method, String data) {
+    public MonitoringResultVO httpSending(String url, String method, String data) {
         long st = System.currentTimeMillis();
         HttpResponse response = null;
         try {
@@ -140,8 +144,7 @@ public class ApiService {
     }
 
 
-    public Map<String, Object> getApiLogData(long st, long ed, HttpResponse response) {
-        Map<String, Object> result = new HashMap<>();
+    public MonitoringResultVO getApiLogData(long st, long ed, HttpResponse response) {
         long loadTime = ed - st;
         long payLoad = response.getEntity().getContentLength();
         int status = response.getStatusLine().getStatusCode();
@@ -160,11 +163,12 @@ public class ApiService {
             if (payLoad == -1) payLoad = CommonUtil.getByteLength(responseData.toString());
         }
 
-        result.put("loadTime", loadTime);
-        result.put("status", status);
-        result.put("payLoad", payLoad);
-        result.put("response", responseData.toString());
-        return result;
+        return MonitoringResultVO.builder()
+                .totalLoadTime(new Long(loadTime).intValue())
+                .totalPayLoad(new Long(payLoad).intValue())
+                .status(status)
+                .response(responseData.toString())
+                .build();
     }
 
     public HttpUriRequest getHttpRequest(String method, String url, String data) {
