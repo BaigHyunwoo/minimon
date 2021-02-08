@@ -32,11 +32,11 @@ public class UrlController {
     @ApiOperation(value = "URL 조회", response = MonUrl.class)
     @GetMapping(path = "/{seq}")
     public CommonResponse get(@PathVariable("seq") int seq) {
-        Optional<MonUrl> optionalMonUrl = urlService.getUrl(seq);
-        if (!optionalMonUrl.isPresent()) {
+        Optional url = urlService.getUrl(seq);
+        if (!url.isPresent()) {
             return CommonResponse.fail("해당 URL 정보가 존재하지 않습니다.");
         }
-        return new CommonResponse(optionalMonUrl.get());
+        return new CommonResponse(url.get());
     }
 
     @ApiOperation(value = "URL 생성", response = MonUrl.class)

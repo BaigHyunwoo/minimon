@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -30,7 +31,11 @@ public class ApiController {
     @ApiOperation(value = "API 조회", response = MonApi.class)
     @GetMapping(path = "/{seq}")
     public CommonResponse get(@PathVariable("seq") int seq) {
-        return new CommonResponse(apiService.getApi(seq));
+        Optional api = apiService.getApi(seq);
+        if(!api.isPresent()) {
+            return CommonResponse.fail("해당 API 정보가 존재하지 않습니다.");
+        }
+        return new CommonResponse(api.get());
     }
 
     @ApiOperation(value = "API 생성", response = MonApi.class)
@@ -42,13 +47,19 @@ public class ApiController {
     @ApiOperation(value = "API 수정", response = boolean.class)
     @PutMapping(path = "")
     public CommonResponse update(@RequestBody MonApi monApi) {
-        return new CommonResponse(apiService.editApi(monApi));
+        if(!apiService.editApi(monApi)) {
+            return CommonResponse.fail("해당 API 정보가 존재하지 않습니다.");
+        }
+        return new CommonResponse();
     }
 
     @ApiOperation(value = "API 삭제", response = boolean.class)
     @DeleteMapping(path = "/{seq}")
     public CommonResponse delete(@PathVariable("seq") int seq) {
-        return new CommonResponse(apiService.remove(seq));
+        if(!apiService.remove(seq)) {
+            return CommonResponse.fail("해당 API 정보가 존재하지 않습니다.");
+        }
+        return new CommonResponse();
     }
 
     @ApiOperation(value = "API 검사 테스트 실행", response = Map.class)
@@ -60,6 +71,10 @@ public class ApiController {
     @ApiOperation(value = "API 검사 실행", response = MonResult.class)
     @PostMapping(path = "/{seq}/execute")
     public CommonResponse execute(@PathVariable("seq") int seq) {
-        return new CommonResponse(apiService.executeApi(seq));
+        MonResult monResult = apiService.executeApi(seq);
+        if(monResult == null) {
+            return CommonResponse.fail("해당 API 정보가 존재하지 않습니다.");
+        }
+        return new CommonResponse(monResult);
     }
 }

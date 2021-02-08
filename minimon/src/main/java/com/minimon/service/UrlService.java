@@ -42,7 +42,7 @@ public class UrlService {
 
     @Transactional
     public boolean editUrl(MonUrl monUrlVO) {
-        Optional<MonUrl> optionalMonUrl = monUrlRepository.findById(monUrlVO.getSeq());
+        Optional<MonUrl> optionalMonUrl = getUrl(monUrlVO.getSeq());
         optionalMonUrl.ifPresent(monUrl -> {
             monUrlRepository.save(monUrlVO);
         });
@@ -51,7 +51,7 @@ public class UrlService {
 
     @Transactional
     public boolean remove(int seq) {
-        Optional<MonUrl> optionalMonUrl = monUrlRepository.findById(seq);
+        Optional<MonUrl> optionalMonUrl = getUrl(seq);
         optionalMonUrl.ifPresent(monUrl -> {
             monUrlRepository.delete(monUrl);
         });
@@ -75,7 +75,7 @@ public class UrlService {
     public MonResult executeUrl(int seq) {
         MonResult monResult = null;
 
-        Optional<MonUrl> optionalMonUrl = monUrlRepository.findById(seq);
+        Optional<MonUrl> optionalMonUrl = getUrl(seq);
         if (optionalMonUrl.isPresent()) {
             MonUrl monUrl = optionalMonUrl.get();
             monResult = resultService.saveResult(errorCheck(monUrl, executeUrl(monUrl.getUrl(), monUrl.getTimeout())));

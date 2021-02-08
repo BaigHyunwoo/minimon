@@ -35,8 +35,8 @@ public class ApiService {
         return monApiRepository.findAll();
     }
 
-    public MonApi getApi(int seq) {
-        return monApiRepository.findById(seq).orElse(new MonApi());
+    public Optional<MonApi> getApi(int seq) {
+        return monApiRepository.findById(seq);
     }
 
     @Transactional
@@ -47,7 +47,7 @@ public class ApiService {
 
     @Transactional
     public boolean editApi(MonApi monApiVO) {
-        Optional<MonApi> optionalMonApi = Optional.ofNullable(getApi(monApiVO.getSeq()));
+        Optional<MonApi> optionalMonApi = getApi(monApiVO.getSeq());
         optionalMonApi.ifPresent(monUrl -> {
             monApiRepository.save(monApiVO);
         });
@@ -56,7 +56,7 @@ public class ApiService {
 
     @Transactional
     public boolean remove(int seq) {
-        Optional<MonApi> optionalMonApi = Optional.ofNullable(getApi(seq));
+        Optional<MonApi> optionalMonApi = getApi(seq);
         optionalMonApi.ifPresent(monApi -> {
             monApiRepository.delete(monApi);
         });
@@ -80,7 +80,7 @@ public class ApiService {
     public MonResult executeApi(int seq) {
         MonResult monResult = null;
 
-        Optional<MonApi> optionalMonApi = monApiRepository.findById(seq);
+        Optional<MonApi> optionalMonApi = getApi(seq);
         if (optionalMonApi.isPresent()) {
             MonApi monApi = optionalMonApi.get();
             monResult = resultService.saveResult(errorCheckApi(monApi, executeApi(monApi)));
