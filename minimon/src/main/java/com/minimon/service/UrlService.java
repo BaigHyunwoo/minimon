@@ -30,8 +30,8 @@ public class UrlService {
         return monUrlRepository.findAll();
     }
 
-    public MonUrl getUrl(int seq) {
-        return monUrlRepository.findById(seq).orElse(new MonUrl());
+    public Optional<MonUrl> getUrl(int seq) {
+        return monUrlRepository.findById(seq);
     }
 
     @Transactional
