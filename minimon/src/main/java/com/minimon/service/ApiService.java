@@ -1,5 +1,6 @@
 package com.minimon.service;
 
+import com.minimon.common.CommonRestTemplate;
 import com.minimon.common.CommonUtil;
 import com.minimon.entity.MonApi;
 import com.minimon.entity.MonResult;
@@ -16,6 +17,7 @@ import org.apache.http.client.methods.*;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -27,9 +29,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class ApiService {
+    private final CommonRestTemplate commonRestTemplate;
     private final ResultService resultService;
     private final MonApiRepository monApiRepository;
 
@@ -132,15 +135,16 @@ public class ApiService {
     }
 
     public MonitoringResultVO httpSending(String url, String method, String data) {
-        long st = System.currentTimeMillis();
-        HttpResponse response = null;
-        try {
-            response = HttpClients.createDefault().execute(getHttpRequest(method, url, data));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        long ed = System.currentTimeMillis();
-        return getApiLogData(st, ed, response);
+//        long st = System.currentTimeMillis();
+//        HttpResponse response = null;
+//        try {
+//            response = HttpClients.createDefault().execute(getHttpRequest(method, url, data));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        long ed = System.currentTimeMillis();
+//        return getApiLogData(st, ed, response);
+        return MonitoringResultVO.builder().status(200).response(commonRestTemplate.callApi(HttpMethod.valueOf(method), url)).build();
     }
 
 

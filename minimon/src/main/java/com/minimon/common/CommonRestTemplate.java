@@ -2,8 +2,10 @@ package com.minimon.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.*;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -15,6 +17,7 @@ import java.util.Map;
 
 
 @Slf4j
+@Component
 public class CommonRestTemplate {
     private final Charset charset = Charset.forName("UTF-8");
 
