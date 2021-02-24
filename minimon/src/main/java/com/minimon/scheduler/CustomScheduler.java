@@ -1,9 +1,9 @@
-package com.minimon.service;
+package com.minimon.scheduler;
 
 import com.minimon.enums.SchedulerActiveTypeEnum;
 import com.minimon.enums.SchedulerStatusEnum;
 import com.minimon.enums.SchedulerTypeEnum;
-import com.minimon.scheduler.MonitoringScheduler;
+import com.minimon.vo.SchedulerTaskVO;
 import com.minimon.vo.SchedulerVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,13 +19,13 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 
-@Service
 @Slf4j
+@Service
 @RequiredArgsConstructor
-public class CustomSchedulerService implements InitializingBean {
+public class CustomScheduler implements InitializingBean {
     private final TaskScheduler scheduler;
     private final MonitoringScheduler monitoringScheduler;
-    private Map<String, Map<String, Object>> scheduledTasks = new ConcurrentHashMap<>();
+    private Map<String, SchedulerTaskVO> scheduledTasks = new ConcurrentHashMap<>();
 
 
     /**
@@ -34,8 +34,8 @@ public class CustomSchedulerService implements InitializingBean {
      * @throws Exception
      */
     @Override
-    public void afterPropertiesSet() throws Exception {
-//        runAllTasks();
+    public void afterPropertiesSet() {
+        runAllTasks();
     }
 
     public Map getRunningScheduler() {
@@ -43,25 +43,19 @@ public class CustomSchedulerService implements InitializingBean {
         tasks.put("CURRENT THREAD SIZE", Thread.activeCount());
         tasks.put("TOTAL TASK SIZE", scheduledTasks.size());
 
-        Arrays.stream(SchedulerTypeEnum.values()).forEach(s -> {
-            Map<String, String> taskStatus = new HashMap<>();
-            String activeType = s.getActiveType();
-            String time = s.getTime();
+        for (SchedulerTypeEnum schedulerTypeEnum : SchedulerTypeEnum.values()) {
             String status = SchedulerStatusEnum.STOP.getCode();
-
-            if (scheduledTasks.containsKey(s.getCode())) {
-                Map task = scheduledTasks.get(s.getCode());
-                ScheduledFuture scheduledFuture = (ScheduledFuture) task.get("task");
+            SchedulerTaskVO task = new SchedulerTaskVO();
+            if (scheduledTasks.containsKey(schedulerTypeEnum.getCode())) {
+                task = scheduledTasks.get(schedulerTypeEnum.getCode());
+                ScheduledFuture scheduledFuture = task.getScheduler();
                 status = (scheduledFuture.isDone() == false ? SchedulerStatusEnum.RUNNING.getCode() : SchedulerStatusEnum.STOP.getCode());
-                time = "" + task.get("Time");
-                activeType = "" + task.get("ActiveType");
             }
 
-            taskStatus.put("ActiveType", activeType);
-            taskStatus.put("time", time);
-            taskStatus.put("Status", status);
-            tasks.put(s.getCode(), taskStatus);
-        });
+            task.setSchedulerType(schedulerTypeEnum);
+            task.setStatus(status);
+            tasks.put(schedulerTypeEnum.getCode(), task);
+        }
 
         log.info(tasks.toString());
         return tasks;
@@ -89,25 +83,24 @@ public class CustomSchedulerService implements InitializingBean {
     }
 
     private void run(Runnable task, String schedulerType, String activeType, String time) {
-        Map<String, Object> taskStatus = new HashMap<>();
-        taskStatus.put("ActiveType", activeType);
-        taskStatus.put("Time", time);
+        SchedulerTaskVO schedulerTaskVO = new SchedulerTaskVO();
+        schedulerTaskVO.setSchedulerType(SchedulerTypeEnum.valueOf(schedulerType));
         switch (SchedulerActiveTypeEnum.valueOf(activeType)) {
             case CRON:
-                taskStatus.put("task", scheduler.schedule(task, new CronTrigger(time)));
+                schedulerTaskVO.setScheduler(scheduler.schedule(task, new CronTrigger(time)));
                 break;
             case DELAY:
-                taskStatus.put("task", scheduler.scheduleAtFixedRate(task, Integer.parseInt(time)));
+                schedulerTaskVO.setScheduler(scheduler.scheduleAtFixedRate(task, Integer.parseInt(time)));
                 break;
         }
-        scheduledTasks.put(schedulerType, taskStatus);
+        scheduledTasks.put(schedulerType, schedulerTaskVO);
         log.info("RUN TASK " + schedulerType + " " + activeType + " " + time);
     }
 
     public boolean stop(String schedulerType) {
         if (Optional.ofNullable(scheduledTasks.get(schedulerType)).isPresent()) {
-            Map task = scheduledTasks.get(schedulerType);
-            ScheduledFuture scheduledFuture = (ScheduledFuture) task.get("task");
+            SchedulerTaskVO schedulerTaskVO = scheduledTasks.get(schedulerType);
+            ScheduledFuture scheduledFuture = schedulerTaskVO.getScheduler();
             log.info(schedulerType + " isCancel ? " + scheduledFuture.cancel(true));
             scheduledTasks.remove(schedulerType);
             log.info("STOP TASK " + schedulerType);
