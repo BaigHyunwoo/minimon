@@ -18,6 +18,10 @@ public class CommonResponse {
         return new CommonResponse(code, errorMessage);
     }
 
+    public static CommonResponse fail(String code, String errorMessage) {
+        return new CommonResponse(Integer.valueOf(code), errorMessage);
+    }
+
     public CommonResponse() {
         setSuccess();
         this.data = new String();

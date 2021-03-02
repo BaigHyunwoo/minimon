@@ -1,5 +1,6 @@
 package com.minimon.controller;
 
+import com.minimon.common.CommonMessage;
 import com.minimon.common.CommonResponse;
 import com.minimon.entity.MonApi;
 import com.minimon.entity.MonResult;
@@ -58,7 +59,7 @@ public class ApiController {
     @DeleteMapping(path = "/{seq}")
     public CommonResponse delete(@PathVariable("seq") int seq) {
         if(!apiService.remove(seq)) {
-            return CommonResponse.fail("해당 API 정보가 존재하지 않습니다.");
+            return CommonResponse.fail(CommonMessage.getMessage("noExist.code"), CommonMessage.getMessage("noExist.msg"));
         }
         return new CommonResponse();
     }
