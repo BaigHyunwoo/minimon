@@ -98,7 +98,6 @@ public class SeleniumHandler {
 
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
             if (driver != null) driver.quit();
         }
 
