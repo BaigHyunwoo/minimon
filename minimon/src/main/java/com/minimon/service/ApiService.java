@@ -4,7 +4,6 @@ import com.minimon.common.CommonRestTemplate;
 import com.minimon.common.CommonUtil;
 import com.minimon.entity.MonApi;
 import com.minimon.entity.MonResult;
-import com.minimon.enums.HttpRequestTypeEnum;
 import com.minimon.enums.MonTypeEnum;
 import com.minimon.enums.MonitoringResultCodeEnum;
 import com.minimon.enums.UseStatusEnum;
@@ -179,7 +178,7 @@ public class ApiService {
         HttpUriRequest http = null;
 
         try {
-            switch (HttpRequestTypeEnum.valueOf(method)) {
+            switch (HttpMethod.valueOf(method)) {
                 case GET:
                     HttpGet httpget = new HttpGet(url);
                     http = httpget;
