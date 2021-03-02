@@ -1,6 +1,5 @@
 package com.minimon.service;
 
-import com.minimon.common.CommonUtil;
 import com.minimon.common.SeleniumHandler;
 import com.minimon.entity.MonResult;
 import com.minimon.entity.MonUrl;
@@ -106,19 +105,15 @@ public class UrlService {
                 .relationSeq(url.getSeq())
                 .title(url.getTitle())
                 .loadTime(monitoringResultVO.getTotalLoadTime())
-                .payload(monitoringResultVO.getTotalPayLoad())
-                .result(getResultCode(monitoringResultVO.getStatus(), monitoringResultVO.getTotalLoadTime(), monitoringResultVO.getTotalPayLoad(), url))
+                .result(getResultCode(monitoringResultVO.getStatus(), monitoringResultVO.getTotalLoadTime(), url))
                 .build();
     }
 
-    public String getResultCode(int status, double totalLoadTime, double totalPayLoad, MonUrl url) {
+    public String getResultCode(int status, double totalLoadTime, MonUrl url) {
         if (status >= 400) {
             return MonitoringResultCodeEnum.UNKNOWN.getCode();
         } else if (url.getLoadTimeCheck() == 1 && totalLoadTime >= url.getErrLoadTime()) {
             return MonitoringResultCodeEnum.LOAD_TIME.getCode();
-        } else if (url.getPayLoadCheck() == 1 && (CommonUtil.getPerData(url.getPayLoad(), url.getPayLoadPer(), 2) > totalPayLoad
-                || totalPayLoad > CommonUtil.getPerData(url.getPayLoad(), url.getPayLoadPer(), 1))) {
-            return MonitoringResultCodeEnum.PAYLOAD.getCode();
         } else {
             return MonitoringResultCodeEnum.SUCCESS.getCode();
         }

@@ -45,20 +45,17 @@ public class MonResult {
 
     private double loadTime;
 
-    private double payload;
-
     @CreatedDate
     @Column(updatable = false)
     @ApiModelProperty(value = "등록일", hidden = true)
     private LocalDateTime regDate;
 
     @Builder
-    public MonResult(MonTypeEnum monTypeEnum, int relationSeq, String title, String result, double loadTime, double payload) {
+    public MonResult(MonTypeEnum monTypeEnum, int relationSeq, String title, String result, double loadTime) {
         this.relationType = monTypeEnum.getCode();
         this.relationSeq = relationSeq;
         this.title = title;
         this.result = result;
         this.loadTime = loadTime;
-        this.payload = payload;
     }
 }

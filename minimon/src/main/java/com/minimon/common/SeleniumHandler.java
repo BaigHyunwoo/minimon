@@ -196,12 +196,6 @@ public class SeleniumHandler {
         headers.putAll(headersObj.toMap());
 
         /*
-         * SET PAYLOAD
-         */
-        monitoringResultVO.setTotalPayLoad(monitoringResultVO.getTotalPayLoad() + (headers.containsKey("content-length") ? Integer.parseInt(headers.get("content-length").toString()) : 0));
-        ;
-
-        /*
          * SET STATUS
          */
         if (currentURL.equals(response.get("url")) == true) {

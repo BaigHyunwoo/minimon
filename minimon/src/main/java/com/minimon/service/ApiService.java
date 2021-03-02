@@ -108,25 +108,20 @@ public class ApiService {
                 .relationSeq(api.getSeq())
                 .title(api.getMethod() + " : " + api.getTitle())
                 .loadTime(monitoringResultVO.getTotalLoadTime())
-                .payload(monitoringResultVO.getTotalPayLoad())
                 .result(errCheck(
                         monitoringResultVO.getStatus(),
                         monitoringResultVO.getTotalLoadTime(),
-                        monitoringResultVO.getTotalPayLoad(),
                         monitoringResultVO.getResponse(),
                         api))
                 .build();
     }
 
 
-    public String errCheck(int status, double totalLoadTime, double totalPayLoad, String response, MonApi api) {
+    public String errCheck(int status, double totalLoadTime, String response, MonApi api) {
         if (status >= 400)
             return MonitoringResultCodeEnum.UNKNOWN.getCode();
         else if (api.getLoadTimeCheck() == 1 && totalLoadTime >= api.getErrLoadTime())
             return MonitoringResultCodeEnum.LOAD_TIME.getCode();
-        else if (api.getPayLoadCheck() == 1 && (CommonUtil.getPerData(api.getPayLoad(), api.getPayLoadPer(), 2) > totalPayLoad
-                || totalPayLoad > CommonUtil.getPerData(api.getPayLoad(), api.getPayLoadPer(), 1)))
-            return MonitoringResultCodeEnum.PAYLOAD.getCode();
         else if (api.getResponseCheck() == 1 && response.equals(api.getResponse()) == false)
             return MonitoringResultCodeEnum.RESPONSE.getCode();
         else
@@ -134,74 +129,9 @@ public class ApiService {
     }
 
     public MonitoringResultVO httpSending(String url, String method, String data) {
-//        long st = System.currentTimeMillis();
-//        HttpResponse response = null;
-//        try {
-//            response = HttpClients.createDefault().execute(getHttpRequest(method, url, data));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        long ed = System.currentTimeMillis();
-//        return getApiLogData(st, ed, response);
-        return MonitoringResultVO.builder().status(200).response(commonRestTemplate.callApi(HttpMethod.valueOf(method), url)).build();
-    }
-
-
-    public MonitoringResultVO getApiLogData(long st, long ed, HttpResponse response) {
-        long loadTime = ed - st;
-        long payLoad = response.getEntity().getContentLength();
-        int status = response.getStatusLine().getStatusCode();
-
-        StringBuffer responseData = new StringBuffer();
-        if (status >= 200 && status < 400) {
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()))) {
-                String inputLine = "";
-                while ((inputLine = reader.readLine()) != null) {
-                    responseData.append(inputLine);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            payLoad = response.getEntity().getContentLength();
-            if (payLoad == -1) payLoad = CommonUtil.getByteLength(responseData.toString());
-        }
-
-        return MonitoringResultVO.builder()
-                .totalLoadTime(new Long(loadTime).intValue())
-                .totalPayLoad(new Long(payLoad).intValue())
-                .status(status)
-                .response(responseData.toString())
-                .build();
-    }
-
-    public HttpUriRequest getHttpRequest(String method, String url, String data) {
-        HttpUriRequest http = null;
-
-        try {
-            switch (HttpMethod.valueOf(method)) {
-                case GET:
-                    HttpGet httpget = new HttpGet(url);
-                    http = httpget;
-                    break;
-                case POST:
-                    HttpPost httppost = new HttpPost(url);
-                    httppost.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
-                    http = httppost;
-                    break;
-                case PUT:
-                    HttpPut httpPut = new HttpPut(url);
-                    httpPut.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
-                    http = httpPut;
-                    break;
-                case DELETE:
-                    HttpDelete httpDelete = new HttpDelete(url);
-                    http = httpDelete;
-                    break;
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return http;
+        long st = System.currentTimeMillis();
+        String response = commonRestTemplate.callApi(HttpMethod.valueOf(method), url);
+        long ed = System.currentTimeMillis();
+        return MonitoringResultVO.builder().status(200).response(response).build();
     }
 }

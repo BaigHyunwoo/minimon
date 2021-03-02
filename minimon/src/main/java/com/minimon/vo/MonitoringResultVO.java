@@ -17,10 +17,6 @@ public class MonitoringResultVO {
     @ApiModelProperty(value = "결과 코드")
     private int status;
 
-    @Setter
-    @ApiModelProperty(value = "용량")
-    private int totalPayLoad;
-
     @ApiModelProperty(value = "걸린 시간")
     private int totalLoadTime;
 
@@ -28,10 +24,9 @@ public class MonitoringResultVO {
     private String response;
 
     @Builder
-    public MonitoringResultVO(String url, int totalLoadTime, int totalPayLoad, int status, String response) {
+    public MonitoringResultVO(String url, int totalLoadTime, int status, String response) {
         this.url = url;
         this.totalLoadTime = totalLoadTime;
-        this.totalPayLoad = totalPayLoad;
         this.status = status;
         this.response = response;
     }
