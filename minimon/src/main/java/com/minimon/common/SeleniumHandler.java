@@ -2,6 +2,7 @@ package com.minimon.common;
 
 import com.minimon.MinimonApplication;
 import com.minimon.vo.MonitoringResultVO;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.json.JSONObject;
 import org.openqa.selenium.*;
@@ -28,9 +29,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 
+@Slf4j
 public class SeleniumHandler {
-    private static final Logger logger = LoggerFactory.getLogger(SeleniumHandler.class.getName());
-
     private String driverName = "webdriver.chrome.driver";
 
     private EventFiringWebDriver driver;
@@ -94,7 +94,7 @@ public class SeleniumHandler {
             driver = new EventFiringWebDriver(new ChromeDriver(options));
             js = driver;
             vars = new HashMap<>();
-            logger.debug("WebDriver - 연결 완료");
+            log.debug("WebDriver - 연결 완료");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -113,16 +113,16 @@ public class SeleniumHandler {
             driver.register(event);
             driver.navigate().to(url);
             totalLoadTime = event.returnLoadTime();
-            logger.debug("totalLoadTime : " + totalLoadTime);
+            log.debug("totalLoadTime : " + totalLoadTime);
 
         } catch (TimeoutException e1) {
             totalLoadTime = -1;
-            logger.info("Error - Timeout");
+            log.info("Error - Timeout");
 
         } catch (Exception e) {
             e.printStackTrace();
             totalLoadTime = -2;
-            logger.info("Error - Unknown");
+            log.info("Error - Unknown");
         }
 
         return totalLoadTime;
@@ -136,7 +136,7 @@ public class SeleniumHandler {
 
             logs = driver.manage().logs().get(LogType.PERFORMANCE);
 
-            logger.debug("WebDriver - Log 호출 완료");
+            log.debug("WebDriver - Log 호출 완료");
 
         } catch (TimeoutException ex) {
 
@@ -163,7 +163,7 @@ public class SeleniumHandler {
         for (Iterator<LogEntry> it = logs.iterator(); it.hasNext(); ) {
             setResult(getResourceMessage(it.next()), currentURL, monitoringResultVO);
         }
-        logger.debug("WebDriver - Log 분석 완료");
+        log.debug("WebDriver - Log 분석 완료");
 
         return monitoringResultVO;
     }
