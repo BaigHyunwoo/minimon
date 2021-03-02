@@ -46,16 +46,19 @@ public class MonApi extends CommonEntity {
     private int errLoadTime;
 
     @NotNull
+    @Column(columnDefinition = "char(1)")
     @ApiModelProperty(name = "사용 여부")
     private String monitoringUseYn;
 
     @NotNull
+    @Column(columnDefinition = "char(1)")
     @ApiModelProperty(name = "지연 시간 검사 여부")
-    private int loadTimeCheck;
+    private String loadTimeCheckYn;
 
     @NotNull
+    @Column(columnDefinition = "char(1)")
     @ApiModelProperty(name = "응답 데이터 검사 여부")
-    private int responseCheck;
+    private String responseCheckYn;
 
     @NotNull
     @ApiModelProperty(name = "사용 http 메소드")
@@ -70,7 +73,7 @@ public class MonApi extends CommonEntity {
 
     @NotNull
     @ApiModelProperty(name = "걸린 시간")
-    private double loadTime;
+    private int loadTime;
 
     @Lob
     @ApiModelProperty(name = "응답 데이터")

@@ -21,8 +21,8 @@ import java.util.HashMap;
 @Api(tags = {"Main Controller"})
 public class MainController {
 
-    @PostMapping(path = "/set/{driverPath}")
-    public CommonResponse driver(@PathVariable String driverPath) {
+    @PostMapping(path = "/set")
+    public CommonResponse driver(@RequestParam String driverPath) {
         log.info("driverPath : " + driverPath);
         MinimonApplication.setDriverPath(driverPath);
         return new CommonResponse();

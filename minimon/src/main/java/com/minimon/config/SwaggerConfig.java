@@ -16,18 +16,18 @@ public class SwaggerConfig {
 
     @Bean
     public Docket api() {
-        int sortOrder = 0;
+        int index = 0;
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .apis(RequestHandlerSelectors.withClassAnnotation(RestController.class))
                 .paths(PathSelectors.any())
                 .build()
                 .tags(
-                        new Tag("Main Controller", "MAIN", sortOrder++),
-                        new Tag("Url Controller", "URL", sortOrder++),
-                        new Tag("Api Controller", "API", sortOrder++),
-                        new Tag("Transaction Controller", "TRANSACTION", sortOrder++),
-                        new Tag("Result Controller", "RESULT", sortOrder++)
+                        new Tag("Main Controller", "MAIN", index++),
+                        new Tag("Url Controller", "URL", index++),
+                        new Tag("Api Controller", "API", index++),
+                        new Tag("Transaction Controller", "TRANSACTION", index++),
+                        new Tag("Result Controller", "RESULT", index++)
                 );
     }
 }

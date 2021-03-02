@@ -3,7 +3,7 @@ package com.minimon.service;
 import com.minimon.common.SeleniumHandler;
 import com.minimon.entity.MonResult;
 import com.minimon.entity.MonUrl;
-import com.minimon.enums.MonTypeEnum;
+import com.minimon.enums.MonitoringTypeEnum;
 import com.minimon.enums.MonitoringResultCodeEnum;
 import com.minimon.enums.UseStatusEnum;
 import com.minimon.repository.MonUrlRepository;
@@ -101,7 +101,7 @@ public class UrlService {
 
     public MonResult errorCheck(MonUrl url, MonitoringResultVO monitoringResultVO) {
         return MonResult.builder()
-                .monTypeEnum(MonTypeEnum.URL)
+                .monitoringTypeEnum(MonitoringTypeEnum.URL)
                 .relationSeq(url.getSeq())
                 .title(url.getTitle())
                 .loadTime(monitoringResultVO.getTotalLoadTime())
@@ -112,7 +112,7 @@ public class UrlService {
     public String getResultCode(int status, double totalLoadTime, MonUrl url) {
         if (status >= 400) {
             return MonitoringResultCodeEnum.UNKNOWN.getCode();
-        } else if (url.getLoadTimeCheck() == 1 && totalLoadTime >= url.getErrLoadTime()) {
+        } else if (url.getLoadTimeCheckYn().equals(UseStatusEnum.USE.getCode()) && totalLoadTime >= url.getErrLoadTime()) {
             return MonitoringResultCodeEnum.LOAD_TIME.getCode();
         } else {
             return MonitoringResultCodeEnum.SUCCESS.getCode();

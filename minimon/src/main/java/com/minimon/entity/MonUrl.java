@@ -46,12 +46,14 @@ public class MonUrl extends CommonEntity {
     private int errLoadTime;
 
     @NotNull
+    @Column(columnDefinition = "char(1)")
     @ApiModelProperty(name = "모니터링 사용 여부")
     private String monitoringUseYn;
 
     @NotNull
+    @Column(columnDefinition = "char(1)")
     @ApiModelProperty(name = "지연시간 검사 여부")
-    private int loadTimeCheck;
+    private String loadTimeCheckYn;
 
     @NotNull
     @ApiModelProperty(name = "응답 코드")
@@ -59,5 +61,5 @@ public class MonUrl extends CommonEntity {
 
     @NotNull
     @ApiModelProperty(name = "걸린 시간")
-    private double loadTime;
+    private int loadTime;
 }

@@ -10,10 +10,6 @@ public class CommonResponse {
     private CommonResponseMeta meta;
     private Object data;
 
-    public static CommonResponse fail() {
-        return new CommonResponse(ResponseEnum.FAIL.getCode(), ResponseEnum.FAIL.getValue());
-    }
-
     public static CommonResponse fail(String errorMessage) {
         return new CommonResponse(ResponseEnum.FAIL.getCode(), errorMessage);
     }
@@ -24,7 +20,7 @@ public class CommonResponse {
 
     public CommonResponse() {
         setSuccess();
-        this.data = new Object();
+        this.data = new String();
     }
 
     public CommonResponse(Object result) {
@@ -34,7 +30,7 @@ public class CommonResponse {
 
     public CommonResponse(int code, String message) {
         this.meta = new CommonResponseMeta(code, message);
-        this.data = new Object();
+        this.data = new String();
     }
 
     private void setSuccess() {

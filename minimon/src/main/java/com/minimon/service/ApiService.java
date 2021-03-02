@@ -1,28 +1,19 @@
 package com.minimon.service;
 
 import com.minimon.common.CommonRestTemplate;
-import com.minimon.common.CommonUtil;
 import com.minimon.entity.MonApi;
 import com.minimon.entity.MonResult;
-import com.minimon.enums.MonTypeEnum;
+import com.minimon.enums.MonitoringTypeEnum;
 import com.minimon.enums.MonitoringResultCodeEnum;
 import com.minimon.enums.UseStatusEnum;
 import com.minimon.repository.MonApiRepository;
 import com.minimon.vo.MonitoringResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.*;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClients;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -104,7 +95,7 @@ public class ApiService {
 
     public MonResult errorCheckApi(MonApi api, MonitoringResultVO monitoringResultVO) {
         return MonResult.builder()
-                .monTypeEnum(MonTypeEnum.API)
+                .monitoringTypeEnum(MonitoringTypeEnum.API)
                 .relationSeq(api.getSeq())
                 .title(api.getMethod() + " : " + api.getTitle())
                 .loadTime(monitoringResultVO.getTotalLoadTime())
@@ -116,13 +107,12 @@ public class ApiService {
                 .build();
     }
 
-
     public String errCheck(int status, double totalLoadTime, String response, MonApi api) {
         if (status >= 400)
             return MonitoringResultCodeEnum.UNKNOWN.getCode();
-        else if (api.getLoadTimeCheck() == 1 && totalLoadTime >= api.getErrLoadTime())
+        else if (api.getLoadTimeCheckYn().equals(UseStatusEnum.USE.getCode()) && totalLoadTime >= api.getErrLoadTime())
             return MonitoringResultCodeEnum.LOAD_TIME.getCode();
-        else if (api.getResponseCheck() == 1 && response.equals(api.getResponse()) == false)
+        else if (api.getResponseCheckYn().equals(UseStatusEnum.USE.getCode()) && response.equals(api.getResponse()) == false)
             return MonitoringResultCodeEnum.RESPONSE.getCode();
         else
             return MonitoringResultCodeEnum.SUCCESS.getCode();
@@ -130,8 +120,12 @@ public class ApiService {
 
     public MonitoringResultVO httpSending(String url, String method, String data) {
         long st = System.currentTimeMillis();
-        String response = commonRestTemplate.callApi(HttpMethod.valueOf(method), url);
-        long ed = System.currentTimeMillis();
-        return MonitoringResultVO.builder().status(200).response(response).build();
+        String response = commonRestTemplate.callApi(HttpMethod.valueOf(method), url, data);
+        long loadTime = System.currentTimeMillis() - st;
+        return MonitoringResultVO.builder()
+                .status(200)
+                .totalLoadTime(new Long(loadTime).intValue())
+                .response(response)
+                .build();
     }
 }

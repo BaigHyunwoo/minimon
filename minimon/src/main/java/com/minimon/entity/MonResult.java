@@ -1,6 +1,6 @@
 package com.minimon.entity;
 
-import com.minimon.enums.MonTypeEnum;
+import com.minimon.enums.MonitoringTypeEnum;
 import com.sun.istack.NotNull;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
@@ -51,8 +51,8 @@ public class MonResult {
     private LocalDateTime regDate;
 
     @Builder
-    public MonResult(MonTypeEnum monTypeEnum, int relationSeq, String title, String result, double loadTime) {
-        this.relationType = monTypeEnum.getCode();
+    public MonResult(MonitoringTypeEnum monitoringTypeEnum, int relationSeq, String title, String result, double loadTime) {
+        this.relationType = monitoringTypeEnum.getCode();
         this.relationSeq = relationSeq;
         this.title = title;
         this.result = result;

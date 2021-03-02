@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum MonTypeEnum {
+public enum MonitoringTypeEnum {
     URL("URL", "웹 사이트"),
     API("API", "API 호출"),
     TRANSACTION("TRANSACTION", "기능 동작");

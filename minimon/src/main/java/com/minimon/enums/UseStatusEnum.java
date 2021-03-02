@@ -6,8 +6,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum UseStatusEnum {
-    USE("USE", "사용"),
-    UNUSED("UNUSED", "사용안함");
+    USE("Y", "사용"),
+    UNUSED("N", "사용안함");
 
     private String code;
     private String value;
