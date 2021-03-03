@@ -17,8 +17,6 @@ import org.openqa.selenium.support.events.AbstractWebDriverEventListener;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.HashMap;
@@ -116,11 +114,9 @@ public class SeleniumHandler {
             log.debug("totalLoadTime : " + totalLoadTime);
 
         } catch (TimeoutException e1) {
-            totalLoadTime = -1;
             log.info("Error - Timeout");
 
         } catch (Exception e) {
-            e.printStackTrace();
             totalLoadTime = -2;
             log.info("Error - Unknown");
         }
