@@ -3,6 +3,7 @@ package com.minimon.common;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.minimon.enums.ResponseEnum;
 import lombok.Getter;
+import org.springframework.cache.support.NullValue;
 
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -24,7 +25,7 @@ public class CommonResponse {
 
     public CommonResponse() {
         setSuccess();
-        this.data = new String();
+        this.data = NullValue.INSTANCE;
     }
 
     public CommonResponse(Object result) {
@@ -34,7 +35,7 @@ public class CommonResponse {
 
     public CommonResponse(int code, String message) {
         this.meta = new CommonResponseMeta(code, message);
-        this.data = new String();
+        this.data = NullValue.INSTANCE;
     }
 
     private void setSuccess() {

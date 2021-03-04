@@ -37,7 +37,7 @@ public class CommonSearchSpec {
     @ApiModelProperty(value = "정렬 키")
     private String sortKey;
 
-    @ApiModelProperty(value = "정렬 종류(asc, desc)")
+    @ApiModelProperty(value = "정렬 종류(ASC, DESC)")
     private String sortType;
 
 
@@ -61,9 +61,9 @@ public class CommonSearchSpec {
 
         if (this.sortType == null || this.sortKey == null)
             return PageRequest.of(page, this.size);
-        else if (this.sortType.equals("desc") == true)
+        else if (this.sortType.equals(Sort.Direction.DESC.toString()) == true)
             return PageRequest.of(page, this.size, Sort.Direction.DESC, this.sortKey);
-        else if (this.sortType.equals("asc") == true)
+        else if (this.sortType.equals(Sort.Direction.ASC.toString()) == true)
             return PageRequest.of(page, this.size, Sort.Direction.ASC, this.sortKey);
         return null;
     }
@@ -72,15 +72,6 @@ public class CommonSearchSpec {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
             setPredicates(root, cb, predicates);
-            return cb.and(predicates.toArray(new Predicate[0]));
-        };
-    }
-
-    public Specification searchSpecs(String useYn) {
-        return (root, query, cb) -> {
-            List<Predicate> predicates = new ArrayList<>();
-            setPredicates(root, cb, predicates);
-            predicates.add(cb.equal(root.get("useYn"), useYn));
             return cb.and(predicates.toArray(new Predicate[0]));
         };
     }

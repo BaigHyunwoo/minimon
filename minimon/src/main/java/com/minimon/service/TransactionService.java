@@ -1,14 +1,13 @@
 package com.minimon.service;
 
 import com.minimon.common.CommonUtil;
-import com.minimon.common.SeleniumHandler;
+import com.minimon.common.CommonSelenium;
 import com.minimon.entity.MonCodeData;
 import com.minimon.entity.MonTransaction;
 import com.minimon.repository.MonTransactionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -20,6 +19,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Service
 public class TransactionService {
+
+    private final CommonSelenium commonSelenium;
 
     private final MonTransactionRepository monTransactionRepository;
 
@@ -119,14 +120,13 @@ public class TransactionService {
 
         try {
 
-            SeleniumHandler selenium = new SeleniumHandler();
-            driver = selenium.setUp();
+            driver = commonSelenium.setUp();
 
             long startTime = System.currentTimeMillis();
             for (int i = 0; i < codeDataList.size(); i++) {
 
                 MonCodeData monCodeData = codeDataList.get(i);
-                logData.put("" + i, selenium.executeAction(selenium, driver, monCodeData.getAction(), monCodeData.getSelector_type(), monCodeData.getSelector_value(), monCodeData.getValue()));
+                logData.put("" + i, commonSelenium.executeAction(commonSelenium, driver, monCodeData.getAction(), monCodeData.getSelector_type(), monCodeData.getSelector_value(), monCodeData.getValue()));
 
             }
             long endTime = System.currentTimeMillis();

@@ -30,3 +30,8 @@ logging:
     root: info
     web: trace
     springframework.web: trace
+
+common:
+  location: C:\\Users\\user\\Downloads\\chromedriver
+  driverName: webdriver.chrome.driver
+  driverPath: C:\\Users\\user\\Downloads\\chromedriver

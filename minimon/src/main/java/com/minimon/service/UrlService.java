@@ -1,6 +1,6 @@
 package com.minimon.service;
 
-import com.minimon.common.SeleniumHandler;
+import com.minimon.common.CommonSelenium;
 import com.minimon.entity.MonResult;
 import com.minimon.entity.MonUrl;
 import com.minimon.enums.MonitoringTypeEnum;
@@ -24,6 +24,7 @@ import java.util.Optional;
 public class UrlService {
     private final ResultService resultService;
     private final MonUrlRepository monUrlRepository;
+    private final CommonSelenium commonSelenium;
 
     public List<MonUrl> getUrlList() {
         return monUrlRepository.findAll();
@@ -84,12 +85,11 @@ public class UrlService {
     }
 
     public MonitoringResultVO executeUrl(String url, int timeout) {
-        SeleniumHandler selenium = new SeleniumHandler();
-        EventFiringWebDriver driver = selenium.setUp();
+        EventFiringWebDriver driver = commonSelenium.setUp();
         MonitoringResultVO monitoringResultVO;
         try {
-            int totalLoadTime = selenium.connect(url, driver, timeout);
-            monitoringResultVO = selenium.getResult(selenium.getLog(driver), driver.getCurrentUrl(), totalLoadTime);
+            int totalLoadTime = commonSelenium.connect(url, driver, timeout);
+            monitoringResultVO = commonSelenium.getResult(commonSelenium.getLog(driver), driver.getCurrentUrl(), totalLoadTime);
         } finally {
             if (driver != null) {
                 driver.quit();
