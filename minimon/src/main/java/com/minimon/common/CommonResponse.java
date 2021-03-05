@@ -27,6 +27,10 @@ public class CommonResponse {
         return fail(CommonMessage.getMessage("notExist.code"), CommonMessage.getMessage("notExist.msg"));
     }
 
+    public static CommonResponse preparingFunctionResponse() {
+        return fail(CommonMessage.getMessage("preparingFunction.code"), CommonMessage.getMessage("preparingFunction.msg"));
+    }
+
     public CommonResponse() {
         setSuccess();
         this.data = NullValue.INSTANCE;

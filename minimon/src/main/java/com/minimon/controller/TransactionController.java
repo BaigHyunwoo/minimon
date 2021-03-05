@@ -2,8 +2,8 @@ package com.minimon.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.minimon.common.CommonResponse;
 import com.minimon.entity.MonCodeData;
-import com.minimon.entity.MonResult;
 import com.minimon.entity.MonTransaction;
 import com.minimon.repository.MonTransactionRepository;
 import com.minimon.service.ResultService;
@@ -15,13 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,9 +33,6 @@ public class TransactionController {
 
     private final ResultService resultService;
 
-    /**
-     * URL DTO Set
-     */
     private MonTransaction setTblMonTransaction(MonTransaction monTransaction, Map<String, Object> param) {
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -59,7 +50,8 @@ public class TransactionController {
             monTransaction.setErrLoadTime(Integer.parseInt("" + param.get("errLoadTime")));
             monTransaction.setStatus(Integer.parseInt("" + param.get("status")));
             monTransaction.setTransactionCode("" + param.get("transactionCode"));
-            monTransaction.setCodeDataList(objectMapper.readValue(param.get("codeDatas").toString(), new TypeReference<List<MonCodeData>>() {}));
+            monTransaction.setCodeDataList(objectMapper.readValue(param.get("codeDatas").toString(), new TypeReference<List<MonCodeData>>() {
+            }));
 
         } catch (Exception e) {
 
@@ -75,23 +67,25 @@ public class TransactionController {
      */
     @ApiOperation(value = "목록 조회", response = MonTransaction.class)
     @GetMapping(path = "")
-    public HashMap<String, Object> getUrls() {
-        HashMap<String, Object> result = new HashMap<String, Object>();
+    public CommonResponse getUrls() {
+        /**
+         HashMap<String, Object> result = new HashMap<String, Object>();
 
-        try {
+         try {
 
-            List<MonTransaction> transactionList = monTransactionRepository.findAll();
-            result.put("transactionList", transactionList);
-            result.put("result", "success");
+         List<MonTransaction> transactionList = monTransactionRepository.findAll();
+         result.put("transactionList", transactionList);
+         result.put("result", "success");
 
 
-        } catch (Exception e) {
+         } catch (Exception e) {
 
-            e.printStackTrace();
+         e.printStackTrace();
 
-        }
+         }
+         */
 
-        return result;
+        return CommonResponse.preparingFunctionResponse();
     }
 
 
@@ -100,21 +94,23 @@ public class TransactionController {
      */
     @ApiOperation(value = "생성", response = Map.class)
     @PostMapping(path = "")
-    public HashMap<String, Object> createTransaction(@RequestParam Map<String, Object> param) {
-        HashMap<String, Object> result = new HashMap<String, Object>();
+    public CommonResponse createTransaction(@RequestParam Map<String, Object> param) {
+        /**
+         HashMap<String, Object> result = new HashMap<String, Object>();
 
-        try {
+         try {
 
-            monTransactionRepository.save(setTblMonTransaction(new MonTransaction(), param));
-            result.put("result", "success");
+         monTransactionRepository.save(setTblMonTransaction(new MonTransaction(), param));
+         result.put("result", "success");
 
-        } catch (Exception e) {
+         } catch (Exception e) {
 
-            e.printStackTrace();
+         e.printStackTrace();
 
-        }
+         }
+         */
 
-        return result;
+        return CommonResponse.preparingFunctionResponse();
     }
 
 
@@ -123,25 +119,27 @@ public class TransactionController {
      */
     @ApiOperation(value = "조회", response = Map.class)
     @GetMapping(path = "/{seq}")
-    public HashMap<String, Object> getTransaction(@PathVariable("seq") int seq) {
-        HashMap<String, Object> result = new HashMap<String, Object>();
+    public CommonResponse getTransaction(@PathVariable("seq") int seq) {
+        /**
+         HashMap<String, Object> result = new HashMap<String, Object>();
 
-        try {
-
-
-            MonTransaction existsTransaction = monTransactionRepository.findBySeq(seq);
-
-            result.put("data", existsTransaction);
-            result.put("result", "success");
+         try {
 
 
-        } catch (Exception e) {
+         MonTransaction existsTransaction = monTransactionRepository.findBySeq(seq);
 
-            e.printStackTrace();
+         result.put("data", existsTransaction);
+         result.put("result", "success");
 
-        }
 
-        return result;
+         } catch (Exception e) {
+
+         e.printStackTrace();
+
+         }
+         */
+
+        return CommonResponse.preparingFunctionResponse();
     }
 
 
@@ -150,30 +148,33 @@ public class TransactionController {
      */
     @ApiOperation(value = "수정", response = Map.class)
     @PutMapping(path = "/{seq}")
-    public HashMap<String, Object> updateTransaction(@PathVariable("seq") int seq, @RequestParam Map<String, Object> param) {
-        HashMap<String, Object> result = new HashMap<String, Object>();
+    public CommonResponse updateTransaction(@PathVariable("seq") int seq, @RequestParam Map<String, Object> param) {
+        /**
+         HashMap<String, Object> result = new HashMap<String, Object>();
 
-        try {
+         try {
 
-            MonTransaction existsTransaction = monTransactionRepository.findBySeq(seq);
+         MonTransaction existsTransaction = monTransactionRepository.findBySeq(seq);
 
-            if (existsTransaction != null) {
+         if (existsTransaction != null) {
 
-                monTransactionRepository.save(setTblMonTransaction(existsTransaction, param));
+         monTransactionRepository.save(setTblMonTransaction(existsTransaction, param));
 
-            }
+         }
 
-            result.put("data", seq);
-            result.put("result", "success");
+         result.put("data", seq);
+         result.put("result", "success");
 
 
-        } catch (Exception e) {
+         } catch (Exception e) {
 
-            e.printStackTrace();
+         e.printStackTrace();
 
-        }
+         }
 
-        return result;
+         */
+
+        return CommonResponse.preparingFunctionResponse();
     }
 
 
@@ -182,31 +183,33 @@ public class TransactionController {
      */
     @ApiOperation(value = "삭제", response = Map.class)
     @DeleteMapping(path = "/{seq}")
-    public HashMap<String, Object> delete(@PathVariable("seq") int seq) {
-        HashMap<String, Object> result = new HashMap<String, Object>();
+    public CommonResponse delete(@PathVariable("seq") int seq) {
+        /**
+         HashMap<String, Object> result = new HashMap<String, Object>();
 
-        try {
-
-
-            MonTransaction existsTransaction = monTransactionRepository.findBySeq(seq);
-
-            if (existsTransaction != null) {
-
-                monTransactionRepository.delete(existsTransaction);
-
-            }
-
-            result.put("data", seq);
-            result.put("result", "success");
+         try {
 
 
-        } catch (Exception e) {
+         MonTransaction existsTransaction = monTransactionRepository.findBySeq(seq);
 
-            e.printStackTrace();
+         if (existsTransaction != null) {
 
-        }
+         monTransactionRepository.delete(existsTransaction);
 
-        return result;
+         }
+
+         result.put("data", seq);
+         result.put("result", "success");
+
+
+         } catch (Exception e) {
+
+         e.printStackTrace();
+
+         }
+         */
+
+        return CommonResponse.preparingFunctionResponse();
     }
 
 
@@ -216,51 +219,52 @@ public class TransactionController {
     @ResponseBody
     @ApiOperation(value = "검사 테스트", response = Map.class)
     @PostMapping(value = "/check")
-    public Map<String, Object> transactionCheck(MultipartFile transactionFile) {
-        Map<String, Object> result = new HashMap<String, Object>();
+    public CommonResponse transactionCheck(MultipartFile transactionFile) {
 
-        try {
-            List<MonCodeData> codeDatas = new ArrayList<MonCodeData>();
+//        Map<String, Object> result = new HashMap<String, Object>();
+//
+//        try {
+//            List<MonCodeData> codeDatas = new ArrayList<MonCodeData>();
+//
+//            /*
+//             * READ CODE FILE
+//             */
+//            BufferedReader br;
+//            String line;
+//            InputStream is = transactionFile.getInputStream();
+//            br = new BufferedReader(new InputStreamReader(is));
+//            boolean check = false;
+//            while ((line = br.readLine()) != null) {
+//
+//                /*
+//                 * TEST FUNCTION START
+//                 */
+//                if (line.indexOf("@Test") > 0) check = true;
+//                if (check == true) {
+//                    MonCodeData monCodeData = transactionService.getCodeData(line);
+//                    if (monCodeData != null) {
+//                        codeDatas.add(monCodeData);
+//                        log.debug(monCodeData.getAction() + " " + monCodeData.getSelector_type() + "  " + monCodeData.getSelector_value() + "     " + monCodeData.getValue());
+//                    }
+//
+//                }
+//            }
+//
+//            Map<String, Object> logData = transactionService.executeTransaction(codeDatas);
+//            result.put("data", logData);
+//            result.put("codeDatas", codeDatas);
+//            result.put("result", "success");
+//
+//
+//        } catch (Exception e) {
+//
+//            e.printStackTrace();
+//            result.put("result", "ERR");
+//            result.put("msg", e.getMessage());
+//
+//        }
 
-            /*
-             * READ CODE FILE
-             */
-            BufferedReader br;
-            String line;
-            InputStream is = transactionFile.getInputStream();
-            br = new BufferedReader(new InputStreamReader(is));
-            boolean check = false;
-            while ((line = br.readLine()) != null) {
-
-                /*
-                 * TEST FUNCTION START
-                 */
-                if (line.indexOf("@Test") > 0) check = true;
-                if (check == true) {
-                    MonCodeData monCodeData = transactionService.getCodeData(line);
-                    if (monCodeData != null) {
-                        codeDatas.add(monCodeData);
-                        log.debug(monCodeData.getAction() + " " + monCodeData.getSelector_type() + "  " + monCodeData.getSelector_value() + "     " + monCodeData.getValue());
-                    }
-
-                }
-            }
-
-            Map<String, Object> logData = transactionService.executeTransaction(codeDatas);
-            result.put("data", logData);
-            result.put("codeDatas", codeDatas);
-            result.put("result", "success");
-
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-            result.put("result", "ERR");
-            result.put("msg", e.getMessage());
-
-        }
-
-        return result;
+        return CommonResponse.preparingFunctionResponse();
     }
 
 
@@ -269,35 +273,37 @@ public class TransactionController {
      */
     @ApiOperation(value = "검사 실행", response = Map.class)
     @GetMapping(path = "/execute/{seq}")
-    public HashMap<String, Object> transactionExecute(@PathVariable("seq") int seq) {
-        HashMap<String, Object> result = new HashMap<String, Object>();
+    public CommonResponse transactionExecute(@PathVariable("seq") int seq) {
+        /**
+         HashMap<String, Object> result = new HashMap<String, Object>();
 
-        try {
+         try {
 
-            MonTransaction existsTransaction = monTransactionRepository.findBySeq(seq);
+         MonTransaction existsTransaction = monTransactionRepository.findBySeq(seq);
 
-            if (existsTransaction != null) {
+         if (existsTransaction != null) {
 
-                Map<String, Object> logData = transactionService.executeTransaction(existsTransaction.getCodeDataList());
-                Map<String, Object> data = transactionService.errorCheckTransaction(existsTransaction, logData);
-                result.put("" + existsTransaction.getSeq(), data);
+         Map<String, Object> logData = transactionService.executeTransaction(existsTransaction.getCodeDataList());
+         Map<String, Object> data = transactionService.errorCheckTransaction(existsTransaction, logData);
+         result.put("" + existsTransaction.getSeq(), data);
 
-                MonResult monResult = resultService.saveResult(data);
-                resultService.sendResultByProperties(monResult);
+         MonResult monResult = resultService.saveResult(data);
+         resultService.sendResultByProperties(monResult);
 
-            }
+         }
 
-            result.put("data", seq);
-            result.put("result", "success");
+         result.put("data", seq);
+         result.put("result", "success");
 
 
-        } catch (Exception e) {
+         } catch (Exception e) {
 
-            e.printStackTrace();
+         e.printStackTrace();
 
-        }
+         }
+         */
 
-        return result;
+        return CommonResponse.preparingFunctionResponse();
     }
 
 
