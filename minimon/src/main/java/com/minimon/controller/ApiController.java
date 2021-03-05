@@ -35,7 +35,7 @@ public class ApiController {
     public CommonResponse get(@PathVariable("seq") int seq) {
         Optional api = apiService.getApi(seq);
         if(!api.isPresent()) {
-            return CommonResponse.fail("해당 API 정보가 존재하지 않습니다.");
+            return CommonResponse.notExistResponse();
         }
         return new CommonResponse(api.get());
     }
@@ -50,7 +50,7 @@ public class ApiController {
     @PutMapping(path = "")
     public CommonResponse update(@RequestBody MonApi monApi) {
         if(!apiService.editApi(monApi)) {
-            return CommonResponse.fail("해당 API 정보가 존재하지 않습니다.");
+            return CommonResponse.notExistResponse();
         }
         return new CommonResponse();
     }
@@ -59,7 +59,7 @@ public class ApiController {
     @DeleteMapping(path = "/{seq}")
     public CommonResponse delete(@PathVariable("seq") int seq) {
         if(!apiService.remove(seq)) {
-            return CommonResponse.fail(CommonMessage.getMessage("noExist.code"), CommonMessage.getMessage("noExist.msg"));
+            return CommonResponse.notExistResponse();
         }
         return new CommonResponse();
     }
@@ -75,7 +75,7 @@ public class ApiController {
     public CommonResponse execute(@PathVariable("seq") int seq) {
         MonResult monResult = apiService.executeApi(seq);
         if(monResult == null) {
-            return CommonResponse.fail("해당 API 정보가 존재하지 않습니다.");
+            return CommonResponse.notExistResponse();
         }
         return new CommonResponse(monResult);
     }

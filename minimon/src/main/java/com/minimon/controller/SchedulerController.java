@@ -2,6 +2,7 @@ package com.minimon.controller;
 
 import com.minimon.common.CommonResponse;
 import com.minimon.scheduler.CustomScheduler;
+import com.minimon.vo.SchedulerTaskVO;
 import com.minimon.vo.SchedulerVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,7 +29,7 @@ public class SchedulerController {
     }
 
     @GetMapping(path = "/running/scheduler/list")
-    @ApiOperation(value = "활성화 스케줄 작업 목록 조회")
+    @ApiOperation(value = "활성화 스케줄 작업 목록 조회", responseContainer = "Map", response = SchedulerTaskVO.class)
     public CommonResponse getRunningScheduler() {
         return new CommonResponse(customScheduler.getRunningScheduler());
     }

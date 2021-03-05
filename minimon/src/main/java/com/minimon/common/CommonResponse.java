@@ -23,6 +23,10 @@ public class CommonResponse {
         return new CommonResponse(Integer.valueOf(code), errorMessage);
     }
 
+    public static CommonResponse notExistResponse() {
+        return fail(CommonMessage.getMessage("notExist.code"), CommonMessage.getMessage("notExist.msg"));
+    }
+
     public CommonResponse() {
         setSuccess();
         this.data = NullValue.INSTANCE;

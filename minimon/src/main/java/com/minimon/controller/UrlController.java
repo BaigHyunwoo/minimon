@@ -34,7 +34,7 @@ public class UrlController {
     public CommonResponse get(@PathVariable("seq") int seq) {
         Optional url = urlService.getUrl(seq);
         if (!url.isPresent()) {
-            return CommonResponse.fail("해당 URL 정보가 존재하지 않습니다.");
+            return CommonResponse.notExistResponse();
         }
         return new CommonResponse(url.get());
     }
@@ -49,7 +49,7 @@ public class UrlController {
     @PutMapping(path = "")
     public CommonResponse update(@RequestBody MonUrl monUrl) {
         if (!urlService.editUrl(monUrl)) {
-            return CommonResponse.fail("해당 URL 정보가 존재하지 않습니다.");
+            return CommonResponse.notExistResponse();
         }
         return new CommonResponse();
     }
@@ -58,7 +58,7 @@ public class UrlController {
     @DeleteMapping(path = "/{seq}")
     public CommonResponse delete(@PathVariable("seq") int seq) {
         if (!urlService.remove(seq)) {
-            return CommonResponse.fail("해당 URL 정보가 존재하지 않습니다.");
+            return CommonResponse.notExistResponse();
         }
         return new CommonResponse();
     }
@@ -74,7 +74,7 @@ public class UrlController {
     public CommonResponse execute(@PathVariable("seq") int seq) {
         MonResult monResult = urlService.executeUrl(seq);
         if (monResult == null) {
-            return CommonResponse.fail("해당 URL 정보가 존재하지 않습니다.");
+            return CommonResponse.notExistResponse();
         }
         return new CommonResponse(monResult);
     }
