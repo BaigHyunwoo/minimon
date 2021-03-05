@@ -33,11 +33,11 @@ public class ApiController {
     @ApiOperation(value = "API 조회", response = MonApi.class)
     @GetMapping(path = "/{seq}")
     public CommonResponse get(@PathVariable("seq") int seq) {
-        Optional api = apiService.getApi(seq);
-        if(!api.isPresent()) {
+        MonApi api = apiService.getApi(seq);
+        if(api == null) {
             return CommonResponse.notExistResponse();
         }
-        return new CommonResponse(api.get());
+        return new CommonResponse(api);
     }
 
     @ApiOperation(value = "API 생성", response = MonApi.class)

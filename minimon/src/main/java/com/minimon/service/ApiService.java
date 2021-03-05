@@ -3,13 +3,17 @@ package com.minimon.service;
 import com.minimon.common.CommonRestTemplate;
 import com.minimon.entity.MonApi;
 import com.minimon.entity.MonResult;
-import com.minimon.enums.MonitoringTypeEnum;
 import com.minimon.enums.MonitoringResultCodeEnum;
+import com.minimon.enums.MonitoringTypeEnum;
 import com.minimon.enums.UseStatusEnum;
 import com.minimon.repository.MonApiRepository;
 import com.minimon.vo.MonitoringResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
@@ -27,12 +31,13 @@ public class ApiService {
     private final MonApiRepository monApiRepository;
 
 
+    @Cacheable(value = "api", key = "'list'", unless = "#result == null")
     public List<MonApi> getApis() {
         return monApiRepository.findAll();
     }
 
-    public Optional<MonApi> getApi(int seq) {
-        return monApiRepository.findById(seq);
+    public MonApi getApi(int seq) {
+        return monApiRepository.findById(seq).orElse(null);
     }
 
     @Transactional
@@ -41,18 +46,26 @@ public class ApiService {
         return monApi;
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "api", key = "'list'"),
+            @CacheEvict(value = "api", key = "#monApiVO.seq")
+    })
     @Transactional
     public boolean editApi(MonApi monApiVO) {
-        Optional<MonApi> optionalMonApi = getApi(monApiVO.getSeq());
+        Optional<MonApi> optionalMonApi = monApiRepository.findById(monApiVO.getSeq());
         optionalMonApi.ifPresent(monUrl -> {
             monApiRepository.save(monApiVO);
         });
         return optionalMonApi.isPresent();
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "api", key = "'list'"),
+            @CacheEvict(value = "api", key = "#monApiVO.seq")
+    })
     @Transactional
     public boolean remove(int seq) {
-        Optional<MonApi> optionalMonApi = getApi(seq);
+        Optional<MonApi> optionalMonApi = monApiRepository.findById(seq);
         optionalMonApi.ifPresent(monApi -> {
             monApiRepository.delete(monApi);
         });
@@ -76,7 +89,7 @@ public class ApiService {
     public MonResult executeApi(int seq) {
         MonResult monResult = null;
 
-        Optional<MonApi> optionalMonApi = getApi(seq);
+        Optional<MonApi> optionalMonApi = monApiRepository.findById(seq);
         if (optionalMonApi.isPresent()) {
             MonApi monApi = optionalMonApi.get();
             monResult = resultService.saveResult(errorCheckApi(monApi, executeApi(monApi)));
