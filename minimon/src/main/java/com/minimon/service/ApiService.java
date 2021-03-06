@@ -10,10 +10,6 @@ import com.minimon.repository.MonApiRepository;
 import com.minimon.vo.MonitoringResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +27,6 @@ public class ApiService {
     private final MonApiRepository monApiRepository;
 
 
-    @Cacheable(value = "api", key = "'list'", unless = "#result == null")
     public List<MonApi> getApis() {
         return monApiRepository.findAll();
     }
@@ -46,10 +41,6 @@ public class ApiService {
         return monApi;
     }
 
-    @Caching(evict = {
-            @CacheEvict(value = "api", key = "'list'"),
-            @CacheEvict(value = "api", key = "#monApiVO.seq")
-    })
     @Transactional
     public boolean editApi(MonApi monApiVO) {
         Optional<MonApi> optionalMonApi = monApiRepository.findById(monApiVO.getSeq());
@@ -59,10 +50,6 @@ public class ApiService {
         return optionalMonApi.isPresent();
     }
 
-    @Caching(evict = {
-            @CacheEvict(value = "api", key = "'list'"),
-            @CacheEvict(value = "api", key = "#monApiVO.seq")
-    })
     @Transactional
     public boolean remove(int seq) {
         Optional<MonApi> optionalMonApi = monApiRepository.findById(seq);
