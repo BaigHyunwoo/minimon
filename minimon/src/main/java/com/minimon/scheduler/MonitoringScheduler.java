@@ -21,12 +21,18 @@ public class MonitoringScheduler {
     private final UrlService urlService;
     private final ApiService apiService;
 
-    public void execute() {
+    public void urlMonitoring() {
         List<MonResult> monResults = new ArrayList();
-        monResults.addAll(apiService.checkApis(apiService.findScheduledApis()));
         monResults.addAll(urlService.checkUrls(urlService.findScheduledUrls()));
         check(monResults);
-        log.info("Monitoring Execute Complete");
+        log.info("URL Monitoring Execute Complete");
+    }
+
+    public void apiMonitoring() {
+        List<MonResult> monResults = new ArrayList();
+        monResults.addAll(apiService.checkApis(apiService.findScheduledApis()));
+        check(monResults);
+        log.info("API Monitoring Execute Complete");
     }
 
     @Transactional

@@ -128,8 +128,10 @@ public class CustomScheduler implements InitializingBean {
 
     private Runnable getTaskBySchedulerType(SchedulerTypeEnum schedulerType) {
         switch (schedulerType) {
-            case MONITORING:
-                return () -> monitoringScheduler.execute();
+            case URL_MONITORING:
+                return () -> monitoringScheduler.urlMonitoring();
+            case API_MONITORING:
+                return () -> monitoringScheduler.apiMonitoring();
             default:
                 return null;
         }
