@@ -33,6 +33,6 @@ logging:
     springframework.web: trace
 
 common:
-  location: C:\\Users\\user\\Downloads\\chromedriver
+  location: C:\\Users\\user\\Downloads\\chromedriver\\location.properties
   driverName: webdriver.chrome.driver
   driverPath: C:\\Users\\user\\Downloads\\chromedriver

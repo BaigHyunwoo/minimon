@@ -11,6 +11,7 @@ import com.minimon.vo.MonitoringResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -121,10 +122,9 @@ public class ApiService {
     public MonitoringResultVO httpSending(String url, String method, String data) {
         long st = System.currentTimeMillis();
         String response = commonRestTemplate.callApi(HttpMethod.valueOf(method), url, data);
-        long loadTime = System.currentTimeMillis() - st;
         return MonitoringResultVO.builder()
-                .status(200)
-                .totalLoadTime(new Long(loadTime).intValue())
+                .status(HttpStatus.OK.value())
+                .totalLoadTime(new Long(System.currentTimeMillis() - st).intValue())
                 .response(response)
                 .build();
     }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.io.FileInputStream;
 import java.util.Map;
 import java.util.Properties;
@@ -23,16 +24,8 @@ public class ResultService {
     @Value("${common.location}")
     private String location;
 
-    public MonResult saveResult(Map<String, Object> result) {
-        MonResult monResult = new MonResult();
-        monResult.setTitle("" + result.get("title"));
-        monResult.setResult("" + result.get("result"));
-        monResult.setLoadTime(Double.parseDouble("" + result.get("check_loadTime")));
-        monResult.setResponse(result.toString());
-        monResultRepository.save(monResult);
-        return monResult;
-    }
 
+    @Transactional
     public MonResult saveResult(MonResult monResult) {
         monResultRepository.save(monResult);
         return monResult;
@@ -43,7 +36,7 @@ public class ResultService {
         try {
 
             Properties properties = new Properties();
-            FileInputStream fis = new FileInputStream(location + "/location.properties");
+            FileInputStream fis = new FileInputStream(location);
             properties.load(new java.io.BufferedInputStream(fis));
             String location = properties.getProperty("location");
             String text = getResultText(monResult);
