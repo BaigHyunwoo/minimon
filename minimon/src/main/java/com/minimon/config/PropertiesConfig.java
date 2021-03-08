@@ -6,5 +6,5 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableConfigurationProperties(value = CommonProperties.class)
-public class PropertiesConfiguration {
+public class PropertiesConfig {
 }

@@ -38,7 +38,7 @@ public class MonitoringScheduler {
     @Transactional
     public void check(List<MonResult> monResults) {
         monResults.forEach(monResult -> {
-            switch (MonitoringResultCodeEnum.valueOf(monResult.getResult())) {
+            switch (monResult.getResultCode()) {
                 case SUCCESS:
                     break;
                 default:

@@ -17,6 +17,7 @@ import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -209,7 +210,7 @@ public class CommonSelenium {
          * SET STATUS
          */
         if (currentURL.equals(response.get("url")) == true) {
-            monitoringResultVO.setStatus(response.getInt("status"));
+            monitoringResultVO.setStatus(HttpStatus.valueOf(response.getInt("status")));
         }
     }
 
