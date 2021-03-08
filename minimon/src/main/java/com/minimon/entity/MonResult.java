@@ -1,5 +1,6 @@
 package com.minimon.entity;
 
+import com.minimon.enums.MonitoringResultCodeEnum;
 import com.minimon.enums.MonitoringTypeEnum;
 import com.sun.istack.NotNull;
 import io.swagger.annotations.ApiModelProperty;
@@ -7,6 +8,7 @@ import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.http.HttpStatus;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -21,24 +23,35 @@ public class MonResult {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
+    @ApiModelProperty(name = "고유 번호")
     private int seq;
 
     @NotNull
-    private String relationType;
+    @Enumerated(EnumType.STRING)
+    @ApiModelProperty(name = "모니터링 타입")
+    private MonitoringTypeEnum monitoringType;
 
     @NotNull
+    @ApiModelProperty(name = "매핑 SEQ")
     private int relationSeq;
 
     @NotNull
+    @ApiModelProperty(name = "제목")
     private String title;
 
     @NotNull
-    private String result;
+    @Enumerated(EnumType.STRING)
+    @ApiModelProperty(name = "응답 결과 코드")
+    private MonitoringResultCodeEnum resultCode;
 
+    @ApiModelProperty(name = "응답 결과 body")
     private String response;
 
-    private int status;
+    @Enumerated(EnumType.STRING)
+    @ApiModelProperty(name = "응답 상태 코드")
+    private HttpStatus status;
 
+    @ApiModelProperty(name = "응답 지연시간")
     private double loadTime;
 
     @CreatedDate
@@ -47,11 +60,11 @@ public class MonResult {
     private LocalDateTime regDate;
 
     @Builder
-    public MonResult(MonitoringTypeEnum monitoringTypeEnum, int relationSeq, String title, String result, double loadTime) {
-        this.relationType = monitoringTypeEnum.getCode();
+    public MonResult(MonitoringTypeEnum monitoringTypeEnum, int relationSeq, String title, MonitoringResultCodeEnum resultCode, double loadTime) {
+        this.monitoringType = monitoringTypeEnum;
         this.relationSeq = relationSeq;
         this.title = title;
-        this.result = result;
+        this.resultCode = resultCode;
         this.loadTime = loadTime;
     }
 }

@@ -96,7 +96,7 @@ public class MonApiService {
                 .relationSeq(api.getSeq())
                 .title(api.getMethod() + " : " + api.getTitle())
                 .loadTime(monitoringResultVO.getTotalLoadTime())
-                .result(errCheck(
+                .resultCode(errCheck(
                         monitoringResultVO.getStatus(),
                         monitoringResultVO.getTotalLoadTime(),
                         monitoringResultVO.getResponse(),
@@ -104,22 +104,22 @@ public class MonApiService {
                 .build();
     }
 
-    public String errCheck(int status, double totalLoadTime, String response, MonApi api) {
-        if (status >= HttpStatus.BAD_REQUEST.value())
-            return MonitoringResultCodeEnum.UNKNOWN.getCode();
+    public MonitoringResultCodeEnum errCheck(HttpStatus status, double totalLoadTime, String response, MonApi api) {
+        if (status == HttpStatus.OK)
+            return MonitoringResultCodeEnum.SUCCESS;
         else if (api.getLoadTimeCheckYn().equals(UseStatusEnum.Y) && totalLoadTime >= api.getErrorLoadTime())
-            return MonitoringResultCodeEnum.LOAD_TIME.getCode();
+            return MonitoringResultCodeEnum.LOAD_TIME;
         else if (api.getResponseCheckYn().equals(UseStatusEnum.Y) && !response.equals(api.getResponse()))
-            return MonitoringResultCodeEnum.RESPONSE.getCode();
+            return MonitoringResultCodeEnum.RESPONSE;
         else
-            return MonitoringResultCodeEnum.SUCCESS.getCode();
+            return MonitoringResultCodeEnum.UNKNOWN;
     }
 
     public MonitoringResultVO httpSending(String url, String method, String data) {
         long st = System.currentTimeMillis();
         String response = commonRestTemplate.callApi(HttpMethod.valueOf(method), url, data);
         return MonitoringResultVO.builder()
-                .status(HttpStatus.OK.value())
+                .status(HttpStatus.OK)
                 .totalLoadTime(new Long(System.currentTimeMillis() - st).intValue())
                 .response(response)
                 .build();

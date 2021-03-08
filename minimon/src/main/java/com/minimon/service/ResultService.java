@@ -50,10 +50,8 @@ public class ResultService {
     }
 
     public String getResultText(MonResult monResult) {
-        return new StringBuffer()
-                .append("\n" + monResult.getRegDate() + " ")
-                .append("\n" + monResult.getRelationType() + " : " + monResult.getTitle() + " ")
-                .append("\nRESULT : " + monResult.getResult() + " ")
-                .toString();
+        return "\n" + monResult.getRegDate() + " " +
+                "\n" + monResult.getMonitoringType().getValue() + " : " + monResult.getTitle() + " " +
+                "\nRESULT : " + monResult.getResultCode().getValue() + " ";
     }
 }

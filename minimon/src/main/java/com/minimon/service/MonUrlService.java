@@ -3,14 +3,15 @@ package com.minimon.service;
 import com.minimon.common.CommonSelenium;
 import com.minimon.entity.MonResult;
 import com.minimon.entity.MonUrl;
-import com.minimon.enums.MonitoringTypeEnum;
 import com.minimon.enums.MonitoringResultCodeEnum;
+import com.minimon.enums.MonitoringTypeEnum;
 import com.minimon.enums.UseStatusEnum;
 import com.minimon.repository.MonUrlRepository;
 import com.minimon.vo.MonitoringResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -43,18 +44,14 @@ public class MonUrlService {
     @Transactional
     public boolean editUrl(MonUrl monUrlVO) {
         Optional<MonUrl> optionalMonUrl = getUrl(monUrlVO.getSeq());
-        optionalMonUrl.ifPresent(monUrl -> {
-            monUrlRepository.save(monUrlVO);
-        });
+        optionalMonUrl.ifPresent(monUrl -> monUrlRepository.save(monUrlVO));
         return optionalMonUrl.isPresent();
     }
 
     @Transactional
     public boolean remove(int seq) {
         Optional<MonUrl> optionalMonUrl = getUrl(seq);
-        optionalMonUrl.ifPresent(monUrl -> {
-            monUrlRepository.delete(monUrl);
-        });
+        optionalMonUrl.ifPresent(monUrlRepository::delete);
         return optionalMonUrl.isPresent();
     }
 
@@ -105,17 +102,17 @@ public class MonUrlService {
                 .relationSeq(url.getSeq())
                 .title(url.getTitle())
                 .loadTime(monitoringResultVO.getTotalLoadTime())
-                .result(getResultCode(monitoringResultVO.getStatus(), monitoringResultVO.getTotalLoadTime(), url))
+                .resultCode(getResultCode(monitoringResultVO.getStatus(), monitoringResultVO.getTotalLoadTime(), url))
                 .build();
     }
 
-    public String getResultCode(int status, double totalLoadTime, MonUrl url) {
-        if (status >= 400) {
-            return MonitoringResultCodeEnum.UNKNOWN.getCode();
-        } else if (url.getLoadTimeCheckYn().equals(UseStatusEnum.Y.getCode()) && totalLoadTime >= url.getErrorLoadTime()) {
-            return MonitoringResultCodeEnum.LOAD_TIME.getCode();
+    public MonitoringResultCodeEnum getResultCode(HttpStatus status, double totalLoadTime, MonUrl url) {
+        if (status == HttpStatus.OK) {
+            return MonitoringResultCodeEnum.SUCCESS;
+        } else if (url.getLoadTimeCheckYn().equals(UseStatusEnum.Y) && totalLoadTime >= url.getErrorLoadTime()) {
+            return MonitoringResultCodeEnum.LOAD_TIME;
         } else {
-            return MonitoringResultCodeEnum.SUCCESS.getCode();
+            return MonitoringResultCodeEnum.UNKNOWN;
         }
     }
 

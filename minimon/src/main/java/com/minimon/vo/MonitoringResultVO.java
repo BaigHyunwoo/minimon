@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.http.HttpStatus;
 
 @Getter
 @ApiModel(value = "모니터링 실행 결과 VO")
@@ -15,7 +16,7 @@ public class MonitoringResultVO {
 
     @Setter
     @ApiModelProperty(value = "결과 코드")
-    private int status;
+    private HttpStatus status;
 
     @ApiModelProperty(value = "걸린 시간")
     private int totalLoadTime;
@@ -24,7 +25,7 @@ public class MonitoringResultVO {
     private String response;
 
     @Builder
-    public MonitoringResultVO(String url, int totalLoadTime, int status, String response) {
+    public MonitoringResultVO(String url, int totalLoadTime, HttpStatus status, String response) {
         this.url = url;
         this.totalLoadTime = totalLoadTime;
         this.status = status;
