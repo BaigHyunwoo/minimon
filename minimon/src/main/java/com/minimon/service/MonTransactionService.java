@@ -1,7 +1,7 @@
 package com.minimon.service;
 
-import com.minimon.common.CommonUtil;
 import com.minimon.common.CommonSelenium;
+import com.minimon.common.CommonUtil;
 import com.minimon.entity.MonCodeData;
 import com.minimon.entity.MonTransaction;
 import com.minimon.repository.MonTransactionRepository;
@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +17,7 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class TransactionService {
+public class MonTransactionService {
 
     private final CommonSelenium commonSelenium;
 
@@ -44,10 +43,7 @@ public class TransactionService {
 
 
     public List<MonTransaction> findTransactionUseable() {
-        Date now = new Date();
-        int hours = now.getHours();
-        return monTransactionRepository.findByUseableAndStartDateLessThanEqualAndEndDateGreaterThanEqualAndStartHourLessThanEqualAndEndHourGreaterThanEqual(
-                1, now, now, hours, hours);
+        return null;
     }
 
     public int checkStatus(Map<String, Object> logData) {
@@ -89,7 +85,7 @@ public class TransactionService {
             result = "status ERR";
         }
 
-        if (loadTime <= CommonUtil.getPerData(transaction.getLoadTime(), transaction.getErrLoadTime(), 1))
+        if (loadTime <= CommonUtil.getPerData(transaction.getLoadTime(), transaction.getErrorLoadTime(), 1))
             checkData.put("loadTime", "SUCCESS");
         else {
             checkData.put("loadTime", " ERR");
@@ -126,7 +122,7 @@ public class TransactionService {
             for (int i = 0; i < codeDataList.size(); i++) {
 
                 MonCodeData monCodeData = codeDataList.get(i);
-                logData.put("" + i, commonSelenium.executeAction(commonSelenium, driver, monCodeData.getAction(), monCodeData.getSelector_type(), monCodeData.getSelector_value(), monCodeData.getValue()));
+                logData.put("" + i, commonSelenium.executeAction(driver, monCodeData.getAction(), monCodeData.getSelector_type(), monCodeData.getSelector_value(), monCodeData.getValue()));
 
             }
             long endTime = System.currentTimeMillis();

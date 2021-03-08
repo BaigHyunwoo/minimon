@@ -57,19 +57,21 @@ public class CommonSelenium {
         }
 
         public int returnLoadTime() {
-            int loadTime = (int) (endTime - startTime);
-            return loadTime;
+            return new Long(endTime - startTime).intValue();
         }
     }
 
     public String waitForWindow(int timeout) {
+
         try {
             Thread.sleep(timeout);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
         Set<String> whNow = driver.getWindowHandles();
         Set<String> whThen = (Set<String>) vars.get("window_handles");
+
         if (whNow.size() > whThen.size()) {
             whNow.removeAll(whThen);
         }
@@ -108,7 +110,6 @@ public class CommonSelenium {
             log.debug("WebDriver - 연결 완료");
 
         } catch (Exception e) {
-            e.printStackTrace();
             if (driver != null) driver.quit();
         }
 
@@ -126,7 +127,6 @@ public class CommonSelenium {
             driver.register(event);
             driver.navigate().to(url);
             totalLoadTime = event.returnLoadTime();
-            log.debug("totalLoadTime : " + totalLoadTime);
 
         } catch (TimeoutException e1) {
             log.info("Error - Timeout");
@@ -214,7 +214,7 @@ public class CommonSelenium {
     }
 
 
-    public String executeAction(CommonSelenium selenium, EventFiringWebDriver driver, String action, String selector_type, String selector_value, String value) {
+    public String executeAction(EventFiringWebDriver driver, String action, String selector_type, String selector_value, String value) {
         String result;
 
         WebElement element;

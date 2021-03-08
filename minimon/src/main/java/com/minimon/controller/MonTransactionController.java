@@ -1,13 +1,10 @@
 package com.minimon.controller;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.minimon.common.CommonResponse;
-import com.minimon.entity.MonCodeData;
 import com.minimon.entity.MonTransaction;
 import com.minimon.repository.MonTransactionRepository;
 import com.minimon.service.ResultService;
-import com.minimon.service.TransactionService;
+import com.minimon.service.MonTransactionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -15,52 +12,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 
 
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/transaction")
-@Api(tags = {"Transaction Controller"})
-public class TransactionController {
+@RequestMapping("/monTransaction")
+@Api(tags = {"Monitoring Transaction Controller"})
+public class MonTransactionController {
 
     private final MonTransactionRepository monTransactionRepository;
 
-    private final TransactionService transactionService;
+    private final MonTransactionService monTransactionService;
 
     private final ResultService resultService;
-
-    private MonTransaction setTblMonTransaction(MonTransaction monTransaction, Map<String, Object> param) {
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        try {
-            monTransaction.setTitle("" + param.get("title"));
-            monTransaction.setTimer(Integer.parseInt("" + param.get("timer")));
-            monTransaction.setStartDate(LocalDateTime.parse(param.get("transaction_start_date").toString()));
-            monTransaction.setEndDate(LocalDateTime.parse(param.get("transaction_end_date").toString()));
-            monTransaction.setStartHour(Integer.parseInt(param.get("transaction_start_hour").toString()));
-            monTransaction.setEndHour(Integer.parseInt(param.get("transaction_end_hour").toString()));
-            monTransaction.setTimeout(Integer.parseInt("" + param.get("timeout")));
-            monTransaction.setUseable(param.get("transaction_useable").toString());
-            monTransaction.setLoadTimeCheck(Integer.parseInt("" + param.get("transaction_loadTimeCheck")));
-            monTransaction.setLoadTime(Double.parseDouble("" + param.get("loadTime")));
-            monTransaction.setErrLoadTime(Integer.parseInt("" + param.get("errLoadTime")));
-            monTransaction.setStatus(Integer.parseInt("" + param.get("status")));
-            monTransaction.setTransactionCode("" + param.get("transactionCode"));
-            monTransaction.setCodeDataList(objectMapper.readValue(param.get("codeDatas").toString(), new TypeReference<List<MonCodeData>>() {
-            }));
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-
-        }
-
-        return monTransaction;
-    }
 
     /**
      * TRANSACTION LIST  호출

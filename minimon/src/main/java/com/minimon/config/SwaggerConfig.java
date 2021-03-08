@@ -23,9 +23,9 @@ public class SwaggerConfig {
                 .paths(PathSelectors.any())
                 .build()
                 .tags(
-                        new Tag("Url Controller", "URL", index++),
-                        new Tag("Api Controller", "API", index++),
-                        new Tag("Transaction Controller", "TRANSACTION", index++),
+                        new Tag("Monitoring Url Controller", "URL 모니터링 관리", index++),
+                        new Tag("Monitoring Api Controller", "API 모니터링 관리", index++),
+                        new Tag("Monitoring Transaction Controller", "TRANSACTION 모니터링 관리", index++),
                         new Tag("Result Controller", "RESULT", index++)
                 );
     }

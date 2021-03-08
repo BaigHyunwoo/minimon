@@ -2,9 +2,9 @@ package com.minimon.scheduler;
 
 import com.minimon.entity.MonResult;
 import com.minimon.enums.MonitoringResultCodeEnum;
-import com.minimon.service.ApiService;
+import com.minimon.service.MonApiService;
 import com.minimon.service.ResultService;
-import com.minimon.service.UrlService;
+import com.minimon.service.MonUrlService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,19 +18,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MonitoringScheduler {
     private final ResultService resultService;
-    private final UrlService urlService;
-    private final ApiService apiService;
+    private final MonUrlService monUrlService;
+    private final MonApiService monApiService;
 
     public void urlMonitoring() {
         List<MonResult> monResults = new ArrayList();
-        monResults.addAll(urlService.checkUrls(urlService.findScheduledUrls()));
+        monResults.addAll(monUrlService.checkUrls(monUrlService.findScheduledUrls()));
         check(monResults);
         log.info("URL Monitoring Execute Complete");
     }
 
     public void apiMonitoring() {
         List<MonResult> monResults = new ArrayList();
-        monResults.addAll(apiService.checkApis(apiService.findScheduledApis()));
+        monResults.addAll(monApiService.checkApis(monApiService.findScheduledApis()));
         check(monResults);
         log.info("API Monitoring Execute Complete");
     }

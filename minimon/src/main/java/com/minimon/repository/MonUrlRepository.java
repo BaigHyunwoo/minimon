@@ -2,6 +2,7 @@ package com.minimon.repository;
 
 import com.minimon.entity.MonUrl;
 import com.minimon.entity.QMonUrl;
+import com.minimon.enums.UseStatusEnum;
 import com.querydsl.jpa.JPQLQuery;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -11,7 +12,7 @@ import java.util.List;
 
 @Repository
 public interface MonUrlRepository extends JpaRepository<MonUrl, Integer> {
-    List<MonUrl> findByMonitoringUseYn(String monitoringUseYn);
+    List<MonUrl> findByMonitoringUseYn(UseStatusEnum monitoringUseYn);
 }
 
 interface MonUrlSupport {

@@ -22,7 +22,7 @@ import java.util.Optional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ApiService {
+public class MonApiService {
     private final CommonRestTemplate commonRestTemplate;
     private final ResultService resultService;
     private final MonApiRepository monApiRepository;
@@ -61,7 +61,7 @@ public class ApiService {
     }
 
     public List<MonApi> findScheduledApis() {
-        return monApiRepository.findByMonitoringUseYnOrderByRegDateDesc(UseStatusEnum.Y.getCode());
+        return monApiRepository.findByMonitoringUseYnOrderByRegDateDesc(UseStatusEnum.Y);
     }
 
     public List<MonResult> checkApis(List<MonApi> monApis) {
@@ -111,7 +111,7 @@ public class ApiService {
     public String errCheck(int status, double totalLoadTime, String response, MonApi api) {
         if (status >= 400)
             return MonitoringResultCodeEnum.UNKNOWN.getCode();
-        else if (api.getLoadTimeCheckYn().equals(UseStatusEnum.Y.getCode()) && totalLoadTime >= api.getErrLoadTime())
+        else if (api.getLoadTimeCheckYn().equals(UseStatusEnum.Y.getCode()) && totalLoadTime >= api.getErrorLoadTime())
             return MonitoringResultCodeEnum.LOAD_TIME.getCode();
         else if (api.getResponseCheckYn().equals(UseStatusEnum.Y.getCode()) && response.equals(api.getResponse()) == false)
             return MonitoringResultCodeEnum.RESPONSE.getCode();
