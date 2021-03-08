@@ -119,6 +119,19 @@ public class CommonRestTemplate {
     }
 
     /**
+     * convert String to Object
+     */
+    public <T> T convertToMap(String data, Class<T> T) {
+        try {
+            return new ObjectMapper().readValue(data, T);
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.info("ERROR  Convert To Object " + data);
+        }
+        return null;
+    }
+
+    /**
      * convert String to Map
      */
     public Map convertToMap(String data) {

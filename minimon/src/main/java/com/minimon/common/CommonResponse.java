@@ -33,7 +33,7 @@ public class CommonResponse {
 
     public CommonResponse() {
         setSuccess();
-        this.data = NullValue.INSTANCE;
+        this.data = new String();
     }
 
     public CommonResponse(Object result) {
@@ -43,7 +43,7 @@ public class CommonResponse {
 
     public CommonResponse(int code, String message) {
         this.meta = new CommonResponseMeta(code, message);
-        this.data = NullValue.INSTANCE;
+        this.data = new String();
     }
 
     private void setSuccess() {
