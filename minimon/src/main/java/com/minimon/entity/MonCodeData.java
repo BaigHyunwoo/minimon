@@ -1,14 +1,14 @@
 package com.minimon.entity;
 
 import com.sun.istack.NotNull;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "MON_CODE_DATA")
 public class MonCodeData {

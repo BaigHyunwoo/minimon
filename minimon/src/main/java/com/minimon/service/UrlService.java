@@ -59,7 +59,7 @@ public class UrlService {
     }
 
     public List<MonUrl> findScheduledUrls() {
-        return monUrlRepository.findByMonitoringUseYn(UseStatusEnum.USE.getCode());
+        return monUrlRepository.findByMonitoringUseYn(UseStatusEnum.Y.getCode());
     }
 
     public List<MonResult> checkUrls(List<MonUrl> monUrls) {
@@ -112,7 +112,7 @@ public class UrlService {
     public String getResultCode(int status, double totalLoadTime, MonUrl url) {
         if (status >= 400) {
             return MonitoringResultCodeEnum.UNKNOWN.getCode();
-        } else if (url.getLoadTimeCheckYn().equals(UseStatusEnum.USE.getCode()) && totalLoadTime >= url.getErrLoadTime()) {
+        } else if (url.getLoadTimeCheckYn().equals(UseStatusEnum.Y.getCode()) && totalLoadTime >= url.getErrLoadTime()) {
             return MonitoringResultCodeEnum.LOAD_TIME.getCode();
         } else {
             return MonitoringResultCodeEnum.SUCCESS.getCode();

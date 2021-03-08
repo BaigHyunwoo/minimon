@@ -2,6 +2,7 @@ package com.minimon.entity;
 
 import com.sun.istack.NotNull;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,10 +13,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @Entity
-@NoArgsConstructor
 @Table(name = "MON_API")
 public class MonApi extends CommonEntity {
 

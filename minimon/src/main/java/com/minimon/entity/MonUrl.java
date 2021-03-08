@@ -1,7 +1,9 @@
 package com.minimon.entity;
 
+import com.minimon.enums.UseStatusEnum;
 import com.sun.istack.NotNull;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,10 +14,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
 
-@Getter
-@Setter
+@Data
 @Entity
-@NoArgsConstructor
 @Table(name = "MON_URL")
 public class MonUrl extends CommonEntity {
 
@@ -46,14 +46,16 @@ public class MonUrl extends CommonEntity {
     private int errLoadTime;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "char(1)")
     @ApiModelProperty(name = "모니터링 사용 여부")
-    private String monitoringUseYn;
+    private UseStatusEnum monitoringUseYn;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "char(1)")
     @ApiModelProperty(name = "지연시간 검사 여부")
-    private String loadTimeCheckYn;
+    private UseStatusEnum loadTimeCheckYn;
 
     @NotNull
     @ApiModelProperty(name = "응답 코드")
