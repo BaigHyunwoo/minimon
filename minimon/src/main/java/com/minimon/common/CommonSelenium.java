@@ -16,7 +16,6 @@ import org.openqa.selenium.support.events.AbstractWebDriverEventListener;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -45,21 +44,6 @@ public class CommonSelenium {
 
     JavascriptExecutor js;
 
-
-    public String waitForWindow(int timeout) {
-        try {
-            Thread.sleep(timeout);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        Set<String> whNow = driver.getWindowHandles();
-        Set<String> whThen = (Set<String>) vars.get("window_handles");
-        if (whNow.size() > whThen.size()) {
-            whNow.removeAll(whThen);
-        }
-        return whNow.iterator().next();
-    }
-
     public class WebDriverEventListenerClass extends AbstractWebDriverEventListener {
 
         long startTime, endTime;
@@ -78,13 +62,25 @@ public class CommonSelenium {
         }
     }
 
+    public String waitForWindow(int timeout) {
+        try {
+            Thread.sleep(timeout);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Set<String> whNow = driver.getWindowHandles();
+        Set<String> whThen = (Set<String>) vars.get("window_handles");
+        if (whNow.size() > whThen.size()) {
+            whNow.removeAll(whThen);
+        }
+        return whNow.iterator().next();
+    }
+
     public EventFiringWebDriver setUp() {
 
         EventFiringWebDriver driver = null;
 
         try {
-
-            System.out.println(driverName + " " + driverPath);
 
             // 기존 프로세스 킬
             Runtime.getRuntime().exec("taskkill /F /IM chromedriver");
@@ -93,11 +89,18 @@ public class CommonSelenium {
             System.setProperty(driverName, driverPath + File.separator + "chromedriver.exe");
 
             LoggingPreferences logPrefs = new LoggingPreferences();
+
             logPrefs.enable(LogType.PERFORMANCE, Level.ALL);
 
             ChromeOptions options = new ChromeOptions();
             options.setExperimentalOption("w3c", false);
-            options.addArguments("headless");
+
+            /**
+             *  동작 체크용
+             *  브라우저 창 가리려면 주석 제거
+             */
+            // options.addArguments("headless");
+
             options.setCapability(CapabilityType.LOGGING_PREFS, logPrefs);
             driver = new EventFiringWebDriver(new ChromeDriver(options));
             js = driver;
@@ -116,7 +119,9 @@ public class CommonSelenium {
     public int connect(String url, EventFiringWebDriver driver, int timeout) {
         driver.manage().timeouts().pageLoadTimeout(timeout, TimeUnit.SECONDS);
         int totalLoadTime = -1;
+
         try {
+
             WebDriverEventListenerClass event = new WebDriverEventListenerClass();
             driver.register(event);
             driver.navigate().to(url);
@@ -336,7 +341,7 @@ public class CommonSelenium {
 
         while (0 < 1) {
             Thread.sleep(100);
-            JavascriptExecutor js = (JavascriptExecutor) driver;
+            JavascriptExecutor js = driver;
             if (js.executeScript("return document.readyState").toString().equals("complete") == true) {
                 break;
             }

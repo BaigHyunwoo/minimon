@@ -1,12 +1,12 @@
 package com.minimon.service;
 
-import com.minimon.common.CommonSender;
-import com.minimon.common.CommonProperties;
+import com.minimon.common.CommonRestTemplate;
 import com.minimon.entity.MonResult;
 import com.minimon.repository.MonResultRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
@@ -17,6 +17,7 @@ import java.util.Properties;
 @Service
 @RequiredArgsConstructor
 public class ResultService {
+    private final CommonRestTemplate commonRestTemplate;
     private final MonResultRepository monResultRepository;
 
     @Value("${common.location}")
@@ -38,14 +39,17 @@ public class ResultService {
     }
 
     public void sendResultByProperties(MonResult monResult) {
+
         try {
+
             Properties properties = new Properties();
             FileInputStream fis = new FileInputStream(location + "/location.properties");
             properties.load(new java.io.BufferedInputStream(fis));
             String location = properties.getProperty("location");
             String text = getResultText(monResult);
-            CommonSender commonSender = new CommonSender();
-            commonSender.sendingMassage(location, text);
+
+            commonRestTemplate.callApi(HttpMethod.GET, location, text);
+
             log.info("SEND API : " + location + "  Body : " + text);
         } catch (Exception e) {
             log.info("SEND RESULT ERROR");
