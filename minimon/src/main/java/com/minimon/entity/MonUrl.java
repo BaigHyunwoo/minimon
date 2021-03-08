@@ -34,16 +34,12 @@ public class MonUrl extends CommonEntity {
     private String title;
 
     @NotNull
-    @ApiModelProperty(name = "반복 시간")
-    private int timer;
-
-    @NotNull
     @ApiModelProperty(name = "타임 아웃 시간")
     private int timeout;
 
     @NotNull
     @ApiModelProperty(name = "지연 한계 시간")
-    private int errLoadTime;
+    private int errorLoadTime;
 
     @NotNull
     @Enumerated(EnumType.STRING)

@@ -45,18 +45,14 @@ public class MonApiService {
     @Transactional
     public boolean editApi(MonApi monApiVO) {
         Optional<MonApi> optionalMonApi = monApiRepository.findById(monApiVO.getSeq());
-        optionalMonApi.ifPresent(monUrl -> {
-            monApiRepository.save(monApiVO);
-        });
+        optionalMonApi.ifPresent(monUrl -> monApiRepository.save(monApiVO));
         return optionalMonApi.isPresent();
     }
 
     @Transactional
     public boolean remove(int seq) {
         Optional<MonApi> optionalMonApi = monApiRepository.findById(seq);
-        optionalMonApi.ifPresent(monApi -> {
-            monApiRepository.delete(monApi);
-        });
+        optionalMonApi.ifPresent(monApiRepository::delete);
         return optionalMonApi.isPresent();
     }
 
@@ -109,11 +105,11 @@ public class MonApiService {
     }
 
     public String errCheck(int status, double totalLoadTime, String response, MonApi api) {
-        if (status >= 400)
+        if (status >= HttpStatus.BAD_REQUEST.value())
             return MonitoringResultCodeEnum.UNKNOWN.getCode();
-        else if (api.getLoadTimeCheckYn().equals(UseStatusEnum.Y.getCode()) && totalLoadTime >= api.getErrorLoadTime())
+        else if (api.getLoadTimeCheckYn().equals(UseStatusEnum.Y) && totalLoadTime >= api.getErrorLoadTime())
             return MonitoringResultCodeEnum.LOAD_TIME.getCode();
-        else if (api.getResponseCheckYn().equals(UseStatusEnum.Y.getCode()) && response.equals(api.getResponse()) == false)
+        else if (api.getResponseCheckYn().equals(UseStatusEnum.Y) && !response.equals(api.getResponse()))
             return MonitoringResultCodeEnum.RESPONSE.getCode();
         else
             return MonitoringResultCodeEnum.SUCCESS.getCode();

@@ -1,5 +1,6 @@
 package com.minimon.entity;
 
+import com.minimon.enums.UseStatusEnum;
 import com.sun.istack.NotNull;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -33,31 +34,30 @@ public class MonApi extends CommonEntity {
     private String title;
 
     @NotNull
-    @ApiModelProperty(name = "반복 시간")
-    private int timer;
-
-    @NotNull
     @ApiModelProperty(name = "타임아웃 시간")
     private int timeout;
 
     @NotNull
     @ApiModelProperty(name = "지연 시간 한계")
-    private int errLoadTime;
+    private int errorLoadTime;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "char(1)")
     @ApiModelProperty(name = "사용 여부")
-    private String monitoringUseYn;
+    private UseStatusEnum monitoringUseYn;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "char(1)")
     @ApiModelProperty(name = "지연 시간 검사 여부")
-    private String loadTimeCheckYn;
+    private UseStatusEnum loadTimeCheckYn;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "char(1)")
     @ApiModelProperty(name = "응답 데이터 검사 여부")
-    private String responseCheckYn;
+    private UseStatusEnum responseCheckYn;
 
     @NotNull
     @ApiModelProperty(name = "사용 http 메소드")
