@@ -34,6 +34,14 @@ public class MonTransactionController {
 
     private final ResultService resultService;
 
+
+    /**
+     *  TODO
+     *  트랜잭션 기능 selenium plugin 이용 -> test.java 파일 업로드 후 compile하여 테스트 실행 및 결과 받아 올 수 있도록 변경
+     *  불가능 시 현재 최신 selenium 기능 탐색
+     *  -> 또한 해당 기능 없을 시 selenium의 action들을 계속 이용해야하는지 체크
+     */
+
     /**
      * TRANSACTION LIST  호출
      */
