@@ -1,5 +1,6 @@
 package com.minimon.service;
 
+import com.minimon.common.CommonSearchSpec;
 import com.minimon.common.CommonSelenium;
 import com.minimon.entity.MonResult;
 import com.minimon.entity.MonUrl;
@@ -11,6 +12,7 @@ import com.minimon.vo.MonitoringResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +29,8 @@ public class MonUrlService {
     private final MonUrlRepository monUrlRepository;
     private final CommonSelenium commonSelenium;
 
-    public List<MonUrl> getUrlList() {
-        return monUrlRepository.findAll();
+    public Page getUrlList(CommonSearchSpec commonSearchSpec) {
+        return monUrlRepository.findAll(commonSearchSpec.searchSpecs(), commonSearchSpec.pageRequest());
     }
 
     public Optional<MonUrl> getUrl(int seq) {

@@ -1,6 +1,7 @@
 package com.minimon.controller;
 
 import com.minimon.common.CommonResponse;
+import com.minimon.common.CommonSearchSpec;
 import com.minimon.entity.MonResult;
 import com.minimon.entity.MonUrl;
 import com.minimon.service.MonUrlService;
@@ -25,8 +26,8 @@ public class MonUrlController {
 
     @ApiOperation(value = "URL 목록 조회", response = MonUrl.class)
     @GetMapping(path = "")
-    public CommonResponse getUrls() {
-        return new CommonResponse(monUrlService.getUrlList());
+    public CommonResponse getUrls(@ModelAttribute CommonSearchSpec commonSearchSpec) {
+        return new CommonResponse(monUrlService.getUrlList(commonSearchSpec));
     }
 
     @ApiOperation(value = "URL 조회", response = MonUrl.class)

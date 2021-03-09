@@ -3,6 +3,7 @@ package com.minimon.common;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Setter
 @Getter
 @ApiModel(value = "공통 리스트 조회(조건, 페이징, 정렬) 정보")
 public class CommonSearchSpec {
@@ -61,9 +63,9 @@ public class CommonSearchSpec {
 
         if (this.sortType == null || this.sortKey == null)
             return PageRequest.of(page, this.size);
-        else if (this.sortType.equals(Sort.Direction.DESC.toString()) == true)
+        else if (this.sortType.equals(Sort.Direction.DESC.name()) == true)
             return PageRequest.of(page, this.size, Sort.Direction.DESC, this.sortKey);
-        else if (this.sortType.equals(Sort.Direction.ASC.toString()) == true)
+        else if (this.sortType.equals(Sort.Direction.ASC.name()) == true)
             return PageRequest.of(page, this.size, Sort.Direction.ASC, this.sortKey);
         return null;
     }
@@ -72,6 +74,15 @@ public class CommonSearchSpec {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
             setPredicates(root, cb, predicates);
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+    }
+
+    public Specification searchSpecs(String useYn) {
+        return (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            setPredicates(root, cb, predicates);
+            predicates.add(cb.equal(root.get("useYn"), useYn));
             return cb.and(predicates.toArray(new Predicate[0]));
         };
     }

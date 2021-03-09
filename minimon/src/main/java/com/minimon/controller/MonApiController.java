@@ -1,6 +1,7 @@
 package com.minimon.controller;
 
 import com.minimon.common.CommonResponse;
+import com.minimon.common.CommonSearchSpec;
 import com.minimon.entity.MonApi;
 import com.minimon.entity.MonResult;
 import com.minimon.service.MonApiService;
@@ -22,15 +23,15 @@ public class MonApiController {
 
     @ApiOperation(value = "API 목록 조회", response = MonApi.class)
     @GetMapping(path = "")
-    public CommonResponse getApis() {
-        return new CommonResponse(monApiService.getApis());
+    public CommonResponse getApis(@ModelAttribute CommonSearchSpec commonSearchSpec) {
+        return new CommonResponse(monApiService.getApis(commonSearchSpec));
     }
 
     @ApiOperation(value = "API 조회", response = MonApi.class)
     @GetMapping(path = "/{seq}")
     public CommonResponse get(@PathVariable("seq") int seq) {
         MonApi api = monApiService.getApi(seq);
-        if(api == null) {
+        if (api == null) {
             return CommonResponse.notExistResponse();
         }
         return new CommonResponse(api);
@@ -45,7 +46,7 @@ public class MonApiController {
     @ApiOperation(value = "API 수정", response = boolean.class)
     @PutMapping(path = "")
     public CommonResponse update(@RequestBody MonApi monApi) {
-        if(!monApiService.editApi(monApi)) {
+        if (!monApiService.editApi(monApi)) {
             return CommonResponse.notExistResponse();
         }
         return new CommonResponse();
@@ -54,7 +55,7 @@ public class MonApiController {
     @ApiOperation(value = "API 삭제", response = boolean.class)
     @DeleteMapping(path = "/{seq}")
     public CommonResponse delete(@PathVariable("seq") int seq) {
-        if(!monApiService.remove(seq)) {
+        if (!monApiService.remove(seq)) {
             return CommonResponse.notExistResponse();
         }
         return new CommonResponse();
@@ -70,7 +71,7 @@ public class MonApiController {
     @PostMapping(path = "/{seq}/execute")
     public CommonResponse execute(@PathVariable("seq") int seq) {
         MonResult monResult = monApiService.executeApi(seq);
-        if(monResult == null) {
+        if (monResult == null) {
             return CommonResponse.notExistResponse();
         }
         return new CommonResponse(monResult);

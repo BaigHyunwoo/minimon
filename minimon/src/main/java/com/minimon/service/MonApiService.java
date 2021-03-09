@@ -1,6 +1,7 @@
 package com.minimon.service;
 
 import com.minimon.common.CommonRestTemplate;
+import com.minimon.common.CommonSearchSpec;
 import com.minimon.entity.MonApi;
 import com.minimon.entity.MonResult;
 import com.minimon.enums.MonitoringResultCodeEnum;
@@ -10,6 +11,7 @@ import com.minimon.repository.MonApiRepository;
 import com.minimon.vo.MonitoringResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -28,8 +30,8 @@ public class MonApiService {
     private final MonApiRepository monApiRepository;
 
 
-    public List<MonApi> getApis() {
-        return monApiRepository.findAll();
+    public Page getApis(CommonSearchSpec commonSearchSpec) {
+        return monApiRepository.findAll(commonSearchSpec.searchSpecs(), commonSearchSpec.pageRequest());
     }
 
     public MonApi getApi(int seq) {

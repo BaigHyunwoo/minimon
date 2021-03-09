@@ -5,13 +5,14 @@ import com.minimon.entity.QMonUrl;
 import com.minimon.enums.UseStatusEnum;
 import com.querydsl.jpa.JPQLQuery;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Repository
-public interface MonUrlRepository extends JpaRepository<MonUrl, Integer> {
+public interface MonUrlRepository extends JpaRepository<MonUrl, Integer>, JpaSpecificationExecutor {
     List<MonUrl> findByMonitoringUseYn(UseStatusEnum monitoringUseYn);
 }
 
