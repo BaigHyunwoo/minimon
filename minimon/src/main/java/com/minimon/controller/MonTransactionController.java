@@ -3,8 +3,8 @@ package com.minimon.controller;
 import com.minimon.common.CommonResponse;
 import com.minimon.entity.MonTransaction;
 import com.minimon.repository.MonTransactionRepository;
-import com.minimon.service.ResultService;
 import com.minimon.service.MonTransactionService;
+import com.minimon.service.ResultService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Map;
 
 
@@ -183,52 +186,32 @@ public class MonTransactionController {
      * Upload transaction Code
      */
     @ResponseBody
-    @ApiOperation(value = "검사 테스트", response = Map.class)
+    @ApiOperation(value = "검사 테스트", produces = "multipart/form-data", response = Map.class)
     @PostMapping(value = "/check")
     public CommonResponse transactionCheck(MultipartFile transactionFile) {
 
-//        Map<String, Object> result = new HashMap<String, Object>();
-//
-//        try {
-//            List<MonCodeData> codeDatas = new ArrayList<MonCodeData>();
-//
-//            /*
-//             * READ CODE FILE
-//             */
-//            BufferedReader br;
-//            String line;
-//            InputStream is = transactionFile.getInputStream();
-//            br = new BufferedReader(new InputStreamReader(is));
-//            boolean check = false;
-//            while ((line = br.readLine()) != null) {
-//
-//                /*
-//                 * TEST FUNCTION START
-//                 */
-//                if (line.indexOf("@Test") > 0) check = true;
-//                if (check == true) {
-//                    MonCodeData monCodeData = transactionService.getCodeData(line);
-//                    if (monCodeData != null) {
-//                        codeDatas.add(monCodeData);
-//                        log.debug(monCodeData.getAction() + " " + monCodeData.getSelector_type() + "  " + monCodeData.getSelector_value() + "     " + monCodeData.getValue());
-//                    }
-//
-//                }
-//            }
-//
-//            Map<String, Object> logData = transactionService.executeTransaction(codeDatas);
-//            result.put("data", logData);
-//            result.put("codeDatas", codeDatas);
-//            result.put("result", "success");
-//
-//
-//        } catch (Exception e) {
-//
-//            e.printStackTrace();
-//            result.put("result", "ERR");
-//            result.put("msg", e.getMessage());
-//
-//        }
+        try {
+            /*
+             * READ CODE FILE
+             */
+            BufferedReader br;
+            String line;
+            InputStream is = transactionFile.getInputStream();
+            br = new BufferedReader(new InputStreamReader(is));
+            boolean check = false;
+            while ((line = br.readLine()) != null) {
+                /*
+                 * TEST FUNCTION START
+                 */
+                if (line.indexOf("@Test") > 0) check = true;
+                if (check == true) {
+                    System.out.println(line);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return CommonResponse.preparingFunctionResponse();
     }
