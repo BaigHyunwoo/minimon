@@ -1,6 +1,7 @@
 package com.minimon.controller;
 
 import com.minimon.common.CommonResponse;
+import com.minimon.entity.MonCodeData;
 import com.minimon.entity.MonTransaction;
 import com.minimon.repository.MonTransactionRepository;
 import com.minimon.service.MonTransactionService;
@@ -15,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 
@@ -191,6 +194,7 @@ public class MonTransactionController {
     public CommonResponse transactionCheck(MultipartFile transactionFile) {
 
         try {
+            List<MonCodeData> codeDataList = new ArrayList<>();
             /*
              * READ CODE FILE
              */
@@ -205,9 +209,15 @@ public class MonTransactionController {
                  */
                 if (line.indexOf("@Test") > 0) check = true;
                 if (check == true) {
-                    System.out.println(line);
+                    MonCodeData monCodeData = monTransactionService.getCodeData(line);
+                    if (monCodeData != null) {
+                        codeDataList.add(monCodeData);
+                        log.debug(monCodeData.getAction() + " " + monCodeData.getSelector_type() + "  " + monCodeData.getSelector_value() + "     " + monCodeData.getValue());
+                    }
                 }
             }
+            Map<String, Object> logData = monTransactionService.executeTransaction(codeDataList);
+            System.out.println(logData);
 
         } catch (Exception e) {
             e.printStackTrace();
