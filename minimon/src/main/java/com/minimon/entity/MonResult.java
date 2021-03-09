@@ -60,11 +60,12 @@ public class MonResult {
     private LocalDateTime regDate;
 
     @Builder
-    public MonResult(MonitoringTypeEnum monitoringTypeEnum, int relationSeq, String title, MonitoringResultCodeEnum resultCode, double loadTime) {
+    public MonResult(MonitoringTypeEnum monitoringTypeEnum, int relationSeq, String title, MonitoringResultCodeEnum resultCode, HttpStatus status, double loadTime) {
         this.monitoringType = monitoringTypeEnum;
         this.relationSeq = relationSeq;
         this.title = title;
         this.resultCode = resultCode;
         this.loadTime = loadTime;
+        this.status = status;
     }
 }

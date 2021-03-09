@@ -21,10 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
@@ -167,21 +164,26 @@ public class CommonSelenium {
     }
 
     public MonitoringResultVO getResult(LogEntries logs, String currentURL, int totalLoadTime) {
-        MonitoringResultVO monitoringResultVO = MonitoringResultVO.builder()
+
+        HttpStatus resultStatus = HttpStatus.BAD_GATEWAY;
+        for (Iterator<LogEntry> it = logs.iterator(); it.hasNext(); ) {
+            Optional<HttpStatus> isExistStatus = Optional.ofNullable(getResultStatus(getResourceMessage(it.next()), currentURL));
+            if(isExistStatus.isPresent()) {
+                resultStatus = isExistStatus.get();
+
+            }
+        }
+
+        log.debug("WebDriver - Log 분석 완료");
+        return MonitoringResultVO.builder()
                 .totalLoadTime(totalLoadTime)
                 .url(currentURL)
+                .status(resultStatus)
                 .build();
-
-        for (Iterator<LogEntry> it = logs.iterator(); it.hasNext(); ) {
-            setResult(getResourceMessage(it.next()), currentURL, monitoringResultVO);
-        }
-        log.debug("WebDriver - Log 분석 완료");
-
-        return monitoringResultVO;
     }
 
 
-    public void setResult(JSONObject message, String currentURL, MonitoringResultVO monitoringResultVO) {
+    public HttpStatus getResultStatus(JSONObject message, String currentURL) {
 
         /*
          * DATA CONVERT & CHECK
@@ -191,10 +193,12 @@ public class CommonSelenium {
         /*
          * Log Exists Check
          */
-        if (methodName != null && methodName.equals("Network.responseReceived") == false) return;
+        if (methodName != null && methodName.equals("Network.responseReceived") == false) {
+            return null;
+        }
 
         /*
-         * GET DATAS
+         * GET DATA
          */
         JSONObject params = message.getJSONObject("params");
 
@@ -210,8 +214,10 @@ public class CommonSelenium {
          * SET STATUS
          */
         if (currentURL.equals(response.get("url")) == true) {
-            monitoringResultVO.setStatus(HttpStatus.valueOf(response.getInt("status")));
+            return HttpStatus.valueOf(response.getInt("status"));
         }
+
+        return null;
     }
 
 

@@ -101,6 +101,7 @@ public class MonApiService {
                         monitoringResultVO.getTotalLoadTime(),
                         monitoringResultVO.getResponse(),
                         api))
+                .status(monitoringResultVO.getStatus())
                 .build();
     }
 

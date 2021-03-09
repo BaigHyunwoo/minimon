@@ -87,7 +87,7 @@ public class MonUrlService {
         try {
             int totalLoadTime = commonSelenium.connect(url, driver, timeout);
             monitoringResultVO = commonSelenium.getResult(commonSelenium.getLog(driver), driver.getCurrentUrl(), totalLoadTime);
-        } finally {
+        }finally {
             if (driver != null) {
                 driver.quit();
             }
@@ -103,6 +103,7 @@ public class MonUrlService {
                 .title(url.getTitle())
                 .loadTime(monitoringResultVO.getTotalLoadTime())
                 .resultCode(getResultCode(monitoringResultVO.getStatus(), monitoringResultVO.getTotalLoadTime(), url))
+                .status(monitoringResultVO.getStatus())
                 .build();
     }
 
