@@ -10,3 +10,4 @@ preparingFunction:
 notExist:
   code: "-1"
   msg: "정보가 존재하지 않습니다."
+  
