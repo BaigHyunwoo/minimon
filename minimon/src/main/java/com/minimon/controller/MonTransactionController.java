@@ -192,7 +192,7 @@ public class MonTransactionController {
     @ApiOperation(value = "검사 테스트", produces = "multipart/form-data", response = Map.class)
     @PostMapping(value = "/check")
     public CommonResponse transactionCheck(MultipartFile transactionFile) {
-
+        Map<String, Object> resultData = null;
         try {
             List<MonCodeData> codeDataList = new ArrayList<>();
             /*
@@ -216,14 +216,13 @@ public class MonTransactionController {
                     }
                 }
             }
-            Map<String, Object> logData = monTransactionService.executeTransaction(codeDataList);
-            System.out.println(logData);
+            resultData = monTransactionService.executeTransaction(codeDataList);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return CommonResponse.preparingFunctionResponse();
+        return new CommonResponse(resultData);
     }
 
 
