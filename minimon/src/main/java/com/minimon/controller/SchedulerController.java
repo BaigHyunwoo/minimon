@@ -16,6 +16,13 @@ import org.springframework.web.bind.annotation.*;
 public class SchedulerController {
     private final CustomScheduler customScheduler;
 
+
+    @PostMapping(path = "/execute")
+    @ApiOperation(value = "특정 스케줄 작업 수동 실행 1회")
+    public CommonResponse execute(@RequestParam String schedulerType) {
+        return new CommonResponse(customScheduler.execute(schedulerType));
+    }
+
     @PostMapping(path = "/run")
     @ApiOperation(value = "특정 스케줄 작업 실행")
     public CommonResponse run(@RequestParam String schedulerType) {

@@ -136,4 +136,9 @@ public class CustomScheduler implements InitializingBean {
                 return null;
         }
     }
+
+    public boolean execute(String schedulerType) {
+        Optional.ofNullable(getTaskBySchedulerType(SchedulerTypeEnum.valueOf(schedulerType))).ifPresent(task -> task.run());
+        return true;
+    }
 }
