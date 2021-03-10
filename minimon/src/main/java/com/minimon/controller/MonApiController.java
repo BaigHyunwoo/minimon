@@ -23,14 +23,14 @@ public class MonApiController {
 
     @ApiOperation(value = "API 목록 조회", response = MonApi.class)
     @GetMapping(path = "")
-    public CommonResponse getApis(@ModelAttribute CommonSearchSpec commonSearchSpec) {
-        return new CommonResponse(monApiService.getApis(commonSearchSpec));
+    public CommonResponse getList(@ModelAttribute CommonSearchSpec commonSearchSpec) {
+        return new CommonResponse(monApiService.getList(commonSearchSpec));
     }
 
     @ApiOperation(value = "API 조회", response = MonApi.class)
     @GetMapping(path = "/{seq}")
     public CommonResponse get(@PathVariable("seq") int seq) {
-        MonApi api = monApiService.getApi(seq);
+        MonApi api = monApiService.get(seq);
         if (api == null) {
             return CommonResponse.notExistResponse();
         }
@@ -40,13 +40,13 @@ public class MonApiController {
     @ApiOperation(value = "API 생성", response = MonApi.class)
     @PostMapping(path = "")
     public CommonResponse create(@RequestBody MonApi monApi) {
-        return new CommonResponse(monApiService.saveApi(monApi));
+        return new CommonResponse(monApiService.save(monApi));
     }
 
     @ApiOperation(value = "API 수정", response = boolean.class)
     @PutMapping(path = "")
     public CommonResponse update(@RequestBody MonApi monApi) {
-        if (!monApiService.editApi(monApi)) {
+        if (!monApiService.edit(monApi)) {
             return CommonResponse.notExistResponse();
         }
         return new CommonResponse();
@@ -64,13 +64,13 @@ public class MonApiController {
     @ApiOperation(value = "API 검사 테스트 실행", response = MonitoringResultVO.class)
     @PostMapping(path = "/check")
     public CommonResponse check(@RequestParam String url, @RequestParam String method, @RequestBody(required = false) String data) {
-        return new CommonResponse(monApiService.executeApi(url, method, data));
+        return new CommonResponse(monApiService.execute(url, method, data));
     }
 
     @ApiOperation(value = "API 검사 실행", response = MonResult.class)
     @PostMapping(path = "/{seq}/execute")
     public CommonResponse execute(@PathVariable("seq") int seq) {
-        MonResult monResult = monApiService.executeApi(seq);
+        MonResult monResult = monApiService.execute(seq);
         if (monResult == null) {
             return CommonResponse.notExistResponse();
         }

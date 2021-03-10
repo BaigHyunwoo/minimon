@@ -1,7 +1,6 @@
 package com.minimon.scheduler;
 
 import com.minimon.entity.MonResult;
-import com.minimon.enums.MonitoringResultCodeEnum;
 import com.minimon.service.MonApiService;
 import com.minimon.service.ResultService;
 import com.minimon.service.MonUrlService;
@@ -23,14 +22,14 @@ public class MonitoringScheduler {
 
     public void urlMonitoring() {
         List<MonResult> monResults = new ArrayList();
-        monResults.addAll(monUrlService.checkUrls(monUrlService.findScheduledUrls()));
+        monResults.addAll(monUrlService.checkList(monUrlService.findScheduledUrls()));
         check(monResults);
         log.info("URL Monitoring Execute Complete");
     }
 
     public void apiMonitoring() {
         List<MonResult> monResults = new ArrayList();
-        monResults.addAll(monApiService.checkApis(monApiService.findScheduledApis()));
+        monResults.addAll(monApiService.checkList(monApiService.findScheduledApis()));
         check(monResults);
         log.info("API Monitoring Execute Complete");
     }
@@ -42,7 +41,7 @@ public class MonitoringScheduler {
                 case SUCCESS:
                     break;
                 default:
-                    resultService.saveResult(monResult);
+                    resultService.save(monResult);
                     resultService.sendResultByProperties(monResult);
                     break;
             }

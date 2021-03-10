@@ -26,14 +26,14 @@ public class MonUrlController {
 
     @ApiOperation(value = "URL 목록 조회", response = MonUrl.class)
     @GetMapping(path = "")
-    public CommonResponse getUrls(@ModelAttribute CommonSearchSpec commonSearchSpec) {
-        return new CommonResponse(monUrlService.getUrlList(commonSearchSpec));
+    public CommonResponse getList(@ModelAttribute CommonSearchSpec commonSearchSpec) {
+        return new CommonResponse(monUrlService.getList(commonSearchSpec));
     }
 
     @ApiOperation(value = "URL 조회", response = MonUrl.class)
     @GetMapping(path = "/{seq}")
     public CommonResponse get(@PathVariable("seq") int seq) {
-        Optional url = monUrlService.getUrl(seq);
+        Optional url = monUrlService.get(seq);
         if (!url.isPresent()) {
             return CommonResponse.notExistResponse();
         }
@@ -43,13 +43,13 @@ public class MonUrlController {
     @ApiOperation(value = "URL 생성", response = MonUrl.class)
     @PostMapping(path = "")
     public CommonResponse create(@RequestBody MonUrl monUrl) {
-        return new CommonResponse(monUrlService.saveUrl(monUrl));
+        return new CommonResponse(monUrlService.save(monUrl));
     }
 
     @ApiOperation(value = "URL 수정", response = boolean.class)
     @PutMapping(path = "")
     public CommonResponse update(@RequestBody MonUrl monUrl) {
-        if (!monUrlService.editUrl(monUrl)) {
+        if (!monUrlService.edit(monUrl)) {
             return CommonResponse.notExistResponse();
         }
         return new CommonResponse();
@@ -67,13 +67,13 @@ public class MonUrlController {
     @ApiOperation(value = "URL 검사 테스트 실행", response = MonitoringResultVO.class)
     @PostMapping(path = "/check")
     public CommonResponse check(@RequestBody MonUrlCheckVO monUrlCheckVO) {
-        return new CommonResponse(monUrlService.executeUrl(monUrlCheckVO.getUrl(), monUrlCheckVO.getTimeout()));
+        return new CommonResponse(monUrlService.execute(monUrlCheckVO.getUrl(), monUrlCheckVO.getTimeout()));
     }
 
     @ApiOperation(value = "URL 검사 실행", response = MonResult.class)
     @PostMapping(path = "/{seq}/execute")
     public CommonResponse execute(@PathVariable("seq") int seq) {
-        MonResult monResult = monUrlService.executeUrl(seq);
+        MonResult monResult = monUrlService.execute(seq);
         if (monResult == null) {
             return CommonResponse.notExistResponse();
         }

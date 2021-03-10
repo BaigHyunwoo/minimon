@@ -1,18 +1,23 @@
 package com.minimon.service;
 
+import com.minimon.common.CommonSearchSpec;
 import com.minimon.common.CommonSelenium;
 import com.minimon.common.CommonUtil;
 import com.minimon.entity.MonCodeData;
 import com.minimon.entity.MonTransaction;
+import com.minimon.entity.MonUrl;
 import com.minimon.repository.MonTransactionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -20,13 +25,34 @@ import java.util.Map;
 public class MonTransactionService {
 
     private final CommonSelenium commonSelenium;
-
     private final MonTransactionRepository monTransactionRepository;
 
-    private String className = this.getClass().toString();
+    public Page getList(CommonSearchSpec commonSearchSpec) {
+        return monTransactionRepository.findAll(commonSearchSpec.searchSpecs(), commonSearchSpec.pageRequest());
+    }
 
-    public List<MonTransaction> getTransactions() {
-        return monTransactionRepository.findAll();
+    public Optional<MonTransaction> get(int seq) {
+        return monTransactionRepository.findById(seq);
+    }
+
+    @Transactional
+    public MonTransaction save(MonTransaction monTransaction) {
+        monTransactionRepository.save(monTransaction);
+        return monTransaction;
+    }
+
+    @Transactional
+    public boolean edit(MonTransaction monTransactionVO) {
+        Optional<MonTransaction> optionalMonTransaction = get(monTransactionVO.getSeq());
+        optionalMonTransaction.ifPresent(monTransaction -> monTransactionRepository.save(monTransactionVO));
+        return optionalMonTransaction.isPresent();
+    }
+
+    @Transactional
+    public boolean remove(int seq) {
+        Optional<MonTransaction> optionalMonTransaction = get(seq);
+        optionalMonTransaction.ifPresent(monTransactionRepository::delete);
+        return optionalMonTransaction.isPresent();
     }
 
     public Map<String, Object> checkTransactions(List<MonTransaction> monTransactions) {

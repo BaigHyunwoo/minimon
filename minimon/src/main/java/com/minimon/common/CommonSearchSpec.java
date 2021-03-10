@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Setter
 @Getter
 @ApiModel(value = "공통 리스트 조회(조건, 페이징, 정렬) 정보")
@@ -78,27 +80,14 @@ public class CommonSearchSpec {
         };
     }
 
-    public Specification searchSpecs(String useYn) {
-        return (root, query, cb) -> {
-            List<Predicate> predicates = new ArrayList<>();
-            setPredicates(root, cb, predicates);
-            predicates.add(cb.equal(root.get("useYn"), useYn));
-            return cb.and(predicates.toArray(new Predicate[0]));
-        };
-    }
-
     public boolean checkDateType(String value) throws Exception {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         boolean check = true;
 
         try {
-
             LocalDateTime.parse(value, formatter);
-
         } catch (Exception e) {
-
             check = false;
-
         }
         return check;
     }
@@ -165,6 +154,7 @@ public class CommonSearchSpec {
                             break;
                     }
                 } catch (Exception e) {
+                    log.debug("CommonSearchSpec create query error");
                 }
             }
         });

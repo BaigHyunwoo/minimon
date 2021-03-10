@@ -30,22 +30,22 @@ public class MonApiService {
     private final MonApiRepository monApiRepository;
 
 
-    public Page getApis(CommonSearchSpec commonSearchSpec) {
+    public Page getList(CommonSearchSpec commonSearchSpec) {
         return monApiRepository.findAll(commonSearchSpec.searchSpecs(), commonSearchSpec.pageRequest());
     }
 
-    public MonApi getApi(int seq) {
+    public MonApi get(int seq) {
         return monApiRepository.findById(seq).orElse(null);
     }
 
     @Transactional
-    public MonApi saveApi(MonApi monApi) {
+    public MonApi save(MonApi monApi) {
         monApiRepository.save(monApi);
         return monApi;
     }
 
     @Transactional
-    public boolean editApi(MonApi monApiVO) {
+    public boolean edit(MonApi monApiVO) {
         Optional<MonApi> optionalMonApi = monApiRepository.findById(monApiVO.getSeq());
         optionalMonApi.ifPresent(monUrl -> monApiRepository.save(monApiVO));
         return optionalMonApi.isPresent();
@@ -62,43 +62,43 @@ public class MonApiService {
         return monApiRepository.findByMonitoringUseYnOrderByRegDateDesc(UseStatusEnum.Y);
     }
 
-    public List<MonResult> checkApis(List<MonApi> monApis) {
+    public List<MonResult> checkList(List<MonApi> monApis) {
         List<MonResult> monResults = new ArrayList<>();
         monApis.forEach(monApi -> {
-            MonitoringResultVO monitoringResultVO = executeApi(monApi);
-            monResults.add(errorCheckApi(monApi, monitoringResultVO));
+            MonitoringResultVO monitoringResultVO = execute(monApi);
+            monResults.add(errorCheck(monApi, monitoringResultVO));
         });
         return monResults;
     }
 
     @Transactional
-    public MonResult executeApi(int seq) {
+    public MonResult execute(int seq) {
         MonResult monResult = null;
 
         Optional<MonApi> optionalMonApi = monApiRepository.findById(seq);
         if (optionalMonApi.isPresent()) {
             MonApi monApi = optionalMonApi.get();
-            monResult = resultService.saveResult(errorCheckApi(monApi, executeApi(monApi)));
+            monResult = resultService.save(errorCheck(monApi, execute(monApi)));
             resultService.sendResultByProperties(monResult);
         }
         return monResult;
     }
 
-    public MonitoringResultVO executeApi(String url, String method, String data) {
-        return httpSending(url, method, data);
+    public MonitoringResultVO execute(String url, String method, String data) {
+        return request(url, method, data);
     }
 
-    public MonitoringResultVO executeApi(MonApi api) {
-        return httpSending(api.getUrl(), api.getMethod(), api.getData());
+    public MonitoringResultVO execute(MonApi api) {
+        return request(api.getUrl(), api.getMethod(), api.getData());
     }
 
-    public MonResult errorCheckApi(MonApi api, MonitoringResultVO monitoringResultVO) {
+    public MonResult errorCheck(MonApi api, MonitoringResultVO monitoringResultVO) {
         return MonResult.builder()
                 .monitoringTypeEnum(MonitoringTypeEnum.API)
                 .relationSeq(api.getSeq())
                 .title(api.getMethod() + " : " + api.getTitle())
                 .loadTime(monitoringResultVO.getTotalLoadTime())
-                .resultCode(errCheck(
+                .resultCode(getResultCode(
                         monitoringResultVO.getStatus(),
                         monitoringResultVO.getTotalLoadTime(),
                         monitoringResultVO.getResponse(),
@@ -107,7 +107,7 @@ public class MonApiService {
                 .build();
     }
 
-    public MonitoringResultCodeEnum errCheck(HttpStatus status, double totalLoadTime, String response, MonApi api) {
+    public MonitoringResultCodeEnum getResultCode(HttpStatus status, double totalLoadTime, String response, MonApi api) {
         if (status == HttpStatus.OK)
             return MonitoringResultCodeEnum.SUCCESS;
         else if (api.getLoadTimeCheckYn().equals(UseStatusEnum.Y) && totalLoadTime >= api.getErrorLoadTime())
@@ -118,7 +118,7 @@ public class MonApiService {
             return MonitoringResultCodeEnum.UNKNOWN;
     }
 
-    public MonitoringResultVO httpSending(String url, String method, String data) {
+    public MonitoringResultVO request(String url, String method, String data) {
         long st = System.currentTimeMillis();
         String response = commonRestTemplate.callApi(HttpMethod.valueOf(method), url, data);
         return MonitoringResultVO.builder()

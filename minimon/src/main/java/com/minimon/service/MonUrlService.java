@@ -29,30 +29,30 @@ public class MonUrlService {
     private final MonUrlRepository monUrlRepository;
     private final CommonSelenium commonSelenium;
 
-    public Page getUrlList(CommonSearchSpec commonSearchSpec) {
+    public Page getList(CommonSearchSpec commonSearchSpec) {
         return monUrlRepository.findAll(commonSearchSpec.searchSpecs(), commonSearchSpec.pageRequest());
     }
 
-    public Optional<MonUrl> getUrl(int seq) {
+    public Optional<MonUrl> get(int seq) {
         return monUrlRepository.findById(seq);
     }
 
     @Transactional
-    public MonUrl saveUrl(MonUrl monUrl) {
+    public MonUrl save(MonUrl monUrl) {
         monUrlRepository.save(monUrl);
         return monUrl;
     }
 
     @Transactional
-    public boolean editUrl(MonUrl monUrlVO) {
-        Optional<MonUrl> optionalMonUrl = getUrl(monUrlVO.getSeq());
+    public boolean edit(MonUrl monUrlVO) {
+        Optional<MonUrl> optionalMonUrl = get(monUrlVO.getSeq());
         optionalMonUrl.ifPresent(monUrl -> monUrlRepository.save(monUrlVO));
         return optionalMonUrl.isPresent();
     }
 
     @Transactional
     public boolean remove(int seq) {
-        Optional<MonUrl> optionalMonUrl = getUrl(seq);
+        Optional<MonUrl> optionalMonUrl = get(seq);
         optionalMonUrl.ifPresent(monUrlRepository::delete);
         return optionalMonUrl.isPresent();
     }
@@ -61,29 +61,29 @@ public class MonUrlService {
         return monUrlRepository.findByMonitoringUseYn(UseStatusEnum.Y);
     }
 
-    public List<MonResult> checkUrls(List<MonUrl> monUrls) {
+    public List<MonResult> checkList(List<MonUrl> monUrls) {
         List<MonResult> monResults = new ArrayList<>();
         monUrls.forEach(monUrl -> {
-            MonitoringResultVO monitoringResultVO = executeUrl(monUrl.getUrl(), monUrl.getTimeout());
+            MonitoringResultVO monitoringResultVO = execute(monUrl.getUrl(), monUrl.getTimeout());
             monResults.add(errorCheck(monUrl, monitoringResultVO));
         });
         return monResults;
     }
 
     @Transactional
-    public MonResult executeUrl(int seq) {
+    public MonResult execute(int seq) {
         MonResult monResult = null;
 
-        Optional<MonUrl> optionalMonUrl = getUrl(seq);
+        Optional<MonUrl> optionalMonUrl = get(seq);
         if (optionalMonUrl.isPresent()) {
             MonUrl monUrl = optionalMonUrl.get();
-            monResult = resultService.saveResult(errorCheck(monUrl, executeUrl(monUrl.getUrl(), monUrl.getTimeout())));
+            monResult = resultService.save(errorCheck(monUrl, execute(monUrl.getUrl(), monUrl.getTimeout())));
             resultService.sendResultByProperties(monResult);
         }
         return monResult;
     }
 
-    public MonitoringResultVO executeUrl(String url, int timeout) {
+    public MonitoringResultVO execute(String url, int timeout) {
         EventFiringWebDriver driver = commonSelenium.setUp();
         MonitoringResultVO monitoringResultVO;
         try {

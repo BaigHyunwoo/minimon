@@ -26,7 +26,7 @@ public class ResultService {
 
 
     @Transactional
-    public MonResult saveResult(MonResult monResult) {
+    public MonResult save(MonResult monResult) {
         monResultRepository.save(monResult);
         return monResult;
     }
