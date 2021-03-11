@@ -9,7 +9,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -91,71 +90,73 @@ public class MonTransactionController {
     @PostMapping(value = "/check")
     public CommonResponse transactionCheck(MultipartFile transactionFile) {
         Map<String, Object> resultData = null;
-        EventFiringWebDriver driver = commonSelenium.setUp();
-        try {
+        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+        DiagnosticCollector<JavaFileObject> ds = new DiagnosticCollector<>();
+        try (StandardJavaFileManager mgr = compiler.getStandardFileManager(ds, null, null)) {
+            Iterable<? extends JavaFileObject> sources = mgr.getJavaFileObjectsFromFiles(Arrays.asList(getTestFile(transactionFile)));
+            JavaCompiler.CompilationTask task = compiler.getTask(null, mgr, ds, null, null, sources);
+            task.call();
 
-//            StringBuffer testSource = new StringBuffer();
-//            BufferedReader br;
-//            String line;
-//            InputStream is = transactionFile.getInputStream();
-//            br = new BufferedReader(new InputStreamReader(is));
-//            boolean check = false;
-//            while ((line = br.readLine()) != null) {
-//                /*
-//                 * TEST FUNCTION START
-//                 */
-//                if (line.indexOf("@Test") > 0) check = true;
-//                if(check == true) {
-//                    testSource.append(line);
-//                }
-//            }
-
-            {
-
-                JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-                DiagnosticCollector<JavaFileObject> ds = new DiagnosticCollector<>();
-                try (StandardJavaFileManager mgr = compiler.getStandardFileManager(ds, null, null)) {
-                    File file = new File("src/main/resources/transactionFiles/DicTest.java");
-                    Iterable<? extends JavaFileObject> sources = mgr.getJavaFileObjectsFromFiles(Arrays.asList(file));
-                    JavaCompiler.CompilationTask task = compiler.getTask(null, mgr, ds, null, null, sources);
-                    task.call();
-                }
-                for (Diagnostic<? extends JavaFileObject> d : ds.getDiagnostics()) {
-                    System.out.format("Line: %d, %s in %s",
-                            d.getLineNumber(), d.getMessage(null),
-                            d.getSource().getName());
-                }
+            for (Diagnostic<? extends JavaFileObject> d : ds.getDiagnostics()) {
+                System.out.format("Line: %d, %s in %s",
+                        d.getLineNumber(), d.getMessage(null),
+                        d.getSource().getName());
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (driver != null) driver.quit();
         }
 
         return new CommonResponse(resultData);
     }
 
-    @ApiOperation(value = "검사 실행", response = Map.class)
-    @GetMapping(path = "/execute/{seq}")
-    public CommonResponse transactionExecute(@PathVariable("seq") int seq) {
-        return CommonResponse.preparingFunctionResponse();
-    }
-
-    public File getTestFile(StringBuffer testSource) {
+    public File getTestFile(MultipartFile transactionFile) {
         File sourceFile = null;
         try {
-            String className = "tester";
+
+            StringBuffer testSource = new StringBuffer();
+            testSource.append("import org.openqa.selenium.support.events.EventFiringWebDriver;\n");
+            testSource.append("import com.minimon.common.CommonSelenium;\n");
+
+            BufferedReader br;
+            String line;
+            InputStream is = transactionFile.getInputStream();
+            br = new BufferedReader(new InputStreamReader(is));
+            boolean check = true;
+            while ((line = br.readLine()) != null) {
+                if (line.indexOf("@Before") > 0) {
+                    check = false;
+                }
+                if (line.indexOf("@Test") > 0) {
+                    check = true;
+                    continue;
+                }
+                if (line.indexOf("org.junit") > 0) {
+                    continue;
+                }
+                if (line.indexOf("org.hamcrest") > 0) {
+                    continue;
+                }
+                if (line.indexOf("WebDriver driver") > 0) {
+                    String driver = "static WebDriver driver = new CommonSelenium().setUp();\n";
+                    testSource.append(driver);
+                } else if (check && line.indexOf("public void") > 0) {
+                    testSource.append("public static void main(String[] args) {\n");
+                } else if (check) {
+                    testSource.append(line + "\n");
+                }
+            }
+
+            System.out.println(testSource);
+
+            String className = "NewsTest";
             // create an empty source file
-            sourceFile = File.createTempFile(className, ".java");
+            sourceFile = File.createTempFile(className,".java");
             sourceFile.deleteOnExit();
+
             className = sourceFile.getName().split("\\.")[0];
-            String sourceCode = "public class " + className + " {"
-                    + "\n" +
-                    "    public static void main(String[] args) {\n" +
-                    "        System.out.print(5);\n" +
-                    "    }"
-                    + "} ";
+            String sourceCode = testSource.toString();
 
             FileWriter writer = new FileWriter(sourceFile);
             writer.write(sourceCode);
@@ -166,4 +167,9 @@ public class MonTransactionController {
         return sourceFile;
     }
 
+    @ApiOperation(value = "검사 실행", response = Map.class)
+    @GetMapping(path = "/execute/{seq}")
+    public CommonResponse transactionExecute(@PathVariable("seq") int seq) {
+        return CommonResponse.preparingFunctionResponse();
+    }
 }

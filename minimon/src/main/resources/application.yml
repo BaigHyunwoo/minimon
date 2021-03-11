@@ -35,4 +35,4 @@ logging:
 common:
   location: C:\\Users\\user\\Downloads\\chromedriver\\location.properties
   driverName: webdriver.chrome.driver
-  driverPath: C:\\Users\\user\\Downloads\\chromedriver
+  driverPath: C:\\Users\\user\\Downloads
