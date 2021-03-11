@@ -9,6 +9,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +26,12 @@ import java.util.Optional;
 @RequestMapping("/monTransaction")
 @Api(tags = {"Monitoring Transaction Controller"})
 public class MonTransactionController {
+
+    @Value("${common.driverName}")
+    private String driverName;
+
+    @Value("${common.driverPath}")
+    private String driverPath;
 
     private final CommonSelenium commonSelenium;
     private final MonTransactionService monTransactionService;
@@ -95,10 +102,10 @@ public class MonTransactionController {
         try (StandardJavaFileManager mgr = compiler.getStandardFileManager(ds, null, null)) {
             Iterable<? extends JavaFileObject> sources = mgr.getJavaFileObjectsFromFiles(Arrays.asList(getTestFile(transactionFile)));
             JavaCompiler.CompilationTask task = compiler.getTask(null, mgr, ds, null, null, sources);
-            task.call();
+            System.out.println(task.call());
 
             for (Diagnostic<? extends JavaFileObject> d : ds.getDiagnostics()) {
-                System.out.format("Line: %d, %s in %s",
+                System.out.format("Line: %d, %s in %s \n",
                         d.getLineNumber(), d.getMessage(null),
                         d.getSource().getName());
             }
@@ -116,7 +123,7 @@ public class MonTransactionController {
         try {
 
             StringBuffer testSource = new StringBuffer();
-            testSource.append("import org.openqa.selenium.support.events.EventFiringWebDriver;\n");
+            testSource.append("package com.minimon.testTemp;\n");
             testSource.append("import com.minimon.common.CommonSelenium;\n");
 
             BufferedReader br;
@@ -125,6 +132,18 @@ public class MonTransactionController {
             br = new BufferedReader(new InputStreamReader(is));
             boolean check = true;
             while ((line = br.readLine()) != null) {
+                if (line.indexOf("org.junit") > 0) {
+                    continue;
+                }
+                if (line.indexOf("org.hamcrest") > 0) {
+                    continue;
+                }
+
+                if (line.indexOf("class") > 0) {
+                    testSource.append("public class NewsTest implements com.minimon.vo.NewsTest {\n");
+                    continue;
+                }
+
                 if (line.indexOf("@Before") > 0) {
                     check = false;
                 }
@@ -132,32 +151,31 @@ public class MonTransactionController {
                     check = true;
                     continue;
                 }
-                if (line.indexOf("org.junit") > 0) {
-                    continue;
-                }
-                if (line.indexOf("org.hamcrest") > 0) {
-                    continue;
-                }
                 if (line.indexOf("WebDriver driver") > 0) {
-                    String driver = "static WebDriver driver = new CommonSelenium().setUp();\n";
+                    continue;
+                }
+                if (check && line.indexOf("public void") > 0) {
+                    testSource.append("public void test() {\n");
+
+                    String driverConfig = "System.setProperty(\"" + driverName + "\", \"" + driverPath + File.separator + File.separator + "chromedriver.exe\");\n";
+                    testSource.append(driverConfig);
+
+                    String driver = "WebDriver driver = new ChromeDriver();\n";
                     testSource.append(driver);
-                } else if (check && line.indexOf("public void") > 0) {
-                    testSource.append("public static void main(String[] args) {\n");
-                } else if (check) {
+                    continue;
+                }
+                if (check) {
                     testSource.append(line + "\n");
                 }
             }
 
             System.out.println(testSource);
-
-            String className = "NewsTest";
+            String className = "/src/main/java/com/minimon/testTemp/NewsTest.java";
             // create an empty source file
-            sourceFile = File.createTempFile(className,".java");
+            sourceFile = new File(className);
             sourceFile.deleteOnExit();
 
-            className = sourceFile.getName().split("\\.")[0];
             String sourceCode = testSource.toString();
-
             FileWriter writer = new FileWriter(sourceFile);
             writer.write(sourceCode);
             writer.close();
@@ -166,6 +184,7 @@ public class MonTransactionController {
         }
         return sourceFile;
     }
+
 
     @ApiOperation(value = "검사 실행", response = Map.class)
     @GetMapping(path = "/execute/{seq}")

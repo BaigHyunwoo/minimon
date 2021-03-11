@@ -168,7 +168,7 @@ public class CommonSelenium {
         HttpStatus resultStatus = HttpStatus.BAD_GATEWAY;
         for (Iterator<LogEntry> it = logs.iterator(); it.hasNext(); ) {
             Optional<HttpStatus> isExistStatus = Optional.ofNullable(getResultStatus(getResourceMessage(it.next()), currentURL));
-            if(isExistStatus.isPresent()) {
+            if (isExistStatus.isPresent()) {
                 resultStatus = isExistStatus.get();
 
             }
