@@ -20,9 +20,9 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/monTransaction")
-@Api(tags = {"Monitoring Transaction Controller"})
-public class MonTransactionController {
+@RequestMapping("/monAct")
+@Api(tags = {"Monitoring Act Controller"})
+public class MonActController {
 
     private final MonActService monActService;
 
@@ -45,7 +45,7 @@ public class MonTransactionController {
 
     @ApiOperation(value = "생성", response = Map.class)
     @PostMapping(path = "")
-    public CommonResponse createTransaction(@RequestBody MonAct monAct) {
+    public CommonResponse create(@RequestBody MonAct monAct) {
         return CommonResponse.preparingFunctionResponse();
     }
 
@@ -69,13 +69,13 @@ public class MonTransactionController {
 
     @ApiOperation(value = "검사 테스트", produces = "multipart/form-data", response = MonitoringResultVO.class)
     @PostMapping(value = "/check")
-    public CommonResponse transactionCheck(MultipartFile transactionFile) {
+    public CommonResponse check(MultipartFile transactionFile) {
         return new CommonResponse(monActService.executeCodeList(transactionFile));
     }
 
     @ApiOperation(value = "검사 실행", response = Map.class)
     @GetMapping(path = "/execute/{seq}")
-    public CommonResponse transactionExecute(@PathVariable("seq") int seq) {
+    public CommonResponse execute(@PathVariable("seq") int seq) {
         MonResult monResult = monActService.execute(seq);
         if (monResult == null) {
             return CommonResponse.notExistResponse();

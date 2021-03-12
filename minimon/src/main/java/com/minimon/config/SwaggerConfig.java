@@ -25,7 +25,7 @@ public class SwaggerConfig {
                 .tags(
                         new Tag("Monitoring Url Controller", "URL 모니터링 관리", index++),
                         new Tag("Monitoring Api Controller", "API 모니터링 관리", index++),
-                        new Tag("Monitoring Transaction Controller", "TRANSACTION 모니터링 관리", index++),
+                        new Tag("Monitoring Act Controller", "ACT 모니터링 관리", index++),
                         new Tag("Result Controller", "RESULT", index++)
                 );
     }
