@@ -107,7 +107,7 @@ public class MonApiService {
                 .build();
     }
 
-    public MonitoringResultCodeEnum getResultCode(HttpStatus status, double totalLoadTime, String response, MonApi api) {
+    public MonitoringResultCodeEnum getResultCode(HttpStatus status, double totalLoadTime, Object response, MonApi api) {
         if (status == HttpStatus.OK)
             return MonitoringResultCodeEnum.SUCCESS;
         else if (api.getLoadTimeCheckYn().equals(UseStatusEnum.Y) && totalLoadTime >= api.getErrorLoadTime())

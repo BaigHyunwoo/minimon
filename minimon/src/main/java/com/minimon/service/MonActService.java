@@ -1,20 +1,18 @@
 package com.minimon.service;
 
-import com.google.gson.Gson;
 import com.minimon.common.CommonSearchSpec;
 import com.minimon.common.CommonSelenium;
 import com.minimon.common.CommonUtil;
 import com.minimon.entity.MonAct;
 import com.minimon.entity.MonCodeData;
 import com.minimon.entity.MonResult;
-import com.minimon.enums.MonitoringResultCodeEnum;
-import com.minimon.enums.MonitoringTypeEnum;
-import com.minimon.enums.UseStatusEnum;
+import com.minimon.enums.*;
 import com.minimon.repository.MonActRepository;
 import com.minimon.vo.MonActCodeResultVO;
 import com.minimon.vo.MonitoringResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -117,11 +115,10 @@ public class MonActService {
             boolean check = false;
             while ((line = br.readLine()) != null) {
                 if (line.indexOf("@Test") > 0) check = true;
-                if (check == true) {
+                if (check) {
                     MonCodeData monCodeData = getCodeData(line);
                     if (monCodeData != null) {
                         codeDataList.add(monCodeData);
-                        log.debug(monCodeData.getAction() + " " + monCodeData.getSelector_type() + "  " + monCodeData.getSelector_value() + "     " + monCodeData.getValue());
                     }
                 }
             }
@@ -177,7 +174,7 @@ public class MonActService {
         return MonitoringResultVO.builder()
                 .status(status)
                 .totalLoadTime(new Long(loadTime).intValue())
-                .response(new Gson().toJson(monActCodeResultVOList))
+                .response(monActCodeResultVOList)
                 .build();
     }
 
@@ -185,15 +182,15 @@ public class MonActService {
     public MonCodeData getCodeData(String line) {
         MonCodeData monCodeData = null;
 
-        String action = getCodeAction(line);
-        if (action != null) {
-            String selector_type = getCodeSelectorType(line);
-            String selector_value = getCodeSelectorValue(line, action);
-            String value = getCodeValue(line, action, selector_type);
+        CodeActionEnum codeAction = getCodeAction(line);
+        if (codeAction != null) {
+            CodeSelectorTypeEnum codeSelectorType = getCodeSelectorType(line);
+            String selector_value = getCodeSelectorValue(line, codeAction);
+            String value = getCodeValue(line, codeAction);
 
             monCodeData = new MonCodeData();
-            monCodeData.setAction(action);
-            monCodeData.setSelector_type(selector_type);
+            monCodeData.setCodeAction(codeAction);
+            monCodeData.setCodeSelectorType(codeSelectorType);
             monCodeData.setSelector_value(selector_value);
             monCodeData.setValue(value);
         }
@@ -202,81 +199,21 @@ public class MonActService {
 
     }
 
-    public String getCodeAction(String line) {
-
-        if (line.indexOf("driver.get") > 0) {
-
-            return "get";
-
-        } else if (line.indexOf("setSize") > 0) {
-
-            return "size";
-
-        } else if (line.indexOf("getWindowHandles") > 0) {
-
-            return "window_handles";
-
-        } else if (line.indexOf("waitForWindow") > 0) {
-
-            return "wait";
-
-        } else if (line.indexOf("switchTo") > 0) {
-
-            return "switch";
-
-        } else if (line.indexOf("click") > 0) {
-
-            return "click";
-
-        } else if (line.indexOf("submit") > 0) {
-
-            return "submit";
-
-        } else if (line.indexOf("sendKeys") > 0) {
-
-            return "sendKeys";
-
+    public CodeActionEnum getCodeAction(String line) {
+        for (CodeActionEnum codeActionEnum : CodeActionEnum.values()) {
+            if (line.indexOf(codeActionEnum.getCode()) > 0) {
+                return codeActionEnum;
+            }
         }
-
         return null;
     }
 
-    public String getCodeSelectorType(String line) {
-
-        if (line.indexOf("By.id") > 0) {
-
-            return "By.id";
-
-        } else if (line.indexOf("By.cssSelector") > 0) {
-
-            return "By.cssSelector";
-
-        } else if (line.indexOf("By.linkText") > 0) {
-
-            return "By.linkText";
-
-        } else if (line.indexOf("By.className") > 0) {
-
-            return "By.className";
-
-        } else if (line.indexOf("By.name") > 0) {
-
-            return "By.name";
-
-        } else if (line.indexOf("By.tagName") > 0) {
-
-            return "By.tagName";
-
-        } else if (line.indexOf("By.xpath") > 0) {
-
-            return "By.xpath";
-
-        } else if (line.indexOf("By.partialLinkText") > 0) {
-
-            return "By.partialLinkText";
-
+    public CodeSelectorTypeEnum getCodeSelectorType(String line) {
+        for (CodeSelectorTypeEnum codeSelectorTypeEnum : CodeSelectorTypeEnum.values()) {
+            if(line.indexOf(codeSelectorTypeEnum.getCode()) > 0) {
+                return codeSelectorTypeEnum;
+            }
         }
-
         return null;
     }
 
@@ -284,7 +221,7 @@ public class MonActService {
 
         int stObjLen = stObj.length();
 
-        if (type.equals("first") == true) {
+        if (type.equals("first")) {
 
             if (line.indexOf(stObj) < 0) return null;
             return line.substring(line.indexOf(stObj) + stObjLen, line.indexOf(edObj, line.indexOf(stObj)));
@@ -297,63 +234,36 @@ public class MonActService {
         }
     }
 
-    public String getCodeSelectorValue(String line, String action) {
-
-
-        if (action.equals("switch") == true || action.equals("click") == true || action.equals("submit") == true || action.equals("sendKeys") == true) {
-
-            return getValueByObject("first", line, "(\"", "\")");
-
+    public String getCodeSelectorValue(String line, CodeActionEnum codeAction) {
+        switch (codeAction) {
+            case CLICK:
+            case SWITCH:
+            case SUBMIT:
+            case SEND:
+                return getValueByObject("first", line, "(\"", "\")");
+            default:
+                return null;
         }
-
-        return null;
     }
 
-    public String getCodeValue(String line, String action, String selector) {
-
-        if (action.equals("get") == true) {
-
-            return getValueByObject("last", line, "(\"", "\")");
-
-        } else if (action.equals("wait") == true) {
-
-            return getValueByObject("first", line, "(\"", "\",");
-
-        } else if (action.equals("switch") == true) {
-
-            return getValueByObject("first", line, "(\"", "\")");
-
-        } else if (action.equals("sendKeys") == true) {
-
-            if (line.indexOf("Keys.ENTER") > 0) {
-
-                return "Keys.ENTER";
-
-            } else if (line.indexOf("Keys.BACK_SPACE") > 0) {
-
-                return "Keys.BACK_SPACE";
-
-            } else if (line.indexOf("Keys.DELETE") > 0) {
-
-                return "Keys.DELETE";
-
-            } else if (line.indexOf("Keys.SPACE") > 0) {
-
-                return "Keys.SPACE";
-
-            } else if (line.indexOf("Keys.ESCAPE") > 0) {
-
-                return "Keys.ESCAPE";
-
-            } else {
-
+    public String getCodeValue(String line, CodeActionEnum codeAction) {
+        switch (codeAction) {
+            case GET:
+                return getValueByObject("last", line, "(\"", "\")");
+            case WAIT:
+                return getValueByObject("first", line, "(\"", "\",");
+            case SWITCH:
+                return getValueByObject("first", line, "(\"", "\")");
+            case SEND:
+                for (CodeSendKeyTypeEnum codeSendKeyTypeEnum : CodeSendKeyTypeEnum.values()) {
+                    if (line.indexOf(codeSendKeyTypeEnum.getCode()) > 0) {
+                        return codeSendKeyTypeEnum.getCode();
+                    }
+                }
                 return getValueByObject("first", line, "sendKeys(\"", "\");");
-
-            }
-
+            default:
+                return null;
         }
-
-        return null;
     }
 
 }

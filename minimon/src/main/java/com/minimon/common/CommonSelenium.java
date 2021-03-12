@@ -1,6 +1,9 @@
 package com.minimon.common;
 
 import com.minimon.entity.MonCodeData;
+import com.minimon.enums.CodeActionEnum;
+import com.minimon.enums.CodeSelectorTypeEnum;
+import com.minimon.enums.CodeSendKeyTypeEnum;
 import com.minimon.enums.MonitoringResultCodeEnum;
 import com.minimon.vo.MonActCodeResultVO;
 import com.minimon.vo.MonitoringResultVO;
@@ -25,7 +28,6 @@ import java.io.File;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
-
 
 @Slf4j
 @Component
@@ -164,7 +166,6 @@ public class CommonSelenium {
     }
 
     public MonitoringResultVO getResult(LogEntries logs, String currentURL, int totalLoadTime) {
-
         HttpStatus resultStatus = HttpStatus.BAD_GATEWAY;
         for (Iterator<LogEntry> it = logs.iterator(); it.hasNext(); ) {
             Optional<HttpStatus> isExistStatus = Optional.ofNullable(getResultStatus(getResourceMessage(it.next()), currentURL));
@@ -185,21 +186,15 @@ public class CommonSelenium {
 
     public HttpStatus getResultStatus(JSONObject message, String currentURL) {
 
-        /*
-         * DATA CONVERT & CHECK
-         */
+        // DATA CONVERT & CHECK
         String methodName = message.getString("method");
 
-        /*
-         * Log Exists Check
-         */
+        // Log Exists Check
         if (methodName != null && methodName.equals("Network.responseReceived") == false) {
             return null;
         }
 
-        /*
-         * GET DATA
-         */
+        // GET DATA
         JSONObject params = message.getJSONObject("params");
 
         JSONObject response = params.getJSONObject("response");
@@ -210,10 +205,8 @@ public class CommonSelenium {
 
         headers.putAll(headersObj.toMap());
 
-        /*
-         * SET STATUS
-         */
-        if (currentURL.equals(response.get("url")) == true) {
+        // SET STATUS
+        if (currentURL.equals(response.get("url"))) {
             return HttpStatus.valueOf(response.getInt("status"));
         }
 
@@ -224,74 +217,55 @@ public class CommonSelenium {
     public MonActCodeResultVO executeAction(EventFiringWebDriver driver, MonCodeData monCodeData, int sortOrder) {
         HttpStatus status = HttpStatus.OK;
         String response;
-        String action = monCodeData.getAction();
-        String selector_type = monCodeData.getSelector_type();
+        CodeActionEnum codeAction = monCodeData.getCodeAction();
+        CodeSelectorTypeEnum codeSelectorType = monCodeData.getCodeSelectorType();
         String selector_value = monCodeData.getSelector_value();
         String value = monCodeData.getValue();
         WebElement element;
         try {
 
-            if (action.equals("get") == true) {
-
-                driver.get(value);
-
-            } else if (action.equals("size") == true) {
-
-                driver.manage().window().maximize();
-
-            } else if (action.equals("window_handles") == true) {
-
-                vars.put("window_handles", driver.getWindowHandles());
-
-            } else if (action.equals("wait") == true) {
-
-                vars.put(selector_value, waitForWindow(driver, 5000));
-
-            } else if (action.equals("switch") == true) {
-
-                if (selector_value != null) driver.switchTo().frame(selector_value).toString();
-                else driver.switchTo().defaultContent();
-
-            } else if (action.equals("click") == true) {
-
-                element = getSelector(driver, selector_type, selector_value);
-                element.click();
-
-            } else if (action.equals("sendKeys") == true) {
-
-                element = getSelector(driver, selector_type, selector_value);
-
-                if (value.equals("Keys.ENTER") == true) {
-
-                    element.sendKeys(Keys.ENTER);
-
-                } else if (value.equals("Keys.BACK_SPACE") == true) {
-
-                    element.sendKeys(Keys.BACK_SPACE);
-
-                } else if (value.equals("Keys.DELETE") == true) {
-
-                    element.sendKeys(Keys.DELETE);
-
-                } else if (value.equals("Keys.SPACE") == true) {
-
-                    element.sendKeys(Keys.SPACE);
-
-                } else if (value.equals("Keys.ESCAPE") == true) {
-
-                    element.sendKeys(Keys.ESCAPE);
-
-                } else {
-
-                    element.sendKeys(value);
-
-                }
-
-            } else if (action.equals("submit") == true) {
-
-                element = getSelector(driver, selector_type, selector_value);
-                element.submit();
-
+            switch (codeAction) {
+                case GET:
+                    driver.get(value);
+                    break;
+                case SIZE:
+                    driver.manage().window().maximize();
+                    break;
+                case WINDOW_HANDLES:
+                    vars.put("window_handles", driver.getWindowHandles());
+                    break;
+                case WAIT:
+                    vars.put(selector_value, waitForWindow(driver, 5000));
+                    break;
+                case SWITCH:
+                    if (selector_value != null) driver.switchTo().frame(selector_value).toString();
+                    else driver.switchTo().defaultContent();
+                    break;
+                case CLICK:
+                    element = getSelector(driver, codeSelectorType, selector_value);
+                    element.click();
+                    break;
+                case SEND:
+                    element = getSelector(driver, codeSelectorType, selector_value);
+                    Object codeSendKeyType = CodeSendKeyTypeEnum.codeOf(value);
+                    if(codeSendKeyType == null ){
+                        element.sendKeys(value);
+                    }else if (CodeSendKeyTypeEnum.ENTER.equals(codeSendKeyType)) {
+                        element.sendKeys(Keys.ENTER);
+                    } else if (CodeSendKeyTypeEnum.SPACE.equals(codeSendKeyType)) {
+                        element.sendKeys(Keys.SPACE);
+                    } else if (CodeSendKeyTypeEnum.DELETE.equals(codeSendKeyType)) {
+                        element.sendKeys(Keys.DELETE);
+                    } else if (CodeSendKeyTypeEnum.ESCAPE.equals(codeSendKeyType)) {
+                        element.sendKeys(Keys.ESCAPE);
+                    } else if (CodeSendKeyTypeEnum.BACK_SPACE.equals(codeSendKeyType)) {
+                        element.sendKeys(Keys.BACK_SPACE);
+                    }
+                    break;
+                case SUBMIT:
+                    element = getSelector(driver, codeSelectorType, selector_value);
+                    element.submit();
+                    break;
             }
 
             waitHtml(driver);
@@ -313,44 +287,26 @@ public class CommonSelenium {
                 .build();
     }
 
-    public WebElement getSelector(EventFiringWebDriver driver, String selector_type, String selector_value) {
-        WebElement webElement = null;
-
-        if (selector_type.equals("By.id") == true) {
-
-            webElement = driver.findElement(By.id(selector_value));
-
-        } else if (selector_type.equals("By.cssSelector") == true) {
-
-            webElement = driver.findElement(By.cssSelector(selector_value));
-
-        } else if (selector_type.equals("By.linkText") == true) {
-
-            webElement = driver.findElement(By.linkText(selector_value));
-
-        } else if (selector_type.equals("By.className") == true) {
-
-            webElement = driver.findElement(By.className(selector_value));
-
-        } else if (selector_type.equals("By.name") == true) {
-
-            webElement = driver.findElement(By.name(selector_value));
-
-        } else if (selector_type.equals("By.tagName") == true) {
-
-            webElement = driver.findElement(By.tagName(selector_value));
-
-        } else if (selector_type.equals("By.xpath") == true) {
-
-            webElement = driver.findElement(By.xpath(selector_value));
-
-        } else if (selector_type.equals("By.partialLinkText") == true) {
-
-            webElement = driver.findElement(By.partialLinkText(selector_value));
-
+    public WebElement getSelector(EventFiringWebDriver driver, CodeSelectorTypeEnum codeSelectorType, String selector_value) {
+        switch (codeSelectorType) {
+            case ID:
+                return driver.findElement(By.id(selector_value));
+            case CSS:
+                return driver.findElement(By.cssSelector(selector_value));
+            case TEXT:
+                return driver.findElement(By.linkText(selector_value));
+            case CLASS:
+                return driver.findElement(By.className(selector_value));
+            case NAME:
+                return driver.findElement(By.name(selector_value));
+            case TAG:
+                return driver.findElement(By.tagName(selector_value));
+            case XPATH:
+                return driver.findElement(By.xpath(selector_value));
+            case PARTIAL_LINK:
+                return driver.findElement(By.partialLinkText(selector_value));
         }
-
-        return webElement;
+        return null;
     }
 
 
@@ -359,7 +315,7 @@ public class CommonSelenium {
         while (0 < 1) {
             Thread.sleep(100);
             JavascriptExecutor js = driver;
-            if (js.executeScript("return document.readyState").toString().equals("complete") == true) {
+            if (js.executeScript("return document.readyState").toString().equals("complete")) {
                 break;
             }
         }

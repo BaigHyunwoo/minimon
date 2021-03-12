@@ -1,6 +1,9 @@
 package com.minimon.entity;
 
+import com.minimon.enums.CodeActionEnum;
+import com.minimon.enums.CodeSelectorTypeEnum;
 import com.sun.istack.NotNull;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,15 +19,22 @@ public class MonCodeData {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
+    @ApiModelProperty(name = "SEQ")
     private int seq;
 
     @NotNull
-    private String action;
+    @Enumerated(EnumType.STRING)
+    @ApiModelProperty(name = "코드 행위")
+    private CodeActionEnum codeAction;
 
-    private String selector_type;
+    @Enumerated(EnumType.STRING)
+    @ApiModelProperty(name = "코드 선택자 종류")
+    private CodeSelectorTypeEnum codeSelectorType;
 
+    @ApiModelProperty(name = "코드 선택자 값")
     private String selector_value;
 
+    @ApiModelProperty(name = "코드 입력 값")
     private String value;
 
 }
