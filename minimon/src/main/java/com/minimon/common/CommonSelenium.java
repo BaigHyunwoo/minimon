@@ -305,39 +305,38 @@ public class CommonSelenium {
 
     public WebElement getSelector(EventFiringWebDriver driver, String selector_type, String selector_value) {
         WebElement webElement = null;
-        WebDriverWait wait = new WebDriverWait(driver, 30);
 
         if (selector_type.equals("By.id") == true) {
 
-            webElement = (WebElement) wait.until(webDriver -> ExpectedConditions.visibilityOfElementLocated(By.id(selector_value)));
+            webElement = driver.findElement(By.id(selector_value));
 
         } else if (selector_type.equals("By.cssSelector") == true) {
 
-            webElement = (WebElement) wait.until(webDriver -> ExpectedConditions.visibilityOfElementLocated(By.cssSelector(selector_value)));
+            webElement = driver.findElement(By.cssSelector(selector_value));
 
         } else if (selector_type.equals("By.linkText") == true) {
 
-            webElement = (WebElement) wait.until(webDriver -> ExpectedConditions.visibilityOfElementLocated(By.linkText(selector_value)));
+            webElement = driver.findElement(By.linkText(selector_value));
 
         } else if (selector_type.equals("By.className") == true) {
 
-            webElement = (WebElement) wait.until(webDriver -> ExpectedConditions.visibilityOfElementLocated(By.className(selector_value)));
+            webElement = driver.findElement(By.className(selector_value));
 
         } else if (selector_type.equals("By.name") == true) {
 
-            webElement = (WebElement) wait.until(webDriver -> ExpectedConditions.visibilityOfElementLocated(By.name(selector_value)));
+            webElement = driver.findElement(By.name(selector_value));
 
         } else if (selector_type.equals("By.tagName") == true) {
 
-            webElement = (WebElement) wait.until(webDriver -> ExpectedConditions.visibilityOfElementLocated(By.tagName(selector_value)));
+            webElement = driver.findElement(By.tagName(selector_value));
 
         } else if (selector_type.equals("By.xpath") == true) {
 
-            webElement = (WebElement) wait.until(webDriver -> ExpectedConditions.visibilityOfElementLocated(By.xpath(selector_value)));
+            webElement = driver.findElement(By.xpath(selector_value));
 
         } else if (selector_type.equals("By.partialLinkText") == true) {
 
-            webElement = (WebElement) wait.until(webDriver -> ExpectedConditions.visibilityOfElementLocated(By.partialLinkText(selector_value)));
+            webElement = driver.findElement(By.partialLinkText(selector_value));
 
         }
 
