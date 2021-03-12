@@ -2,6 +2,7 @@ package com.minimon.scheduler;
 
 import com.minimon.entity.MonResult;
 import com.minimon.service.MonApiService;
+import com.minimon.service.MonTransactionService;
 import com.minimon.service.ResultService;
 import com.minimon.service.MonUrlService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ public class MonitoringScheduler {
     private final ResultService resultService;
     private final MonUrlService monUrlService;
     private final MonApiService monApiService;
+    private final MonTransactionService monTransactionService;
 
     public void urlMonitoring() {
         List<MonResult> monResults = new ArrayList();
@@ -32,6 +34,13 @@ public class MonitoringScheduler {
         monResults.addAll(monApiService.checkList(monApiService.findScheduledApis()));
         check(monResults);
         log.info("API Monitoring Execute Complete");
+    }
+
+    public void transactionMonitoring() {
+        List<MonResult> monResults = new ArrayList();
+        monResults.addAll(monTransactionService.checkList(monTransactionService.findScheduledList()));
+        check(monResults);
+        log.info("ACT Monitoring Execute Complete");
     }
 
     @Transactional

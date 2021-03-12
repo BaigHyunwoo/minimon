@@ -3,11 +3,13 @@ package com.minimon.service;
 import com.minimon.common.CommonSearchSpec;
 import com.minimon.common.CommonSelenium;
 import com.minimon.common.CommonUtil;
+import com.minimon.entity.MonApi;
 import com.minimon.entity.MonCodeData;
 import com.minimon.entity.MonResult;
 import com.minimon.entity.MonTransaction;
 import com.minimon.enums.MonitoringResultCodeEnum;
 import com.minimon.enums.MonitoringTypeEnum;
+import com.minimon.enums.UseStatusEnum;
 import com.minimon.repository.MonTransactionRepository;
 import com.minimon.vo.MonitoringResultVO;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +59,10 @@ public class MonTransactionService {
         Optional<MonTransaction> optionalMonTransaction = get(seq);
         optionalMonTransaction.ifPresent(monTransactionRepository::delete);
         return optionalMonTransaction.isPresent();
+    }
+
+    public List<MonTransaction> findScheduledList() {
+        return monTransactionRepository.findByMonitoringUseYnOrderByRegDateDesc(UseStatusEnum.Y);
     }
 
     public List<MonResult> checkList(List<MonTransaction> monTransactions) {
@@ -145,10 +151,8 @@ public class MonTransactionService {
         try {
             long startTime = System.currentTimeMillis();
             for (int i = 0; i < codeDataList.size(); i++) {
-
                 MonCodeData monCodeData = codeDataList.get(i);
                 responseData.put("" + i, commonSelenium.executeAction(driver, monCodeData.getAction(), monCodeData.getSelector_type(), monCodeData.getSelector_value(), monCodeData.getValue()));
-
             }
             long endTime = System.currentTimeMillis();
 
@@ -173,9 +177,6 @@ public class MonTransactionService {
     }
 
 
-    /**
-     * transaction Code 분석
-     */
     public MonCodeData getCodeData(String line) {
         MonCodeData monCodeData = null;
 
