@@ -6,7 +6,6 @@ import com.minimon.common.CommonUtil;
 import com.minimon.entity.MonAct;
 import com.minimon.entity.MonCodeData;
 import com.minimon.entity.MonResult;
-import com.minimon.entity.MonUrl;
 import com.minimon.enums.MonitoringResultCodeEnum;
 import com.minimon.enums.MonitoringTypeEnum;
 import com.minimon.enums.UseStatusEnum;
@@ -80,7 +79,8 @@ public class MonActService {
         HttpStatus status = HttpStatus.OK;
 
         for (String key : responseData.keySet()) {
-            if (responseData.get(key).equals(MonitoringResultCodeEnum.SUCCESS.getCode()) == false) status = HttpStatus.INTERNAL_SERVER_ERROR;
+            if (responseData.get(key).equals(MonitoringResultCodeEnum.SUCCESS.getCode()) == false)
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
 
         return status;

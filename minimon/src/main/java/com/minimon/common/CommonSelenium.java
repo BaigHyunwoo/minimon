@@ -37,8 +37,6 @@ public class CommonSelenium {
     @Value("${common.driverPath}")
     private String driverPath;
 
-    private EventFiringWebDriver driver;
-
     private Map<String, Object> vars;
 
     JavascriptExecutor js;
@@ -60,7 +58,7 @@ public class CommonSelenium {
         }
     }
 
-    public String waitForWindow(int timeout) {
+    public String waitForWindow(EventFiringWebDriver driver, int timeout) {
 
         try {
             Thread.sleep(timeout);
@@ -109,6 +107,7 @@ public class CommonSelenium {
             log.debug("WebDriver - 연결 완료");
 
         } catch (Exception e) {
+            e.printStackTrace();
             if (driver != null) driver.quit();
         }
 
@@ -243,7 +242,7 @@ public class CommonSelenium {
 
             } else if (action.equals("wait") == true) {
 
-                vars.put(selector_value, waitForWindow(5000));
+                vars.put(selector_value, waitForWindow(driver, 5000));
 
             } else if (action.equals("switch") == true) {
 
@@ -297,6 +296,7 @@ public class CommonSelenium {
 
 
         } catch (Exception e) {
+            e.printStackTrace();
             result = e.getMessage();
         }
 
