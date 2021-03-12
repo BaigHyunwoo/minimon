@@ -19,6 +19,7 @@ public class ExceptionAdviceConfig {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected CommonResponse defaultException(HttpServletRequest request, Exception e) {
+        e.printStackTrace();
         log.error(e.getMessage());
         return CommonResponse.fail(CommonMessage.getMessage("unKnown.code"), CommonMessage.getMessage("unKnown.msg"));
     }

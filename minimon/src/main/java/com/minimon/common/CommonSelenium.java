@@ -1,6 +1,8 @@
 package com.minimon.common;
 
+import com.minimon.entity.MonCodeData;
 import com.minimon.enums.MonitoringResultCodeEnum;
+import com.minimon.vo.MonActCodeResultVO;
 import com.minimon.vo.MonitoringResultVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
@@ -15,8 +17,6 @@ import org.openqa.selenium.logging.LoggingPreferences;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.support.events.AbstractWebDriverEventListener;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -221,11 +221,14 @@ public class CommonSelenium {
     }
 
 
-    public String executeAction(EventFiringWebDriver driver, String action, String selector_type, String selector_value, String value) {
-        String result;
-
+    public MonActCodeResultVO executeAction(EventFiringWebDriver driver, MonCodeData monCodeData, int sortOrder) {
+        HttpStatus status = HttpStatus.OK;
+        String response;
+        String action = monCodeData.getAction();
+        String selector_type = monCodeData.getSelector_type();
+        String selector_value = monCodeData.getSelector_value();
+        String value = monCodeData.getValue();
         WebElement element;
-
         try {
 
             if (action.equals("get") == true) {
@@ -292,15 +295,22 @@ public class CommonSelenium {
             }
 
             waitHtml(driver);
-            result = MonitoringResultCodeEnum.SUCCESS.getCode();
+            response = MonitoringResultCodeEnum.SUCCESS.getCode();
 
 
         } catch (Exception e) {
             e.printStackTrace();
-            result = e.getMessage();
+            response = e.getMessage();
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
 
-        return result;
+        return MonActCodeResultVO
+                .builder()
+                .sortOrder(sortOrder + 1)
+                .monCodeData(monCodeData)
+                .status(status)
+                .response(response)
+                .build();
     }
 
     public WebElement getSelector(EventFiringWebDriver driver, String selector_type, String selector_value) {

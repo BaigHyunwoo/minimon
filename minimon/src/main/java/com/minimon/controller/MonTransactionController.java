@@ -45,7 +45,7 @@ public class MonTransactionController {
 
     @ApiOperation(value = "생성", response = Map.class)
     @PostMapping(path = "")
-    public CommonResponse createTransaction(@RequestParam Map<String, Object> param) {
+    public CommonResponse createTransaction(@RequestBody MonAct monAct) {
         return CommonResponse.preparingFunctionResponse();
     }
 

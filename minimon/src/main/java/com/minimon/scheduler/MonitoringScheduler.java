@@ -24,14 +24,14 @@ public class MonitoringScheduler {
 
     public void urlMonitoring() {
         List<MonResult> monResults = new ArrayList();
-        monResults.addAll(monUrlService.checkList(monUrlService.findScheduledUrls()));
+        monResults.addAll(monUrlService.checkList(monUrlService.findScheduledList()));
         check(monResults);
         log.info("URL Monitoring Execute Complete");
     }
 
     public void apiMonitoring() {
         List<MonResult> monResults = new ArrayList();
-        monResults.addAll(monApiService.checkList(monApiService.findScheduledApis()));
+        monResults.addAll(monApiService.checkList(monApiService.findScheduledList()));
         check(monResults);
         log.info("API Monitoring Execute Complete");
     }

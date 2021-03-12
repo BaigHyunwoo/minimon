@@ -49,6 +49,7 @@ public class MonAct extends CommonEntity {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "mon_act_seq")
+    @ApiModelProperty(name = "검사 코드")
     private List<MonCodeData> codeDataList = new ArrayList<>();
 
     @NotNull

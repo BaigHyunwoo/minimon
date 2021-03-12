@@ -1,5 +1,6 @@
 package com.minimon.service;
 
+import com.google.gson.Gson;
 import com.minimon.common.CommonSearchSpec;
 import com.minimon.common.CommonSelenium;
 import com.minimon.common.CommonUtil;
@@ -10,6 +11,7 @@ import com.minimon.enums.MonitoringResultCodeEnum;
 import com.minimon.enums.MonitoringTypeEnum;
 import com.minimon.enums.UseStatusEnum;
 import com.minimon.repository.MonActRepository;
+import com.minimon.vo.MonActCodeResultVO;
 import com.minimon.vo.MonitoringResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +24,10 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.transaction.Transactional;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -74,15 +79,13 @@ public class MonActService {
         return monResults;
     }
 
-    public HttpStatus checkStatus(Map<String, Object> responseData) {
-
+    public HttpStatus checkStatus(List<MonActCodeResultVO> monActCodeResultVOList) {
         HttpStatus status = HttpStatus.OK;
-
-        for (String key : responseData.keySet()) {
-            if (responseData.get(key).equals(MonitoringResultCodeEnum.SUCCESS.getCode()) == false)
+        for (MonActCodeResultVO monActCodeResultVO : monActCodeResultVOList) {
+            if (monActCodeResultVO.getStatus() != HttpStatus.OK) {
                 status = HttpStatus.INTERNAL_SERVER_ERROR;
+            }
         }
-
         return status;
     }
 
@@ -147,7 +150,7 @@ public class MonActService {
     }
 
     public MonitoringResultVO executeCodeList(List<MonCodeData> codeDataList) {
-        Map<String, Object> responseData = new HashMap<>();
+        List<MonActCodeResultVO> monActCodeResultVOList = new ArrayList<>();
         long loadTime = 0;
         HttpStatus status = HttpStatus.OK;
 
@@ -155,14 +158,11 @@ public class MonActService {
 
         try {
             long startTime = System.currentTimeMillis();
-            for (int i = 0; i < codeDataList.size(); i++) {
-                MonCodeData monCodeData = codeDataList.get(i);
-                responseData.put("" + i, commonSelenium.executeAction(driver, monCodeData.getAction(), monCodeData.getSelector_type(), monCodeData.getSelector_value(), monCodeData.getValue()));
-            }
+            monActCodeResultVOList = codeDataList.stream().map(monCodeData -> commonSelenium.executeAction(driver, monCodeData, codeDataList.indexOf(monCodeData))).collect(Collectors.toList());
             long endTime = System.currentTimeMillis();
 
             loadTime = endTime - startTime;
-            status = checkStatus(responseData);
+            status = checkStatus(monActCodeResultVOList);
 
 
         } catch (Exception e) {
@@ -177,7 +177,7 @@ public class MonActService {
         return MonitoringResultVO.builder()
                 .status(status)
                 .totalLoadTime(new Long(loadTime).intValue())
-                .response(responseData.toString())
+                .response(new Gson().toJson(monActCodeResultVOList))
                 .build();
     }
 
@@ -201,7 +201,6 @@ public class MonActService {
         return monCodeData;
 
     }
-
 
     public String getCodeAction(String line) {
 

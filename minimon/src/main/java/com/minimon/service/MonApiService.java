@@ -58,7 +58,7 @@ public class MonApiService {
         return optionalMonApi.isPresent();
     }
 
-    public List<MonApi> findScheduledApis() {
+    public List<MonApi> findScheduledList() {
         return monApiRepository.findByMonitoringUseYnOrderByRegDateDesc(UseStatusEnum.Y);
     }
 

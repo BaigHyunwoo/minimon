@@ -57,7 +57,7 @@ public class MonUrlService {
         return optionalMonUrl.isPresent();
     }
 
-    public List<MonUrl> findScheduledUrls() {
+    public List<MonUrl> findScheduledList() {
         return monUrlRepository.findByMonitoringUseYn(UseStatusEnum.Y);
     }
 
