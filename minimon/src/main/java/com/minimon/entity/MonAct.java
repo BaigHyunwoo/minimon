@@ -14,8 +14,8 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
-@Table(name = "MON_TRANSACTION")
-public class MonTransaction extends CommonEntity {
+@Table(name = "MON_ACT")
+public class MonAct extends CommonEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
@@ -48,7 +48,7 @@ public class MonTransaction extends CommonEntity {
     private UseStatusEnum loadTimeCheckYn;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "mon_transaction_seq")
+    @JoinColumn(name = "mon_act_seq")
     private List<MonCodeData> codeDataList = new ArrayList<>();
 
     @NotNull

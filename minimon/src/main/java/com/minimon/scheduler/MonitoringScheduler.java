@@ -1,10 +1,10 @@
 package com.minimon.scheduler;
 
 import com.minimon.entity.MonResult;
+import com.minimon.service.MonActService;
 import com.minimon.service.MonApiService;
-import com.minimon.service.MonTransactionService;
-import com.minimon.service.ResultService;
 import com.minimon.service.MonUrlService;
+import com.minimon.service.ResultService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ public class MonitoringScheduler {
     private final ResultService resultService;
     private final MonUrlService monUrlService;
     private final MonApiService monApiService;
-    private final MonTransactionService monTransactionService;
+    private final MonActService monActService;
 
     public void urlMonitoring() {
         List<MonResult> monResults = new ArrayList();
@@ -38,7 +38,7 @@ public class MonitoringScheduler {
 
     public void transactionMonitoring() {
         List<MonResult> monResults = new ArrayList();
-        monResults.addAll(monTransactionService.checkList(monTransactionService.findScheduledList()));
+        monResults.addAll(monActService.checkList(monActService.findScheduledList()));
         check(monResults);
         log.info("ACT Monitoring Execute Complete");
     }

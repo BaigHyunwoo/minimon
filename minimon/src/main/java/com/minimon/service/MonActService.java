@@ -3,14 +3,14 @@ package com.minimon.service;
 import com.minimon.common.CommonSearchSpec;
 import com.minimon.common.CommonSelenium;
 import com.minimon.common.CommonUtil;
-import com.minimon.entity.MonApi;
+import com.minimon.entity.MonAct;
 import com.minimon.entity.MonCodeData;
 import com.minimon.entity.MonResult;
-import com.minimon.entity.MonTransaction;
+import com.minimon.entity.MonUrl;
 import com.minimon.enums.MonitoringResultCodeEnum;
 import com.minimon.enums.MonitoringTypeEnum;
 import com.minimon.enums.UseStatusEnum;
-import com.minimon.repository.MonTransactionRepository;
+import com.minimon.repository.MonActRepository;
 import com.minimon.vo.MonitoringResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,48 +28,49 @@ import java.util.*;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class MonTransactionService {
+public class MonActService {
 
     private final CommonSelenium commonSelenium;
-    private final MonTransactionRepository monTransactionRepository;
+    private final ResultService resultService;
+    private final MonActRepository monActRepository;
 
     public Page getList(CommonSearchSpec commonSearchSpec) {
-        return monTransactionRepository.findAll(commonSearchSpec.searchSpecs(), commonSearchSpec.pageRequest());
+        return monActRepository.findAll(commonSearchSpec.searchSpecs(), commonSearchSpec.pageRequest());
     }
 
-    public Optional<MonTransaction> get(int seq) {
-        return monTransactionRepository.findById(seq);
-    }
-
-    @Transactional
-    public MonTransaction save(MonTransaction monTransaction) {
-        monTransactionRepository.save(monTransaction);
-        return monTransaction;
+    public Optional<MonAct> get(int seq) {
+        return monActRepository.findById(seq);
     }
 
     @Transactional
-    public boolean edit(MonTransaction monTransactionVO) {
-        Optional<MonTransaction> optionalMonTransaction = get(monTransactionVO.getSeq());
-        optionalMonTransaction.ifPresent(monTransaction -> monTransactionRepository.save(monTransactionVO));
-        return optionalMonTransaction.isPresent();
+    public MonAct save(MonAct monAct) {
+        monActRepository.save(monAct);
+        return monAct;
+    }
+
+    @Transactional
+    public boolean edit(MonAct monActVO) {
+        Optional<MonAct> optionalMonAct = get(monActVO.getSeq());
+        optionalMonAct.ifPresent(monAct -> monActRepository.save(monActVO));
+        return optionalMonAct.isPresent();
     }
 
     @Transactional
     public boolean remove(int seq) {
-        Optional<MonTransaction> optionalMonTransaction = get(seq);
-        optionalMonTransaction.ifPresent(monTransactionRepository::delete);
-        return optionalMonTransaction.isPresent();
+        Optional<MonAct> optionalMonAct = get(seq);
+        optionalMonAct.ifPresent(monActRepository::delete);
+        return optionalMonAct.isPresent();
     }
 
-    public List<MonTransaction> findScheduledList() {
-        return monTransactionRepository.findByMonitoringUseYnOrderByRegDateDesc(UseStatusEnum.Y);
+    public List<MonAct> findScheduledList() {
+        return monActRepository.findByMonitoringUseYnOrderByRegDateDesc(UseStatusEnum.Y);
     }
 
-    public List<MonResult> checkList(List<MonTransaction> monTransactions) {
+    public List<MonResult> checkList(List<MonAct> monActs) {
         List<MonResult> monResults = new ArrayList<>();
-        monTransactions.forEach(monTransaction -> {
-            MonitoringResultVO monitoringResultVO = execute(monTransaction.getCodeDataList());
-            monResults.add(errorCheck(monTransaction, monitoringResultVO));
+        monActs.forEach(monAct -> {
+            MonitoringResultVO monitoringResultVO = executeCodeList(monAct.getCodeDataList());
+            monResults.add(errorCheck(monAct, monitoringResultVO));
         });
         return monResults;
     }
@@ -78,45 +79,37 @@ public class MonTransactionService {
 
         HttpStatus status = HttpStatus.OK;
 
-        try {
-
-            for (String key : responseData.keySet()) {
-                if (responseData.get(key).equals("ERR") == true) status = HttpStatus.INTERNAL_SERVER_ERROR;
-            }
-
-        } catch (Exception e) {
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
-            e.printStackTrace();
-
+        for (String key : responseData.keySet()) {
+            if (responseData.get(key).equals(MonitoringResultCodeEnum.SUCCESS.getCode()) == false) status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
 
         return status;
     }
 
-    public MonResult errorCheck(MonTransaction transaction, MonitoringResultVO monitoringResultVO) {
+    public MonResult errorCheck(MonAct monAct, MonitoringResultVO monitoringResultVO) {
         MonitoringResultCodeEnum resultCode = MonitoringResultCodeEnum.SUCCESS;
 
-        if (transaction.getStatus() != monitoringResultVO.getStatus().value()) {
+        if (monAct.getStatus() != monitoringResultVO.getStatus().value()) {
             resultCode = MonitoringResultCodeEnum.UNKNOWN;
         }
 
-        if (monitoringResultVO.getTotalLoadTime() > CommonUtil.getPerData(transaction.getLoadTime(), transaction.getErrorLoadTime(), 1)) {
+        if (monitoringResultVO.getTotalLoadTime() > CommonUtil.getPerData(monAct.getLoadTime(), monAct.getErrorLoadTime(), 1)) {
             resultCode = MonitoringResultCodeEnum.LOAD_TIME;
         }
 
         return MonResult.builder()
-                .title(transaction.getTitle())
+                .title(monAct.getTitle())
                 .monitoringTypeEnum(MonitoringTypeEnum.TRANSACTION)
-                .relationSeq(transaction.getSeq())
+                .relationSeq(monAct.getSeq())
                 .resultCode(resultCode)
                 .status(monitoringResultVO.getStatus())
                 .loadTime(monitoringResultVO.getTotalLoadTime())
                 .build();
     }
 
-    public List<MonCodeData> getTestSource(MultipartFile transactionFile) {
+    public List<MonCodeData> getTestSource(MultipartFile monActFile) {
         List<MonCodeData> codeDataList = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(transactionFile.getInputStream()))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(monActFile.getInputStream()))) {
             String line;
             boolean check = false;
             while ((line = br.readLine()) != null) {
@@ -136,12 +129,24 @@ public class MonTransactionService {
         return codeDataList;
     }
 
-    public MonitoringResultVO executeFile(MultipartFile transactionFile) {
-        return execute(getTestSource(transactionFile));
+    @Transactional
+    public MonResult execute(int seq) {
+        MonResult monResult = null;
+
+        Optional<MonAct> optionalMonAct = get(seq);
+        if (optionalMonAct.isPresent()) {
+            MonAct monAct = optionalMonAct.get();
+            monResult = resultService.save(errorCheck(monAct, executeCodeList(monAct.getCodeDataList())));
+            resultService.sendResultByProperties(monResult);
+        }
+        return monResult;
     }
 
+    public MonitoringResultVO executeCodeList(MultipartFile monActFile) {
+        return executeCodeList(getTestSource(monActFile));
+    }
 
-    public MonitoringResultVO execute(List<MonCodeData> codeDataList) {
+    public MonitoringResultVO executeCodeList(List<MonCodeData> codeDataList) {
         Map<String, Object> responseData = new HashMap<>();
         long loadTime = 0;
         HttpStatus status = HttpStatus.OK;
