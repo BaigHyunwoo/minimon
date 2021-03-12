@@ -4,20 +4,24 @@ import com.minimon.common.CommonSearchSpec;
 import com.minimon.common.CommonSelenium;
 import com.minimon.common.CommonUtil;
 import com.minimon.entity.MonCodeData;
+import com.minimon.entity.MonResult;
 import com.minimon.entity.MonTransaction;
-import com.minimon.entity.MonUrl;
+import com.minimon.enums.MonitoringResultCodeEnum;
+import com.minimon.enums.MonitoringTypeEnum;
 import com.minimon.repository.MonTransactionRepository;
+import com.minimon.vo.MonitoringResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -55,38 +59,27 @@ public class MonTransactionService {
         return optionalMonTransaction.isPresent();
     }
 
-    public Map<String, Object> checkTransactions(List<MonTransaction> monTransactions) {
-        Map<String, Object> checkData = new HashMap<String, Object>();
-
-
-        for (MonTransaction transaction : monTransactions) {
-            Map<String, Object> logData = executeTransaction(transaction.getCodeDataList());
-            checkData.put("" + transaction.getSeq(), errorCheckTransaction(transaction, logData));
-        }
-
-        return checkData;
+    public List<MonResult> checkList(List<MonTransaction> monTransactions) {
+        List<MonResult> monResults = new ArrayList<>();
+        monTransactions.forEach(monTransaction -> {
+            MonitoringResultVO monitoringResultVO = execute(monTransaction.getCodeDataList());
+            monResults.add(errorCheck(monTransaction, monitoringResultVO));
+        });
+        return monResults;
     }
 
+    public HttpStatus checkStatus(Map<String, Object> responseData) {
 
-    public List<MonTransaction> findTransactionUseable() {
-        return null;
-    }
-
-    public int checkStatus(Map<String, Object> logData) {
-
-        int status = 200;
+        HttpStatus status = HttpStatus.OK;
 
         try {
-            for (String key : logData.keySet()) {
 
-                if (logData.get(key).equals("ERR") == true) status = 500;
-
+            for (String key : responseData.keySet()) {
+                if (responseData.get(key).equals("ERR") == true) status = HttpStatus.INTERNAL_SERVER_ERROR;
             }
 
         } catch (Exception e) {
-
-            status = 500;
-
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
             e.printStackTrace();
 
         }
@@ -94,71 +87,74 @@ public class MonTransactionService {
         return status;
     }
 
-    public Map<String, Object> errorCheckTransaction(MonTransaction transaction, Map<String, Object> logData) {
-        Map<String, Object> checkData = new HashMap<String, Object>();
+    public MonResult errorCheck(MonTransaction transaction, MonitoringResultVO monitoringResultVO) {
+        MonitoringResultCodeEnum resultCode = MonitoringResultCodeEnum.SUCCESS;
 
-        String result = "SUCCESS";
-        int status = Integer.parseInt("" + logData.get("status"));
-        double loadTime = Double.parseDouble("" + logData.get("loadTime"));
-
-
-        /*
-         * CHECK
-         */
-        if (transaction.getStatus() == status) checkData.put("status", "SUCCESS");
-        else {
-            checkData.put("status", "ERR");
-            result = "status ERR";
+        if (transaction.getStatus() != monitoringResultVO.getStatus().value()) {
+            resultCode = MonitoringResultCodeEnum.UNKNOWN;
         }
 
-        if (loadTime <= CommonUtil.getPerData(transaction.getLoadTime(), transaction.getErrorLoadTime(), 1))
-            checkData.put("loadTime", "SUCCESS");
-        else {
-            checkData.put("loadTime", " ERR");
-            result = "loadTime ERR";
+        if (monitoringResultVO.getTotalLoadTime() > CommonUtil.getPerData(transaction.getLoadTime(), transaction.getErrorLoadTime(), 1)) {
+            resultCode = MonitoringResultCodeEnum.LOAD_TIME;
         }
 
+        return MonResult.builder()
+                .title(transaction.getTitle())
+                .monitoringTypeEnum(MonitoringTypeEnum.TRANSACTION)
+                .relationSeq(transaction.getSeq())
+                .resultCode(resultCode)
+                .status(monitoringResultVO.getStatus())
+                .loadTime(monitoringResultVO.getTotalLoadTime())
+                .build();
+    }
 
-        /*
-         * SET PARAM
-         */
-        checkData.put("logData", logData);
-        checkData.put("check_loadTime", loadTime);
-        checkData.put("check_status", status);
-        checkData.put("origin_loadTime", transaction.getLoadTime());
-        checkData.put("origin_status", transaction.getStatus());
-        checkData.put("seq", transaction.getSeq());
-        checkData.put("type", "TRANSACTION");
-        checkData.put("title", transaction.getTitle());
-        checkData.put("result", result);
+    public List<MonCodeData> getTestSource(MultipartFile transactionFile) {
+        List<MonCodeData> codeDataList = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(transactionFile.getInputStream()))) {
+            String line;
+            boolean check = false;
+            while ((line = br.readLine()) != null) {
+                if (line.indexOf("@Test") > 0) check = true;
+                if (check == true) {
+                    MonCodeData monCodeData = getCodeData(line);
+                    if (monCodeData != null) {
+                        codeDataList.add(monCodeData);
+                        log.debug(monCodeData.getAction() + " " + monCodeData.getSelector_type() + "  " + monCodeData.getSelector_value() + "     " + monCodeData.getValue());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.debug(e.getMessage());
+        }
+        return codeDataList;
+    }
 
-        return checkData;
+    public MonitoringResultVO executeFile(MultipartFile transactionFile) {
+        return execute(getTestSource(transactionFile));
     }
 
 
-    public Map<String, Object> executeTransaction(List<MonCodeData> codeDataList) {
-        Map<String, Object> logData = new HashMap<>();
-        EventFiringWebDriver driver = null;
+    public MonitoringResultVO execute(List<MonCodeData> codeDataList) {
+        Map<String, Object> responseData = new HashMap<>();
+        long loadTime = 0;
+        HttpStatus status = HttpStatus.OK;
+
+        EventFiringWebDriver driver = commonSelenium.setUp();
 
         try {
-
-            driver = commonSelenium.setUp();
-
             long startTime = System.currentTimeMillis();
             for (int i = 0; i < codeDataList.size(); i++) {
 
                 MonCodeData monCodeData = codeDataList.get(i);
-                logData.put("" + i, commonSelenium.executeAction(driver, monCodeData.getAction(), monCodeData.getSelector_type(), monCodeData.getSelector_value(), monCodeData.getValue()));
+                responseData.put("" + i, commonSelenium.executeAction(driver, monCodeData.getAction(), monCodeData.getSelector_type(), monCodeData.getSelector_value(), monCodeData.getValue()));
 
             }
             long endTime = System.currentTimeMillis();
 
+            loadTime = endTime - startTime;
+            status = checkStatus(responseData);
 
-            logData.put("loadTime", endTime - startTime);
-            logData.put("status", checkStatus(logData));
-
-
-            log.debug(logData.toString());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -169,7 +165,11 @@ public class MonTransactionService {
 
         }
 
-        return logData;
+        return MonitoringResultVO.builder()
+                .status(status)
+                .totalLoadTime(new Long(loadTime).intValue())
+                .response(responseData.toString())
+                .build();
     }
 
 
@@ -181,7 +181,6 @@ public class MonTransactionService {
 
         String action = getCodeAction(line);
         if (action != null) {
-
             String selector_type = getCodeSelectorType(line);
             String selector_value = getCodeSelectorValue(line, action);
             String value = getCodeValue(line, action, selector_type);

@@ -5,6 +5,7 @@ import com.minimon.common.CommonSearchSpec;
 import com.minimon.entity.MonCodeData;
 import com.minimon.entity.MonTransaction;
 import com.minimon.service.MonTransactionService;
+import com.minimon.vo.MonitoringResultVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,40 +70,11 @@ public class MonTransactionController {
         return new CommonResponse();
     }
 
-    @ApiOperation(value = "검사 테스트", produces = "multipart/form-data", response = Map.class)
+    @ApiOperation(value = "검사 테스트", produces = "multipart/form-data", response = MonitoringResultVO.class)
     @PostMapping(value = "/check")
     public CommonResponse transactionCheck(MultipartFile transactionFile) {
-        Map<String, Object> logData = monTransactionService.executeTransaction(getTestSource(transactionFile));
-        return new CommonResponse(logData);
+        return new CommonResponse(monTransactionService.executeFile(transactionFile));
     }
-
-    public List<MonCodeData> getTestSource(MultipartFile transactionFile) {
-        List<MonCodeData> codeDataList = new ArrayList<>();
-
-        try {
-            BufferedReader br;
-            String line;
-            InputStream is = transactionFile.getInputStream();
-            br = new BufferedReader(new InputStreamReader(is));
-            boolean check = false;
-            while ((line = br.readLine()) != null) {
-
-                if (line.indexOf("@Test") > 0) check = true;
-                if (check == true) {
-                    MonCodeData monCodeData = monTransactionService.getCodeData(line);
-                    if (monCodeData != null) {
-                        codeDataList.add(monCodeData);
-                        log.debug(monCodeData.getAction() + " " + monCodeData.getSelector_type() + "  " + monCodeData.getSelector_value() + "     " + monCodeData.getValue());
-                    }
-
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return codeDataList;
-    }
-
 
     @ApiOperation(value = "검사 실행", response = Map.class)
     @GetMapping(path = "/execute/{seq}")

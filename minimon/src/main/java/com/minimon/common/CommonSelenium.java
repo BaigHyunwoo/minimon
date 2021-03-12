@@ -1,5 +1,6 @@
 package com.minimon.common;
 
+import com.minimon.enums.MonitoringResultCodeEnum;
 import com.minimon.vo.MonitoringResultVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
@@ -292,7 +293,7 @@ public class CommonSelenium {
             }
 
             waitHtml(driver);
-            result = "SUCCESS";
+            result = MonitoringResultCodeEnum.SUCCESS.getCode();
 
 
         } catch (Exception e) {
