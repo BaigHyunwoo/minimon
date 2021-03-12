@@ -2,20 +2,21 @@ package com.minimon.controller;
 
 import com.minimon.common.CommonResponse;
 import com.minimon.common.CommonSearchSpec;
-import com.minimon.common.CommonSelenium;
+import com.minimon.entity.MonCodeData;
 import com.minimon.entity.MonTransaction;
 import com.minimon.service.MonTransactionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.tools.*;
-import java.io.*;
-import java.util.Arrays;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -27,31 +28,7 @@ import java.util.Optional;
 @Api(tags = {"Monitoring Transaction Controller"})
 public class MonTransactionController {
 
-    @Value("${common.driverName}")
-    private String driverName;
-
-    @Value("${common.driverPath}")
-    private String driverPath;
-
-    private final CommonSelenium commonSelenium;
     private final MonTransactionService monTransactionService;
-
-
-    private static class CompilerClass {
-        public CompilerClass() {
-        }
-    }
-
-    /**
-     * TODO
-     * 트랜잭션 기능 selenium plugin 이용 -> test.java 파일 업로드 후 compile하여 테스트 실행 및 결과 받아 올 수 있도록 변경
-     * 불가능 시 현재 최신 selenium 기능 탐색
-     * -> 또한 해당 기능 없을 시 selenium의 action들을 계속 이용해야하는지 체크
-     * <p>
-     * 파일 저장 -> resource에
-     * 파일 경로를 transaction에 저장
-     * 경로로 파일을 읽어서 실행
-     */
 
     @ApiOperation(value = "목록 조회", response = MonTransaction.class)
     @GetMapping(path = "")
@@ -96,93 +73,35 @@ public class MonTransactionController {
     @ApiOperation(value = "검사 테스트", produces = "multipart/form-data", response = Map.class)
     @PostMapping(value = "/check")
     public CommonResponse transactionCheck(MultipartFile transactionFile) {
-        Map<String, Object> resultData = null;
-        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        DiagnosticCollector<JavaFileObject> ds = new DiagnosticCollector<>();
-        try (StandardJavaFileManager mgr = compiler.getStandardFileManager(ds, null, null)) {
-            Iterable<? extends JavaFileObject> sources = mgr.getJavaFileObjectsFromFiles(Arrays.asList(getTestFile(transactionFile)));
-            JavaCompiler.CompilationTask task = compiler.getTask(null, mgr, ds, null, null, sources);
-            System.out.println(task.call());
-
-            for (Diagnostic<? extends JavaFileObject> d : ds.getDiagnostics()) {
-                System.out.format("Line: %d, %s in %s \n",
-                        d.getLineNumber(), d.getMessage(null),
-                        d.getSource().getName());
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-        }
-
-        return new CommonResponse(resultData);
+        Map<String, Object> logData = monTransactionService.executeTransaction(getTestSource(transactionFile));
+        return new CommonResponse(logData);
     }
 
-    public File getTestFile(MultipartFile transactionFile) {
-        File sourceFile = null;
+    public List<MonCodeData> getTestSource(MultipartFile transactionFile) {
+        List<MonCodeData> codeDataList = new ArrayList<>();
+
         try {
-
-            StringBuffer testSource = new StringBuffer();
-            testSource.append("package com.minimon.testTemp;\n");
-            testSource.append("import com.minimon.common.CommonSelenium;\n");
-
             BufferedReader br;
             String line;
             InputStream is = transactionFile.getInputStream();
             br = new BufferedReader(new InputStreamReader(is));
-            boolean check = true;
+            boolean check = false;
             while ((line = br.readLine()) != null) {
-                if (line.indexOf("org.junit") > 0) {
-                    continue;
-                }
-                if (line.indexOf("org.hamcrest") > 0) {
-                    continue;
-                }
 
-                if (line.indexOf("class") > 0) {
-                    testSource.append("public class NewsTest implements com.minimon.vo.NewsTest {\n");
-                    continue;
-                }
+                if (line.indexOf("@Test") > 0) check = true;
+                if (check == true) {
+                    MonCodeData monCodeData = monTransactionService.getCodeData(line);
+                    if (monCodeData != null) {
+                        codeDataList.add(monCodeData);
+                        log.debug(monCodeData.getAction() + " " + monCodeData.getSelector_type() + "  " + monCodeData.getSelector_value() + "     " + monCodeData.getValue());
+                    }
 
-                if (line.indexOf("@Before") > 0) {
-                    check = false;
-                }
-                if (line.indexOf("@Test") > 0) {
-                    check = true;
-                    continue;
-                }
-                if (line.indexOf("WebDriver driver") > 0) {
-                    continue;
-                }
-                if (check && line.indexOf("public void") > 0) {
-                    testSource.append("public void test() {\n");
-
-                    String driverConfig = "System.setProperty(\"" + driverName + "\", \"" + driverPath + File.separator + File.separator + "chromedriver.exe\");\n";
-                    testSource.append(driverConfig);
-
-                    String driver = "WebDriver driver = new ChromeDriver();\n";
-                    testSource.append(driver);
-                    continue;
-                }
-                if (check) {
-                    testSource.append(line + "\n");
                 }
             }
-
-            System.out.println(testSource);
-            String className = "/src/main/java/com/minimon/testTemp/NewsTest.java";
-            // create an empty source file
-            sourceFile = new File(className);
-            sourceFile.deleteOnExit();
-
-            String sourceCode = testSource.toString();
-            FileWriter writer = new FileWriter(sourceFile);
-            writer.write(sourceCode);
-            writer.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return sourceFile;
+        return codeDataList;
     }
 
 
