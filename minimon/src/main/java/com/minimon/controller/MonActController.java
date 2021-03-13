@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Map;
 import java.util.Optional;
 
 
@@ -33,7 +32,7 @@ public class MonActController {
         return new CommonResponse(monActService.getList(commonSearchSpec));
     }
 
-    @ApiOperation(value = "조회", response = Map.class)
+    @ApiOperation(value = "조회", response = MonAct.class)
     @GetMapping(path = "/{seq}")
     public CommonResponse get(@PathVariable("seq") int seq) {
         Optional transaction = monActService.get(seq);
@@ -43,13 +42,13 @@ public class MonActController {
         return new CommonResponse(transaction.get());
     }
 
-    @ApiOperation(value = "생성", response = Map.class)
+    @ApiOperation(value = "생성", response = MonAct.class)
     @PostMapping(path = "")
     public CommonResponse create(@RequestBody MonAct monAct) {
-        return CommonResponse.preparingFunctionResponse();
+        return new CommonResponse(monActService.save(monAct));
     }
 
-    @ApiOperation(value = "수정", response = boolean.class)
+    @ApiOperation(value = "수정", response = void.class)
     @PutMapping(path = "")
     public CommonResponse update(@RequestBody MonAct monTransaction) {
         if (!monActService.edit(monTransaction)) {
@@ -58,7 +57,7 @@ public class MonActController {
         return new CommonResponse();
     }
 
-    @ApiOperation(value = "삭제", response = Map.class)
+    @ApiOperation(value = "삭제", response = void.class)
     @DeleteMapping(path = "/{seq}")
     public CommonResponse delete(@PathVariable("seq") int seq) {
         if (!monActService.remove(seq)) {
@@ -73,7 +72,7 @@ public class MonActController {
         return new CommonResponse(monActService.executeCodeList(transactionFile));
     }
 
-    @ApiOperation(value = "검사 실행", response = Map.class)
+    @ApiOperation(value = "검사 실행", response = MonResult.class)
     @GetMapping(path = "/execute/{seq}")
     public CommonResponse execute(@PathVariable("seq") int seq) {
         MonResult monResult = monActService.execute(seq);
