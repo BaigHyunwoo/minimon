@@ -5,6 +5,7 @@ import com.sun.istack.NotNull;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.http.HttpStatus;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -15,6 +16,7 @@ import java.util.Date;
 @Data
 @Entity
 @Table(name = "MON_URL")
+@NoArgsConstructor
 public class MonUrl extends CommonEntity {
 
     @Id
@@ -32,11 +34,11 @@ public class MonUrl extends CommonEntity {
     private String title;
 
     @NotNull
-    @ApiModelProperty(name = "타임 아웃 시간")
+    @ApiModelProperty(name = "타임 아웃 시간(s)")
     private int timeout;
 
     @NotNull
-    @ApiModelProperty(name = "지연 한계 시간")
+    @ApiModelProperty(name = "지연 한계 시간(ms)")
     private int errorLoadTime;
 
     @NotNull
@@ -58,4 +60,16 @@ public class MonUrl extends CommonEntity {
     @NotNull
     @ApiModelProperty(name = "걸린 시간")
     private int loadTime;
+
+    @Builder
+    public MonUrl(String url, String title, int timeout, int errorLoadTime, int loadTime){
+        this.url = url;
+        this.title = title;
+        this.timeout = timeout;
+        this.errorLoadTime = errorLoadTime;
+        this.loadTime = loadTime;
+        this.monitoringUseYn = UseStatusEnum.Y;
+        this.loadTimeCheckYn = UseStatusEnum.Y;
+        this.status = HttpStatus.OK.value();
+    }
 }
