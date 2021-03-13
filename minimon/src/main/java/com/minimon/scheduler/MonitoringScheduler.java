@@ -44,7 +44,7 @@ public class MonitoringScheduler {
     }
 
     @Transactional
-    public void check(List<MonResult> monResults) {
+    protected void check(List<MonResult> monResults) {
         monResults.forEach(monResult -> {
             switch (monResult.getResultCode()) {
                 case SUCCESS:

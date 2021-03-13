@@ -132,7 +132,7 @@ public class CommonSelenium {
 
         } catch (Exception e) {
             totalLoadTime = ConnectErrorCodeEnum.UNKNOWN.getValue();
-            log.info("Error - Unknown "+e.getMessage());
+            log.info("Error - Unknown " + e.getMessage());
         }
 
         return totalLoadTime;

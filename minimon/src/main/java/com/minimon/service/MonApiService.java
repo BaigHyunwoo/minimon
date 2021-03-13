@@ -88,11 +88,11 @@ public class MonApiService {
         return request(url, method, data);
     }
 
-    public MonitoringResultVO execute(MonApi api) {
+    private MonitoringResultVO execute(MonApi api) {
         return request(api.getUrl(), api.getMethod(), api.getData());
     }
 
-    public MonResult errorCheck(MonApi api, MonitoringResultVO monitoringResultVO) {
+    private MonResult errorCheck(MonApi api, MonitoringResultVO monitoringResultVO) {
         return MonResult.builder()
                 .monitoringTypeEnum(MonitoringTypeEnum.API)
                 .relationSeq(api.getSeq())
@@ -107,7 +107,7 @@ public class MonApiService {
                 .build();
     }
 
-    public MonitoringResultCodeEnum getResultCode(HttpStatus status, double totalLoadTime, Object response, MonApi api) {
+    private MonitoringResultCodeEnum getResultCode(HttpStatus status, double totalLoadTime, Object response, MonApi api) {
         if (status == HttpStatus.OK)
             return MonitoringResultCodeEnum.SUCCESS;
         else if (api.getLoadTimeCheckYn().equals(UseStatusEnum.Y) && totalLoadTime >= api.getErrorLoadTime())
@@ -118,7 +118,7 @@ public class MonApiService {
             return MonitoringResultCodeEnum.UNKNOWN;
     }
 
-    public MonitoringResultVO request(String url, String method, String data) {
+    private MonitoringResultVO request(String url, String method, String data) {
         long st = System.currentTimeMillis();
         String response = commonRestTemplate.callApi(HttpMethod.valueOf(method), url, data);
         return MonitoringResultVO.builder()

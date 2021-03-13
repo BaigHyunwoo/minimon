@@ -12,7 +12,6 @@ import com.minimon.vo.MonActCodeResultVO;
 import com.minimon.vo.MonitoringResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -77,7 +76,57 @@ public class MonActService {
         return monResults;
     }
 
-    public HttpStatus checkStatus(List<MonActCodeResultVO> monActCodeResultVOList) {
+    @Transactional
+    public MonResult execute(int seq) {
+        MonResult monResult = null;
+
+        Optional<MonAct> optionalMonAct = get(seq);
+        if (optionalMonAct.isPresent()) {
+            MonAct monAct = optionalMonAct.get();
+            monResult = resultService.save(errorCheck(monAct, executeCodeList(monAct.getCodeDataList())));
+            resultService.sendResultByProperties(monResult);
+        }
+        return monResult;
+    }
+
+    public MonitoringResultVO executeCodeList(MultipartFile monActFile) {
+        return executeCodeList(getTestSource(monActFile));
+    }
+
+    private MonitoringResultVO executeCodeList(List<MonCodeData> codeDataList) {
+        List<MonActCodeResultVO> monActCodeResultVOList = new ArrayList<>();
+        long loadTime = 0;
+        HttpStatus status;
+
+        EventFiringWebDriver driver = commonSelenium.setUp();
+
+        try {
+            long startTime = System.currentTimeMillis();
+            monActCodeResultVOList = codeDataList.stream().map(monCodeData -> commonSelenium.executeAction(driver, monCodeData, codeDataList.indexOf(monCodeData))).collect(Collectors.toList());
+            long endTime = System.currentTimeMillis();
+
+            loadTime = endTime - startTime;
+            status = checkStatus(monActCodeResultVOList);
+
+
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            e.printStackTrace();
+
+        } finally {
+
+            if (driver != null) driver.quit();
+
+        }
+
+        return MonitoringResultVO.builder()
+                .status(status)
+                .totalLoadTime(new Long(loadTime).intValue())
+                .response(monActCodeResultVOList)
+                .build();
+    }
+
+    private HttpStatus checkStatus(List<MonActCodeResultVO> monActCodeResultVOList) {
         HttpStatus status = HttpStatus.OK;
         for (MonActCodeResultVO monActCodeResultVO : monActCodeResultVOList) {
             if (monActCodeResultVO.getStatus() != HttpStatus.OK) {
@@ -87,7 +136,7 @@ public class MonActService {
         return status;
     }
 
-    public MonResult errorCheck(MonAct monAct, MonitoringResultVO monitoringResultVO) {
+    private MonResult errorCheck(MonAct monAct, MonitoringResultVO monitoringResultVO) {
         MonitoringResultCodeEnum resultCode = MonitoringResultCodeEnum.SUCCESS;
 
         if (monAct.getStatus() != monitoringResultVO.getStatus().value()) {
@@ -108,7 +157,7 @@ public class MonActService {
                 .build();
     }
 
-    public List<MonCodeData> getTestSource(MultipartFile monActFile) {
+    private List<MonCodeData> getTestSource(MultipartFile monActFile) {
         List<MonCodeData> codeDataList = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(monActFile.getInputStream()))) {
             String line;
@@ -129,57 +178,7 @@ public class MonActService {
         return codeDataList;
     }
 
-    @Transactional
-    public MonResult execute(int seq) {
-        MonResult monResult = null;
-
-        Optional<MonAct> optionalMonAct = get(seq);
-        if (optionalMonAct.isPresent()) {
-            MonAct monAct = optionalMonAct.get();
-            monResult = resultService.save(errorCheck(monAct, executeCodeList(monAct.getCodeDataList())));
-            resultService.sendResultByProperties(monResult);
-        }
-        return monResult;
-    }
-
-    public MonitoringResultVO executeCodeList(MultipartFile monActFile) {
-        return executeCodeList(getTestSource(monActFile));
-    }
-
-    public MonitoringResultVO executeCodeList(List<MonCodeData> codeDataList) {
-        List<MonActCodeResultVO> monActCodeResultVOList = new ArrayList<>();
-        long loadTime = 0;
-        HttpStatus status = HttpStatus.OK;
-
-        EventFiringWebDriver driver = commonSelenium.setUp();
-
-        try {
-            long startTime = System.currentTimeMillis();
-            monActCodeResultVOList = codeDataList.stream().map(monCodeData -> commonSelenium.executeAction(driver, monCodeData, codeDataList.indexOf(monCodeData))).collect(Collectors.toList());
-            long endTime = System.currentTimeMillis();
-
-            loadTime = endTime - startTime;
-            status = checkStatus(monActCodeResultVOList);
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        } finally {
-
-            if (driver != null) driver.quit();
-
-        }
-
-        return MonitoringResultVO.builder()
-                .status(status)
-                .totalLoadTime(new Long(loadTime).intValue())
-                .response(monActCodeResultVOList)
-                .build();
-    }
-
-
-    public MonCodeData getCodeData(String line) {
+    private MonCodeData getCodeData(String line) {
         MonCodeData monCodeData = null;
 
         CodeActionEnum codeAction = getCodeAction(line);
@@ -199,7 +198,7 @@ public class MonActService {
 
     }
 
-    public CodeActionEnum getCodeAction(String line) {
+    private CodeActionEnum getCodeAction(String line) {
         for (CodeActionEnum codeActionEnum : CodeActionEnum.values()) {
             if (line.indexOf(codeActionEnum.getCode()) > 0) {
                 return codeActionEnum;
@@ -208,16 +207,16 @@ public class MonActService {
         return null;
     }
 
-    public CodeSelectorTypeEnum getCodeSelectorType(String line) {
+    private CodeSelectorTypeEnum getCodeSelectorType(String line) {
         for (CodeSelectorTypeEnum codeSelectorTypeEnum : CodeSelectorTypeEnum.values()) {
-            if(line.indexOf(codeSelectorTypeEnum.getCode()) > 0) {
+            if (line.indexOf(codeSelectorTypeEnum.getCode()) > 0) {
                 return codeSelectorTypeEnum;
             }
         }
         return null;
     }
 
-    public String getValueByObject(String type, String line, String stObj, String edObj) {
+    private String getValueByObject(String type, String line, String stObj, String edObj) {
 
         int stObjLen = stObj.length();
 
@@ -234,7 +233,7 @@ public class MonActService {
         }
     }
 
-    public String getCodeSelectorValue(String line, CodeActionEnum codeAction) {
+    private String getCodeSelectorValue(String line, CodeActionEnum codeAction) {
         switch (codeAction) {
             case CLICK:
             case SWITCH:
@@ -246,7 +245,7 @@ public class MonActService {
         }
     }
 
-    public String getCodeValue(String line, CodeActionEnum codeAction) {
+    private String getCodeValue(String line, CodeActionEnum codeAction) {
         switch (codeAction) {
             case GET:
                 return getValueByObject("last", line, "(\"", "\")");

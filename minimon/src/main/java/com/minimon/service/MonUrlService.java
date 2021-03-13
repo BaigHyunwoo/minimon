@@ -4,7 +4,6 @@ import com.minimon.common.CommonSearchSpec;
 import com.minimon.common.CommonSelenium;
 import com.minimon.entity.MonResult;
 import com.minimon.entity.MonUrl;
-import com.minimon.enums.ConnectErrorCodeEnum;
 import com.minimon.enums.MonitoringResultCodeEnum;
 import com.minimon.enums.MonitoringTypeEnum;
 import com.minimon.enums.UseStatusEnum;
@@ -101,15 +100,7 @@ public class MonUrlService {
         return monitoringResultVO;
     }
 
-    public MonitoringResultVO connectErrorResultVO(String url, HttpStatus status) {
-        return MonitoringResultVO.builder()
-                .totalLoadTime(0)
-                .url(url)
-                .status(status)
-                .build();
-    }
-
-    public MonResult errorCheck(MonUrl url, MonitoringResultVO monitoringResultVO) {
+    private MonResult errorCheck(MonUrl url, MonitoringResultVO monitoringResultVO) {
         return MonResult.builder()
                 .monitoringTypeEnum(MonitoringTypeEnum.URL)
                 .relationSeq(url.getSeq())
@@ -120,7 +111,7 @@ public class MonUrlService {
                 .build();
     }
 
-    public MonitoringResultCodeEnum getResultCode(HttpStatus status, double totalLoadTime, MonUrl url) {
+    private MonitoringResultCodeEnum getResultCode(HttpStatus status, double totalLoadTime, MonUrl url) {
         if (status == HttpStatus.OK) {
             return MonitoringResultCodeEnum.SUCCESS;
         } else if (url.getLoadTimeCheckYn().equals(UseStatusEnum.Y) && totalLoadTime >= url.getErrorLoadTime()) {
@@ -129,5 +120,4 @@ public class MonUrlService {
             return MonitoringResultCodeEnum.UNKNOWN;
         }
     }
-
 }

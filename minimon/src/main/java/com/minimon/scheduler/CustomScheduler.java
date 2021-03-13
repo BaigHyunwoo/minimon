@@ -72,7 +72,7 @@ public class CustomScheduler implements InitializingBean {
         return false;
     }
 
-    public boolean run(SchedulerVO customExecutorVO) {
+    private boolean run(SchedulerVO customExecutorVO) {
         if (scheduledTasks.containsKey(customExecutorVO.getSchedulerType()) == false) {
             Optional.ofNullable(getTaskBySchedulerType(SchedulerTypeEnum.valueOf(customExecutorVO.getSchedulerType()))).ifPresent(task -> {
                 run(task, customExecutorVO.getSchedulerType(), customExecutorVO.getActiveType(), customExecutorVO.getTime());

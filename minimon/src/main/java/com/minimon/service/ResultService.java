@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.io.FileInputStream;
-import java.util.Map;
 import java.util.Properties;
 
 @Slf4j
@@ -49,7 +48,7 @@ public class ResultService {
         }
     }
 
-    public String getResultText(MonResult monResult) {
+    private String getResultText(MonResult monResult) {
         return "\n" + monResult.getRegDate() + " " +
                 "\n" + monResult.getMonitoringType().getValue() + " : " + monResult.getTitle() + " " +
                 "\nRESULT : " + monResult.getResultCode().getValue() + " ";
