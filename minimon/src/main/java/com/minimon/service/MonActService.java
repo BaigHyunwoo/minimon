@@ -12,6 +12,7 @@ import com.minimon.vo.MonActCodeResultVO;
 import com.minimon.vo.MonitoringResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -109,7 +110,12 @@ public class MonActService {
             status = checkStatus(monActCodeResultVOList);
 
 
+        } catch (TimeoutException ex) {
+
+            status = HttpStatus.REQUEST_TIMEOUT;
+
         } catch (Exception e) {
+
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             e.printStackTrace();
 
@@ -195,7 +201,6 @@ public class MonActService {
         }
 
         return monCodeData;
-
     }
 
     private CodeActionEnum getCodeAction(String line) {
@@ -216,21 +221,17 @@ public class MonActService {
         return null;
     }
 
-    private String getValueByObject(String type, String line, String stObj, String edObj) {
-
+    private String getValueByObject(ValueSubStringTypeEnum subStringTypeEnum, String line, String stObj, String edObj) {
         int stObjLen = stObj.length();
-
-        if (type.equals("first")) {
-
-            if (line.indexOf(stObj) < 0) return null;
-            return line.substring(line.indexOf(stObj) + stObjLen, line.indexOf(edObj, line.indexOf(stObj)));
-
-        } else {
-
-            if (line.lastIndexOf(stObj) < 0) return null;
-            return line.substring(line.lastIndexOf(stObj) + stObjLen, line.indexOf(edObj, line.lastIndexOf(stObj)));
-
+        switch (subStringTypeEnum) {
+            case FRONT:
+                if (line.indexOf(stObj) < 0) return null;
+                return line.substring(line.indexOf(stObj) + stObjLen, line.indexOf(edObj, line.indexOf(stObj)));
+            case BACK:
+                if (line.lastIndexOf(stObj) < 0) return null;
+                return line.substring(line.lastIndexOf(stObj) + stObjLen, line.indexOf(edObj, line.lastIndexOf(stObj)));
         }
+        return null;
     }
 
     private String getCodeSelectorValue(String line, CodeActionEnum codeAction) {
@@ -239,7 +240,7 @@ public class MonActService {
             case SWITCH:
             case SUBMIT:
             case SEND:
-                return getValueByObject("first", line, "(\"", "\")");
+                return getValueByObject(ValueSubStringTypeEnum.FRONT, line, "(\"", "\")");
             default:
                 return null;
         }
@@ -248,18 +249,18 @@ public class MonActService {
     private String getCodeValue(String line, CodeActionEnum codeAction) {
         switch (codeAction) {
             case GET:
-                return getValueByObject("last", line, "(\"", "\")");
+                return getValueByObject(ValueSubStringTypeEnum.BACK, line, "(\"", "\")");
             case WAIT:
-                return getValueByObject("first", line, "(\"", "\",");
+                return getValueByObject(ValueSubStringTypeEnum.FRONT, line, "(\"", "\",");
             case SWITCH:
-                return getValueByObject("first", line, "(\"", "\")");
+                return getValueByObject(ValueSubStringTypeEnum.FRONT, line, "(\"", "\")");
             case SEND:
                 for (CodeSendKeyTypeEnum codeSendKeyTypeEnum : CodeSendKeyTypeEnum.values()) {
                     if (line.indexOf(codeSendKeyTypeEnum.getCode()) > 0) {
                         return codeSendKeyTypeEnum.getCode();
                     }
                 }
-                return getValueByObject("first", line, "sendKeys(\"", "\");");
+                return getValueByObject(ValueSubStringTypeEnum.FRONT, line, "sendKeys(\"", "\");");
             default:
                 return null;
         }
