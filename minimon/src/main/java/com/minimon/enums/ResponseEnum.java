@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ResponseEnum {
     SUCCESS(200, "SUCCESS"),
-    FAIL(-1, "FAIL");
+    FAIL(500, "FAIL");
 
     private int code;
     private String value;
