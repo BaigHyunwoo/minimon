@@ -18,7 +18,7 @@ public class SchedulerVO {
     private String activeType;
 
     @ApiModelProperty(value = "반복 설정 시간")
-    private String time = "0";
+    private String time;
 
     @Builder
     public SchedulerVO(String schedulerType, String activeType, String time) {

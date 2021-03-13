@@ -1,11 +1,11 @@
 package com.minimon.service;
 
+import com.minimon.common.CommonProperties;
 import com.minimon.common.CommonRestTemplate;
 import com.minimon.entity.MonResult;
 import com.minimon.repository.MonResultRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +19,7 @@ import java.util.Properties;
 public class ResultService {
     private final CommonRestTemplate commonRestTemplate;
     private final MonResultRepository monResultRepository;
-
-    @Value("${common.location}")
-    private String location;
+    private final CommonProperties commonProperties;
 
 
     @Transactional
@@ -35,7 +33,7 @@ public class ResultService {
         try {
 
             Properties properties = new Properties();
-            FileInputStream fis = new FileInputStream(location);
+            FileInputStream fis = new FileInputStream(commonProperties.getLocation());
             properties.load(new java.io.BufferedInputStream(fis));
             String location = properties.getProperty("location");
             String text = getResultText(monResult);

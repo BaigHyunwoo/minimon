@@ -4,6 +4,7 @@ import com.minimon.entity.MonCodeData;
 import com.minimon.enums.*;
 import com.minimon.vo.MonActCodeResultVO;
 import com.minimon.vo.MonitoringResultVO;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.json.JSONObject;
@@ -17,7 +18,6 @@ import org.openqa.selenium.logging.LoggingPreferences;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.support.events.AbstractWebDriverEventListener;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -28,13 +28,9 @@ import java.util.logging.Level;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class CommonSelenium {
-
-    @Value("${common.driverName}")
-    private String driverName;
-
-    @Value("${common.driverPath}")
-    private String driverPath;
+    private final CommonProperties commonProperties;
 
     private Map<String, Object> vars;
 
@@ -42,7 +38,7 @@ public class CommonSelenium {
 
     private int waitForWindowTimeout = 5000;
 
-    public class WebDriverEventListenerClass extends AbstractWebDriverEventListener {
+    private class WebDriverEventListenerClass extends AbstractWebDriverEventListener {
 
         long startTime, endTime;
 
@@ -86,7 +82,7 @@ public class CommonSelenium {
             Runtime.getRuntime().exec("taskkill /F /IM chromedriver");
 
             // 크롬 드라이버 파일 경로설정
-            System.setProperty(driverName, driverPath + File.separator + "chromedriver.exe");
+            System.setProperty(commonProperties.getDriverName(), commonProperties.getDriverPath() + File.separator + "chromedriver.exe");
 
             LoggingPreferences logPrefs = new LoggingPreferences();
 

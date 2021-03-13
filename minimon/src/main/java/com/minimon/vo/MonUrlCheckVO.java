@@ -14,7 +14,7 @@ public class MonUrlCheckVO {
     @ApiModelProperty(value = "검사 경로")
     private String url;
 
-    @ApiModelProperty(value = "반복 설정 시간")
+    @ApiModelProperty(value = "타임 아웃 시간(초)")
     private int timeout;
 
     @Builder

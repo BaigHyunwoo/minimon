@@ -23,6 +23,7 @@ public class SwaggerConfig {
                 .paths(PathSelectors.any())
                 .build()
                 .tags(
+                        new Tag("CommonConfig Controller", "설정 관리", index++),
                         new Tag("Monitoring Url Controller", "URL 모니터링 관리", index++),
                         new Tag("Monitoring Api Controller", "API 모니터링 관리", index++),
                         new Tag("Monitoring Act Controller", "ACT 모니터링 관리", index++),
