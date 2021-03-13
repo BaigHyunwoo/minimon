@@ -1,10 +1,7 @@
 package com.minimon.common;
 
 import com.minimon.entity.MonCodeData;
-import com.minimon.enums.CodeActionEnum;
-import com.minimon.enums.CodeSelectorTypeEnum;
-import com.minimon.enums.CodeSendKeyTypeEnum;
-import com.minimon.enums.MonitoringResultCodeEnum;
+import com.minimon.enums.*;
 import com.minimon.vo.MonActCodeResultVO;
 import com.minimon.vo.MonitoringResultVO;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +38,9 @@ public class CommonSelenium {
 
     private Map<String, Object> vars;
 
-    JavascriptExecutor js;
+    private JavascriptExecutor js;
+
+    private int waitForWindowTimeout = 5000;
 
     public class WebDriverEventListenerClass extends AbstractWebDriverEventListener {
 
@@ -119,7 +118,7 @@ public class CommonSelenium {
 
     public int connect(String url, EventFiringWebDriver driver, int timeout) {
         driver.manage().timeouts().pageLoadTimeout(timeout, TimeUnit.SECONDS);
-        int totalLoadTime = -1;
+        int totalLoadTime;
 
         try {
 
@@ -129,11 +128,11 @@ public class CommonSelenium {
             totalLoadTime = event.returnLoadTime();
 
         } catch (TimeoutException e1) {
-            log.info("Error - Timeout");
+            totalLoadTime = ConnectErrorCodeEnum.TIMEOUT.getValue();
 
         } catch (Exception e) {
-            totalLoadTime = -2;
-            log.info("Error - Unknown");
+            totalLoadTime = ConnectErrorCodeEnum.UNKNOWN.getValue();
+            log.info("Error - Unknown "+e.getMessage());
         }
 
         return totalLoadTime;
@@ -171,7 +170,6 @@ public class CommonSelenium {
             Optional<HttpStatus> isExistStatus = Optional.ofNullable(getResultStatus(getResourceMessage(it.next()), currentURL));
             if (isExistStatus.isPresent()) {
                 resultStatus = isExistStatus.get();
-
             }
         }
 
@@ -235,7 +233,7 @@ public class CommonSelenium {
                     vars.put("window_handles", driver.getWindowHandles());
                     break;
                 case WAIT:
-                    vars.put(selector_value, waitForWindow(driver, 5000));
+                    vars.put(selector_value, waitForWindow(driver, waitForWindowTimeout));
                     break;
                 case SWITCH:
                     if (selector_value != null) driver.switchTo().frame(selector_value).toString();
@@ -248,9 +246,9 @@ public class CommonSelenium {
                 case SEND:
                     element = getSelector(driver, codeSelectorType, selector_value);
                     Object codeSendKeyType = CodeSendKeyTypeEnum.codeOf(value);
-                    if(codeSendKeyType == null ){
+                    if (codeSendKeyType == null) {
                         element.sendKeys(value);
-                    }else if (CodeSendKeyTypeEnum.ENTER.equals(codeSendKeyType)) {
+                    } else if (CodeSendKeyTypeEnum.ENTER.equals(codeSendKeyType)) {
                         element.sendKeys(Keys.ENTER);
                     } else if (CodeSendKeyTypeEnum.SPACE.equals(codeSendKeyType)) {
                         element.sendKeys(Keys.SPACE);

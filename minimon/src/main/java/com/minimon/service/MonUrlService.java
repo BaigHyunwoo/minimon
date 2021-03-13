@@ -4,6 +4,7 @@ import com.minimon.common.CommonSearchSpec;
 import com.minimon.common.CommonSelenium;
 import com.minimon.entity.MonResult;
 import com.minimon.entity.MonUrl;
+import com.minimon.enums.ConnectErrorCodeEnum;
 import com.minimon.enums.MonitoringResultCodeEnum;
 import com.minimon.enums.MonitoringTypeEnum;
 import com.minimon.enums.UseStatusEnum;
@@ -86,10 +87,13 @@ public class MonUrlService {
     public MonitoringResultVO execute(String url, int timeout) {
         EventFiringWebDriver driver = commonSelenium.setUp();
         MonitoringResultVO monitoringResultVO;
+
         try {
+
             int totalLoadTime = commonSelenium.connect(url, driver, timeout);
             monitoringResultVO = commonSelenium.getResult(commonSelenium.getLog(driver), driver.getCurrentUrl(), totalLoadTime);
-        }finally {
+
+        } finally {
             if (driver != null) {
                 driver.quit();
             }
@@ -97,6 +101,13 @@ public class MonUrlService {
         return monitoringResultVO;
     }
 
+    public MonitoringResultVO connectErrorResultVO(String url, HttpStatus status) {
+        return MonitoringResultVO.builder()
+                .totalLoadTime(0)
+                .url(url)
+                .status(status)
+                .build();
+    }
 
     public MonResult errorCheck(MonUrl url, MonitoringResultVO monitoringResultVO) {
         return MonResult.builder()
