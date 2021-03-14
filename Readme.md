@@ -3,7 +3,7 @@
 
   
 ## 사용 환경  
-호환 OS : Windows
+호환 OS : Windows  
 호환 브라우저 : ChromeBrowser  
 필수 설치 :   
   [Selenium plugin](https://chrome.google.com/webstore/detail/selenium-ide/mooikfkahbdckldjjndioackbalphokd?hl=en)  
