@@ -3,6 +3,7 @@ package com.minimon.common;
 import com.minimon.entity.MonCodeData;
 import com.minimon.enums.*;
 import com.minimon.vo.MonActCodeResultVO;
+import com.minimon.vo.MonUrlResourceVO;
 import com.minimon.vo.MonitoringResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -155,17 +156,23 @@ public class CommonSelenium {
         return logs;
     }
 
-    public JSONObject getResourceMessage(LogEntry entry) {
-        JSONObject json = new JSONObject(entry.getMessage());
-        return json.getJSONObject("message");
-    }
-
     public MonitoringResultVO getResult(LogEntries logs, String currentURL, int totalLoadTime) {
+        List<MonUrlResourceVO> monUrlResourceVOList = new ArrayList<>();
         HttpStatus resultStatus = HttpStatus.BAD_GATEWAY;
-        for (Iterator<LogEntry> it = logs.iterator(); it.hasNext(); ) {
-            Optional<HttpStatus> isExistStatus = Optional.ofNullable(getResultStatus(getResourceMessage(it.next()), currentURL));
-            if (isExistStatus.isPresent()) {
-                resultStatus = isExistStatus.get();
+
+        int resourceCnt = 0;
+        for (Iterator<LogEntry> it = logs.iterator(); it.hasNext(); resourceCnt++) {
+            JSONObject resourceMessage = getResourceMessage(it.next());
+            if (isExist(resourceMessage)) {
+                JSONObject resourceParam = resourceMessage.getJSONObject("params");
+                JSONObject resourceResponse = resourceParam.getJSONObject("response");
+
+                Optional<HttpStatus> isExistStatus = Optional.ofNullable(getResultStatus(resourceResponse, currentURL));
+                if (isExistStatus.isPresent()) {
+                    resultStatus = isExistStatus.get();
+                }
+
+                monUrlResourceVOList.add(getResourceData(resourceResponse, resourceCnt));
             }
         }
 
@@ -174,37 +181,88 @@ public class CommonSelenium {
                 .totalLoadTime(totalLoadTime)
                 .url(currentURL)
                 .status(resultStatus)
+                .response(monUrlResourceVOList)
                 .build();
     }
 
+    public JSONObject getResourceMessage(LogEntry entry) {
+        JSONObject json = new JSONObject(entry.getMessage());
+        return json.getJSONObject("message");
+    }
 
-    public HttpStatus getResultStatus(JSONObject message, String currentURL) {
-
-        // DATA CONVERT & CHECK
+    public Boolean isExist(JSONObject message) {
         String methodName = message.getString("method");
-
-        // Log Exists Check
         if (methodName != null && methodName.equals("Network.responseReceived") == false) {
-            return null;
+            return false;
         }
+        return true;
+    }
 
-        // GET DATA
-        JSONObject params = message.getJSONObject("params");
-
-        JSONObject response = params.getJSONObject("response");
-
-        JSONObject headersObj = response.getJSONObject("headers");
-
-        Map<String, Object> headers = new CaseInsensitiveMap<>();
-
-        headers.putAll(headersObj.toMap());
-
-        // SET STATUS
+    public HttpStatus getResultStatus(JSONObject response, String currentURL) {
         if (currentURL.equals(response.get("url"))) {
             return HttpStatus.valueOf(response.getInt("status"));
         }
-
         return null;
+    }
+
+    public MonUrlResourceVO getResourceData(JSONObject resourceResponse, int sortOrder) {
+        Map<String, Object> detailMap = new HashMap<>();
+
+        JSONObject headersObj = resourceResponse.getJSONObject("headers");
+        Map<String, Object> headers = new CaseInsensitiveMap<>();
+        headers.putAll(headersObj.toMap());
+
+        double payLoad = headers.containsKey("content-length") ? Double.parseDouble(headers.get("content-length").toString()) : 0;
+        String type = headers.containsKey("content-type") ? headers.get("content-type").toString() : "";
+        int status = resourceResponse.getInt("status");
+        String resourceUrl = resourceResponse.getString("url");
+        long resourceLoadTime = 0;
+        long resourceRequestTime = 0;
+        long resourceEndTime = 0;
+
+        /* TODO 리소스 타임 검사
+        if (!resourceResponse.isNull("timing")) {
+            JSONObject timing = resourceResponse.getJSONObject("timing");
+            Double requestTime = timing.getDouble("requestTime");
+
+            Double endTime = 0.0;
+            for (Iterator<String> itt = timing.keys(); itt.hasNext(); ) {
+                String key = itt.next();
+                if (timing.getDouble(key) > 0) {
+                    endTime += timing.getDouble(key);
+                }
+            }
+            Double loadTime = Math.ceil(endTime - requestTime);
+
+            resourceLoadTime = loadTime.longValue();
+            resourceRequestTime = CommonUtil.convertUTCtoGMT(requestTime);
+            resourceEndTime =  CommonUtil.convertUTCtoGMT(requestTime) + endTime.longValue();
+        }
+        */
+
+        detailMap.put("url", resourceUrl);
+        detailMap.put("type", type);
+        detailMap.put("status", status);
+        detailMap.put("payLoad", payLoad);
+        detailMap.put("sortOrder", sortOrder);
+        detailMap.put("requestTime", resourceRequestTime);
+        detailMap.put("endTime", resourceEndTime);
+        detailMap.put("loadTime", resourceLoadTime);
+
+        MonUrlResourceVO monUrlResourceVO = MonUrlResourceVO.builder()
+                .url(resourceUrl)
+                .type(type)
+                .status(status)
+                .payLoad(payLoad)
+                .sortOrder(sortOrder)
+                .requestTime(resourceRequestTime)
+                .endTime(resourceEndTime)
+                .loadTime(resourceLoadTime)
+                .build();
+
+//        System.out.println(monUrlResourceVO.toString());
+//        System.out.println(detailMap.toString());
+        return monUrlResourceVO;
     }
 
 
@@ -314,4 +372,5 @@ public class CommonSelenium {
             }
         }
     }
+
 }
