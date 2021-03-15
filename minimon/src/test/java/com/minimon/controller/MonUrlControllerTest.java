@@ -50,7 +50,7 @@ public class MonUrlControllerTest {
 
     @Test
     public void check() throws Exception {
-        String content = objectMapper.writeValueAsString(new MonUrlCheckVO("https://www.naver.com", 5));
+        String content = objectMapper.writeValueAsString(MonUrlCheckVO.builder().url("https://www.naver.com").timeout(5).build());
 
         mockMvc.perform(post("/monUrl/check")
                 .content(content)
