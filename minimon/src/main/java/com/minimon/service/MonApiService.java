@@ -85,7 +85,7 @@ public class MonApiService {
     }
 
     public MonitoringResultVO execute(String url, String method, String data) {
-        return request(url, method, data);
+        return request(url, HttpMethod.valueOf(method), data);
     }
 
     private MonitoringResultVO execute(MonApi api) {
@@ -118,12 +118,12 @@ public class MonApiService {
             return MonitoringResultCodeEnum.UNKNOWN;
     }
 
-    private MonitoringResultVO request(String url, String method, String data) {
+    private MonitoringResultVO request(String url, HttpMethod method, String data) {
         long st = System.currentTimeMillis();
-        String response = commonRestTemplate.callApi(HttpMethod.valueOf(method), url, data);
+        String response = commonRestTemplate.callApi(method, url, data);
         return MonitoringResultVO.builder()
                 .status(HttpStatus.OK)
-                .totalLoadTime(new Long(System.currentTimeMillis() - st).intValue())
+                .totalLoadTime(Long.valueOf(System.currentTimeMillis() - st).intValue())
                 .response(response)
                 .build();
     }

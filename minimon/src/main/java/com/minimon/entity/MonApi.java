@@ -5,6 +5,8 @@ import com.sun.istack.NotNull;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -15,6 +17,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "MON_API")
+@NoArgsConstructor
 public class MonApi extends CommonEntity {
 
     @Id
@@ -58,8 +61,9 @@ public class MonApi extends CommonEntity {
     private UseStatusEnum responseCheckYn;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     @ApiModelProperty(name = "사용 http 메소드")
-    private String method;
+    private HttpMethod method;
 
     @ApiModelProperty(name = "요청 Body")
     private String data;
@@ -72,8 +76,22 @@ public class MonApi extends CommonEntity {
     @ApiModelProperty(name = "걸린 시간")
     private int loadTime;
 
-    @Lob
     @ApiModelProperty(name = "응답 데이터")
     private String response;
 
+    @Builder
+    public MonApi(String url, String title, int timeout, int errorLoadTime, int loadTime, HttpMethod method, String data, String response){
+        this.url = url;
+        this.title = title;
+        this.timeout = timeout;
+        this.errorLoadTime = errorLoadTime;
+        this.loadTime = loadTime;
+        this.monitoringUseYn = UseStatusEnum.Y;
+        this.loadTimeCheckYn = UseStatusEnum.Y;
+        this.responseCheckYn = UseStatusEnum.Y;
+        this.status = HttpStatus.OK.value();
+        this.method = method;
+        this.data = data;
+        this.response = response;
+    }
 }
