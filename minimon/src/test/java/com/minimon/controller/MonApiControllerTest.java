@@ -1,8 +1,11 @@
 package com.minimon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.minimon.common.CommonResponseMeta;
 import com.minimon.entity.MonApi;
 import com.minimon.entity.MonUrl;
+import com.minimon.enums.ResponseEnum;
+import com.minimon.vo.MonApiCheckVO;
 import com.minimon.vo.MonUrlCheckVO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,7 +51,19 @@ public class MonApiControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.meta.code", is(200)))
+                .andExpect(jsonPath("$.meta.code", is(ResponseEnum.SUCCESS.getCode())))
+                .andDo(print());
+    }
+
+    @Test
+    public void check() throws Exception {
+        String content = objectMapper.writeValueAsString(MonApiCheckVO.builder().method(HttpMethod.GET.toString()).url("https://www.naver.com").data("1"));
+
+        mockMvc.perform(post("/monApi/check")
+                .content(content)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
                 .andDo(print());
     }
 }

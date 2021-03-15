@@ -2,6 +2,7 @@ package com.minimon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.minimon.entity.MonUrl;
+import com.minimon.enums.ResponseEnum;
 import com.minimon.vo.MonUrlCheckVO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,19 +45,7 @@ public class MonUrlControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.meta.code", is(200)))
-                .andDo(print());
-    }
-
-    @Test
-    public void check() throws Exception {
-        String content = objectMapper.writeValueAsString(MonUrlCheckVO.builder().url("https://www.naver.com").timeout(5).build());
-
-        mockMvc.perform(post("/monUrl/check")
-                .content(content)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.meta.code", is(ResponseEnum.SUCCESS.getCode())))
                 .andDo(print());
     }
 }
