@@ -127,7 +127,7 @@ public class MonActService {
 
         return MonitoringResultVO.builder()
                 .status(status)
-                .totalLoadTime(new Long(loadTime).intValue())
+                .totalLoadTime(Long.valueOf(loadTime).intValue())
                 .response(monActCodeResultVOList)
                 .build();
     }

@@ -52,7 +52,7 @@ public class CommonSelenium {
         }
 
         public int returnLoadTime() {
-            return new Long(endTime - startTime).intValue();
+            return Long.valueOf(endTime - startTime).intValue();
         }
     }
 
