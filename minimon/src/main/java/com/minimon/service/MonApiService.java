@@ -122,6 +122,7 @@ public class MonApiService {
         long st = System.currentTimeMillis();
         String response = commonRestTemplate.callApi(method, url, data);
         return MonitoringResultVO.builder()
+                .url(url)
                 .status(HttpStatus.OK)
                 .totalLoadTime(Long.valueOf(System.currentTimeMillis() - st).intValue())
                 .response(response)

@@ -65,7 +65,6 @@ public class MonApiController {
     @ApiOperation(value = "API 검사 테스트 실행", response = MonitoringResultVO.class)
     @PostMapping(path = "/check")
     public CommonResponse check(@RequestBody MonApiCheckVO monApiCheckVO) {
-        System.out.println(monApiCheckVO.getMethod());
         return new CommonResponse(monApiService.execute(monApiCheckVO.getUrl(), monApiCheckVO.getMethod(), monApiCheckVO.getData()));
     }
 
