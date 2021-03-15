@@ -4,9 +4,11 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @ApiModel(value = "API 검사 VO")
+@NoArgsConstructor
 public class MonApiCheckVO {
 
     @ApiModelProperty(value = "검사 Http method")
