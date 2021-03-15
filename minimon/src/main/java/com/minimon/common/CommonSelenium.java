@@ -170,9 +170,9 @@ public class CommonSelenium {
                 Optional<HttpStatus> isExistStatus = Optional.ofNullable(getResultStatus(resourceResponse, currentURL));
                 if (isExistStatus.isPresent()) {
                     resultStatus = isExistStatus.get();
+                } else {
+                    monUrlResourceVOList.add(getResourceData(resourceResponse, resourceCnt));
                 }
-
-                monUrlResourceVOList.add(getResourceData(resourceResponse, resourceCnt));
             }
         }
 
@@ -206,8 +206,6 @@ public class CommonSelenium {
     }
 
     public MonUrlResourceVO getResourceData(JSONObject resourceResponse, int sortOrder) {
-        Map<String, Object> detailMap = new HashMap<>();
-
         JSONObject headersObj = resourceResponse.getJSONObject("headers");
         Map<String, Object> headers = new CaseInsensitiveMap<>();
         headers.putAll(headersObj.toMap());
@@ -240,15 +238,6 @@ public class CommonSelenium {
         }
         */
 
-        detailMap.put("url", resourceUrl);
-        detailMap.put("type", type);
-        detailMap.put("status", status);
-        detailMap.put("payLoad", payLoad);
-        detailMap.put("sortOrder", sortOrder);
-        detailMap.put("requestTime", resourceRequestTime);
-        detailMap.put("endTime", resourceEndTime);
-        detailMap.put("loadTime", resourceLoadTime);
-
         MonUrlResourceVO monUrlResourceVO = MonUrlResourceVO.builder()
                 .url(resourceUrl)
                 .type(type)
@@ -259,9 +248,6 @@ public class CommonSelenium {
                 .endTime(resourceEndTime)
                 .loadTime(resourceLoadTime)
                 .build();
-
-//        System.out.println(monUrlResourceVO.toString());
-//        System.out.println(detailMap.toString());
         return monUrlResourceVO;
     }
 
@@ -271,14 +257,14 @@ public class CommonSelenium {
         String response;
         CodeActionEnum codeAction = monCodeData.getCodeAction();
         CodeSelectorTypeEnum codeSelectorType = monCodeData.getCodeSelectorType();
-        String selector_value = monCodeData.getSelector_value();
-        String value = monCodeData.getValue();
+        String codeSelectorValue = monCodeData.getCodeSelectorValue();
+        String codeValue = monCodeData.getCodeValue();
         WebElement element;
         try {
 
             switch (codeAction) {
                 case GET:
-                    driver.get(value);
+                    driver.get(codeValue);
                     break;
                 case SIZE:
                     driver.manage().window().maximize();
@@ -287,21 +273,21 @@ public class CommonSelenium {
                     vars.put("window_handles", driver.getWindowHandles());
                     break;
                 case WAIT:
-                    vars.put(selector_value, waitForWindow(driver, waitForWindowTimeout));
+                    vars.put(codeSelectorValue, waitForWindow(driver, waitForWindowTimeout));
                     break;
                 case SWITCH:
-                    if (selector_value != null) driver.switchTo().frame(selector_value).toString();
+                    if (codeSelectorValue != null) driver.switchTo().frame(codeSelectorValue).toString();
                     else driver.switchTo().defaultContent();
                     break;
                 case CLICK:
-                    element = getSelector(driver, codeSelectorType, selector_value);
+                    element = getSelector(driver, codeSelectorType, codeSelectorValue);
                     element.click();
                     break;
                 case SEND:
-                    element = getSelector(driver, codeSelectorType, selector_value);
-                    Object codeSendKeyType = CodeSendKeyTypeEnum.codeOf(value);
+                    element = getSelector(driver, codeSelectorType, codeSelectorValue);
+                    Object codeSendKeyType = CodeSendKeyTypeEnum.codeOf(codeValue);
                     if (codeSendKeyType == null) {
-                        element.sendKeys(value);
+                        element.sendKeys(codeValue);
                     } else if (CodeSendKeyTypeEnum.ENTER.equals(codeSendKeyType)) {
                         element.sendKeys(Keys.ENTER);
                     } else if (CodeSendKeyTypeEnum.SPACE.equals(codeSendKeyType)) {
@@ -315,7 +301,7 @@ public class CommonSelenium {
                     }
                     break;
                 case SUBMIT:
-                    element = getSelector(driver, codeSelectorType, selector_value);
+                    element = getSelector(driver, codeSelectorType, codeSelectorValue);
                     element.submit();
                     break;
             }

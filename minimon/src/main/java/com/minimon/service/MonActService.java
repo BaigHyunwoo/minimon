@@ -190,14 +190,14 @@ public class MonActService {
         CodeActionEnum codeAction = getCodeAction(line);
         if (codeAction != null) {
             CodeSelectorTypeEnum codeSelectorType = getCodeSelectorType(line);
-            String selector_value = getCodeSelectorValue(line, codeAction);
-            String value = getCodeValue(line, codeAction);
+            String codeSelectorValue = getCodeSelectorValue(line, codeAction);
+            String codeValue = getCodeValue(line, codeAction);
 
             monCodeData = new MonCodeData();
             monCodeData.setCodeAction(codeAction);
             monCodeData.setCodeSelectorType(codeSelectorType);
-            monCodeData.setSelector_value(selector_value);
-            monCodeData.setValue(value);
+            monCodeData.setCodeSelectorValue(codeSelectorValue);
+            monCodeData.setCodeValue(codeValue);
         }
 
         return monCodeData;

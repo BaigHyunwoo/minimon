@@ -32,9 +32,9 @@ public class MonCodeData {
     private CodeSelectorTypeEnum codeSelectorType;
 
     @ApiModelProperty(name = "코드 선택자 값")
-    private String selector_value;
+    private String codeSelectorValue;
 
     @ApiModelProperty(name = "코드 입력 값")
-    private String value;
+    private String codeValue;
 
 }
