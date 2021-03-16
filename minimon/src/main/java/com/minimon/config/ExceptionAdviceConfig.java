@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,6 +23,14 @@ public class ExceptionAdviceConfig {
         e.printStackTrace();
         log.error(e.getMessage());
         return CommonResponse.fail(CommonMessage.getMessage("unKnown.code"), CommonMessage.getMessage("unKnown.msg"));
+    }
+
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    protected CommonResponse missingServletRequestPartException(HttpServletRequest request, Exception e) {
+        e.printStackTrace();
+        log.error(e.getMessage());
+        return CommonResponse.fail(CommonMessage.getMessage("badRequest.code"), CommonMessage.getMessage("badRequest.msg"));
     }
 }
 

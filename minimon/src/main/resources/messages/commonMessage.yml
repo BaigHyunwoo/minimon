@@ -2,10 +2,13 @@ unKnown:
   code: "500"
   msg: "알 수 없는 에러가 발생하였습니다."
 
+badRequest:
+  code: "400"
+  msg: "입력한 데이터를 확인해주세요."
+
 preparingFunction:
   code: "-2"
   msg: "아직 준비중인 기능입니다."
-
 
 notExist:
   code: "-1"
