@@ -3,12 +3,13 @@ package com.minimon.entity;
 import com.minimon.enums.UseStatusEnum;
 import com.sun.istack.NotNull;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.http.HttpStatus;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
@@ -50,7 +51,7 @@ public class MonAct extends CommonEntity {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "mon_act_seq")
     @ApiModelProperty(name = "검사 코드")
-    private List<MonCodeData> codeDataList = new ArrayList<>();
+    private List<MonCodeData> codeDataList;
 
     @NotNull
     @ApiModelProperty(name = "응답 코드")
@@ -60,4 +61,15 @@ public class MonAct extends CommonEntity {
     @ApiModelProperty(name = "걸린 시간")
     private int loadTime;
 
+    @Builder
+    public MonAct(String title, int timeout, int errorLoadTime, List<MonCodeData> codeDataList, int loadTime) {
+        this.title = title;
+        this.timeout = timeout;
+        this.errorLoadTime = errorLoadTime;
+        this.loadTime = loadTime;
+        this.codeDataList = codeDataList;
+        this.monitoringUseYn = UseStatusEnum.Y;
+        this.loadTimeCheckYn = UseStatusEnum.Y;
+        this.status = HttpStatus.OK.value();
+    }
 }
