@@ -58,6 +58,7 @@ public class MonUrlControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.meta.code", is(ResponseEnum.SUCCESS.getCode())))
                 .andDo(print());
     }
 }
