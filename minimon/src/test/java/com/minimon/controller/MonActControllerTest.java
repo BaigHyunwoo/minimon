@@ -1,20 +1,23 @@
 package com.minimon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.minimon.entity.MonUrl;
 import com.minimon.enums.ResponseEnum;
-import com.minimon.vo.MonUrlCheckVO;
+import org.apache.http.entity.ContentType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -29,4 +32,19 @@ public class MonActControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Test
+    public void check() throws Exception {
+        Path path = Paths.get("src/main/resources/testFiles/DicFindTest.java");
+        String name = "transactionFile";
+        String originalFileName = "DifFindTest.java";
+        String contentType = ContentType.TEXT_PLAIN.getMimeType();
+        byte[] content = Files.readAllBytes(path);
+
+        mockMvc.perform(multipart("/monAct/check")
+                .file(new MockMultipartFile(name, originalFileName, contentType, content)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.meta.code", is(ResponseEnum.SUCCESS.getCode())))
+                .andDo(print());
+    }
 }

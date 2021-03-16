@@ -68,7 +68,7 @@ public class MonActController {
 
     @ApiOperation(value = "검사 테스트", produces = "multipart/form-data", response = MonitoringResultVO.class)
     @PostMapping(value = "/check")
-    public CommonResponse check(MultipartFile transactionFile) {
+    public CommonResponse check(@RequestParam MultipartFile transactionFile) {
         MonitoringResultVO monitoringResultVO = monActService.executeCodeList(transactionFile);
         if (monitoringResultVO == null) {
             return CommonResponse.notExistResponse();
