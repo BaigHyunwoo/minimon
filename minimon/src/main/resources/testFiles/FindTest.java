@@ -22,8 +22,8 @@ import org.openqa.selenium.Keys;
 import java.util.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-public class NewsTest {
-  static WebDriver driver;
+public class FindTestTest {
+  private WebDriver driver;
   private Map<String, Object> vars;
   JavascriptExecutor js;
   @Before
@@ -37,14 +37,12 @@ public class NewsTest {
     driver.quit();
   }
   @Test
-  public void news() {
+  public void findTest() {
     driver.get("https://www.naver.com/");
-    driver.manage().window().setSize(new Dimension(1549, 1040));
-    {
-      WebElement element = driver.findElement(By.linkText("뉴스"));
-      Actions builder = new Actions(driver);
-      builder.moveToElement(element).perform();
-    }
-    driver.findElement(By.linkText("뉴스")).click();
+    driver.manage().window().setSize(new Dimension(1543, 1040));
+    driver.findElement(By.id("query")).click();
+    driver.findElement(By.id("query")).sendKeys("name");
+    driver.findElement(By.id("query")).sendKeys(Keys.ENTER);
+    driver.close();
   }
 }
