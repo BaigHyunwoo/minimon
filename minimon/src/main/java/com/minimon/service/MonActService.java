@@ -91,7 +91,9 @@ public class MonActService {
     }
 
     public MonitoringResultVO executeCodeList(MultipartFile monActFile) {
-        return executeCodeList(getTestSource(monActFile));
+        Optional<List> isExistSource = Optional.ofNullable(getTestSource(monActFile));
+        if (isExistSource.isPresent()) return executeCodeList(isExistSource.get());
+        return null;
     }
 
     private MonitoringResultVO executeCodeList(List<MonCodeData> codeDataList) {
@@ -164,8 +166,10 @@ public class MonActService {
     }
 
     private List<MonCodeData> getTestSource(MultipartFile monActFile) {
-        List<MonCodeData> codeDataList = new ArrayList<>();
+        List<MonCodeData> codeDataList = null;
         try (BufferedReader br = new BufferedReader(new InputStreamReader(monActFile.getInputStream()))) {
+            codeDataList = new ArrayList<>();
+
             String line;
             boolean check = false;
             while ((line = br.readLine()) != null) {
