@@ -165,7 +165,7 @@ public class MonActService {
                 .build();
     }
 
-    private List<MonCodeData> getTestSource(MultipartFile monActFile) {
+    public List<MonCodeData> getTestSource(MultipartFile monActFile) {
         List<MonCodeData> codeDataList = null;
         try (BufferedReader br = new BufferedReader(new InputStreamReader(monActFile.getInputStream()))) {
             codeDataList = new ArrayList<>();
