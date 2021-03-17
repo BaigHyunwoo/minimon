@@ -2,15 +2,19 @@ package com.minimon.service;
 
 import com.minimon.common.CommonProperties;
 import com.minimon.common.CommonRestTemplate;
+import com.minimon.common.CommonSearchSpec;
 import com.minimon.entity.MonResult;
+import com.minimon.entity.MonUrl;
 import com.minimon.repository.MonResultRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.io.FileInputStream;
+import java.util.Optional;
 import java.util.Properties;
 
 @Slf4j
@@ -21,6 +25,13 @@ public class ResultService {
     private final MonResultRepository monResultRepository;
     private final CommonProperties commonProperties;
 
+    public Page getList(CommonSearchSpec commonSearchSpec) {
+        return monResultRepository.findAll(commonSearchSpec.searchSpecs(), commonSearchSpec.pageRequest());
+    }
+
+    public Optional<MonResult> get(int seq) {
+        return monResultRepository.findById(seq);
+    }
 
     @Transactional
     public MonResult save(MonResult monResult) {
@@ -29,7 +40,6 @@ public class ResultService {
     }
 
     public void sendResultByProperties(MonResult monResult) {
-
         try {
 
             Properties properties = new Properties();
@@ -39,8 +49,6 @@ public class ResultService {
             String text = getResultText(monResult);
 
             commonRestTemplate.callApi(HttpMethod.GET, location, text);
-
-            log.info("SEND API : " + location + "  Body : " + text);
         } catch (Exception e) {
             log.info("SEND RESULT ERROR");
         }
