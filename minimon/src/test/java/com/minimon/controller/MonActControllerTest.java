@@ -2,6 +2,7 @@ package com.minimon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.minimon.entity.MonAct;
+import com.minimon.entity.MonUrl;
 import com.minimon.enums.ResponseEnum;
 import com.minimon.service.MonActService;
 import org.apache.http.entity.ContentType;
@@ -21,8 +22,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.hamcrest.Matchers.not;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -50,18 +52,44 @@ public class MonActControllerTest {
         return new MockMultipartFile(name, originalFileName, contentType, content);
     }
 
-    @Test
-    public void create() throws Exception {
-        String content = objectMapper.writeValueAsString(MonAct.builder()
+    private MonAct getDefaultMonAct() throws IOException {
+        return MonAct.builder()
                 .title("네이버 검색")
                 .errorLoadTime(8000)
                 .timeout(10)
                 .loadTime(7000)
                 .codeDataList(monActService.getTestSource(getTestFile()))
-                .build());
+                .build();
+    }
 
+    @Test
+    public void getAct() throws Exception {
+        MonAct monAct = monActService.save(getDefaultMonAct());
+
+        mockMvc.perform(get("/monAct/"+monAct.getSeq())
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.meta.code", is(ResponseEnum.SUCCESS.getCode())))
+                .andExpect(jsonPath("$.data.seq", is(monAct.getSeq())))
+                .andDo(print());
+    }
+
+    @Test
+    public void getActList() throws Exception {
+        monActService.save(getDefaultMonAct());
+
+        mockMvc.perform(get("/monAct")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.meta.code", is(ResponseEnum.SUCCESS.getCode())))
+                .andExpect(jsonPath("$.data.totalElements", not(0)))
+                .andDo(print());
+    }
+
+    @Test
+    public void create() throws Exception {
         mockMvc.perform(post("/monAct")
-                .content(content)
+                .content(objectMapper.writeValueAsString(getDefaultMonAct()))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
