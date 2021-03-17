@@ -83,10 +83,8 @@ public class MonUrlControllerTest {
 
     @Test
     public void check() throws Exception {
-        String content = objectMapper.writeValueAsString(MonUrlCheckVO.builder().url("https://www.naver.com").timeout(5).build());
-
         mockMvc.perform(post("/monUrl/check")
-                .content(content)
+                .content(objectMapper.writeValueAsString(MonUrlCheckVO.builder().url("https://www.naver.com").timeout(5).build()))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

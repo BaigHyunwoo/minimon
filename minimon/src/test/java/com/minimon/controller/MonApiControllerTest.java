@@ -75,10 +75,8 @@ public class MonApiControllerTest {
 
     @Test
     public void create() throws Exception {
-        String content = objectMapper.writeValueAsString(getDefaultMonApi());
-
         mockMvc.perform(post("/monApi")
-                .content(content)
+                .content(objectMapper.writeValueAsString(getDefaultMonApi()))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -88,10 +86,8 @@ public class MonApiControllerTest {
 
     @Test
     public void check() throws Exception {
-        String content = objectMapper.writeValueAsString(MonApiCheckVO.builder().method(HttpMethod.GET.toString()).url("https://www.naver.com").build());
-
         mockMvc.perform(post("/monApi/check")
-                .content(content)
+                .content(objectMapper.writeValueAsString(MonApiCheckVO.builder().method(HttpMethod.GET.toString()).url("https://www.naver.com").build()))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
