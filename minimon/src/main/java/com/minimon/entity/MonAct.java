@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.http.HttpStatus;
 
@@ -16,6 +17,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "MON_ACT")
+@NoArgsConstructor
 public class MonAct extends CommonEntity {
 
     @Id
