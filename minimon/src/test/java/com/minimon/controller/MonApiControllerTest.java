@@ -1,12 +1,10 @@
 package com.minimon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.minimon.common.CommonResponseMeta;
 import com.minimon.entity.MonApi;
-import com.minimon.entity.MonUrl;
 import com.minimon.enums.ResponseEnum;
+import com.minimon.service.MonApiService;
 import com.minimon.vo.MonApiCheckVO;
-import com.minimon.vo.MonUrlCheckVO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +16,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -34,17 +34,48 @@ public class MonApiControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Test
-    public void create() throws Exception {
-        String content = objectMapper.writeValueAsString(MonApi
-                .builder()
+    @Autowired
+    private MonApiService monApiService;
+
+
+    private MonApi getDefaultMonApi() {
+        return MonApi.builder()
                 .title("API 모니터링 목록 조회")
                 .method(HttpMethod.GET)
                 .url("http://localhost:8080/monApi")
                 .timeout(5)
                 .loadTime(2000)
                 .errorLoadTime(3000)
-                .build());
+                .build();
+    }
+
+    @Test
+    public void getApi() throws Exception {
+        MonApi monApi = monApiService.save(getDefaultMonApi());
+
+        mockMvc.perform(get("/monApi/" + monApi.getSeq())
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.meta.code", is(ResponseEnum.SUCCESS.getCode())))
+                .andExpect(jsonPath("$.data.url", is(monApi.getUrl())))
+                .andDo(print());
+    }
+
+    @Test
+    public void getApiList() throws Exception {
+        monApiService.save(getDefaultMonApi());
+
+        mockMvc.perform(get("/monApi")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.meta.code", is(ResponseEnum.SUCCESS.getCode())))
+                .andExpect(jsonPath("$.data.totalElements", not(0)))
+                .andDo(print());
+    }
+
+    @Test
+    public void create() throws Exception {
+        String content = objectMapper.writeValueAsString(getDefaultMonApi());
 
         mockMvc.perform(post("/monApi")
                 .content(content)
