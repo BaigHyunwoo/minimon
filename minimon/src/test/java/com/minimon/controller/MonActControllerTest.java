@@ -94,6 +94,7 @@ public class MonActControllerTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.meta.code", is(ResponseEnum.SUCCESS.getCode())))
+                .andExpect(jsonPath("$.data.codeDataList", not(null)))
                 .andDo(print());
     }
 

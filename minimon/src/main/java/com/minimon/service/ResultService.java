@@ -46,9 +46,8 @@ public class ResultService {
             FileInputStream fis = new FileInputStream(commonProperties.getLocation());
             properties.load(new java.io.BufferedInputStream(fis));
             String location = properties.getProperty("location");
-            String text = getResultText(monResult);
 
-            commonRestTemplate.callApi(HttpMethod.GET, location, text);
+            commonRestTemplate.callApi(HttpMethod.POST, location, monResult);
         } catch (Exception e) {
             log.info("SEND RESULT ERROR");
         }
