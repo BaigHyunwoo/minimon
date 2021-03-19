@@ -22,8 +22,8 @@ location: 응답 API 경로
   
 ex)  
 application.yml  
-common:
-  driverPath: C:\\Users\\user\\Downloads\\chromedriver
+common:  
+  driverPath: C:\\Users\\user\\Downloads\\chromedriver  
   location: C:\\Users\\user\\Downloads\\chromedriver\\location.properties
   
   
