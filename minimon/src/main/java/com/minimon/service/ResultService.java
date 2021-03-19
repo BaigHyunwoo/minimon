@@ -4,7 +4,6 @@ import com.minimon.common.CommonProperties;
 import com.minimon.common.CommonRestTemplate;
 import com.minimon.common.CommonSearchSpec;
 import com.minimon.entity.MonResult;
-import com.minimon.entity.MonUrl;
 import com.minimon.repository.MonResultRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +38,9 @@ public class ResultService {
         return monResult;
     }
 
-    public void sendResultByProperties(MonResult monResult) {
+    public String sendResultByProperties(MonResult monResult) {
+        String response = null;
+
         try {
 
             Properties properties = new Properties();
@@ -47,15 +48,11 @@ public class ResultService {
             properties.load(new java.io.BufferedInputStream(fis));
             String location = properties.getProperty("location");
 
-            commonRestTemplate.callApi(HttpMethod.POST, location, monResult);
+            response = commonRestTemplate.callApi(HttpMethod.POST, location, monResult);
         } catch (Exception e) {
             log.info("SEND RESULT ERROR");
         }
-    }
 
-    private String getResultText(MonResult monResult) {
-        return "\n" + monResult.getRegDate() + " " +
-                "\n" + monResult.getMonitoringType().getValue() + " : " + monResult.getTitle() + " " +
-                "\nRESULT : " + monResult.getResultCode().getValue() + " ";
+        return response;
     }
 }
