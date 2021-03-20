@@ -25,6 +25,14 @@ public class ResultController {
     private final ResultService resultService;
 
 
+    @ApiOperation(value = "Result 수신", response = void.class)
+    @PostMapping(path = "/receive")
+    public CommonResponse receive(@RequestBody MonResult monResult) {
+        log.info(monResult.toString());
+        return new CommonResponse();
+    }
+
+
     @ApiOperation(value = "Result 목록 조회", response = MonResult.class)
     @GetMapping(path = "")
     public CommonResponse getList(@ModelAttribute CommonSearchSpec commonSearchSpec) {
