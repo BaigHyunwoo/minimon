@@ -2,8 +2,7 @@
 사이트 접근, Http 요청, 사이트 접속 후 어떠한 행위들이 정상적으로 동작하는지 검사하는 모니터링 시스템입니다.
 
   
-## 사용 환경  
-호환 OS : Windows  
+## 사용 환경   
 호환 브라우저 : ChromeBrowser  
 필수 설치 :   
   [Selenium plugin](https://chrome.google.com/webstore/detail/selenium-ide/mooikfkahbdckldjjndioackbalphokd?hl=en)  
@@ -24,6 +23,6 @@ ex)
 application.yml  
 common:  
   driverPath: C:\\Users\\user\\Downloads\\chromedriver  
-  location: C:\\Users\\user\\Downloads\\chromedriver\\location.properties
+  location: http://localhost:8080/result/receive
   
   
