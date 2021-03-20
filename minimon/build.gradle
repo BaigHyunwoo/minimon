@@ -7,7 +7,6 @@ plugins {
 group = 'com'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
-
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
@@ -17,6 +16,11 @@ configurations {
 repositories {
 	mavenCentral()
 }
+
+test {
+	useJUnitPlatform()
+}
+
 
 dependencies {
 	compile 'org.springframework.boot:spring-boot-starter-data-jpa'
