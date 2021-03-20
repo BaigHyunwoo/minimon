@@ -12,9 +12,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.io.FileInputStream;
 import java.util.Optional;
-import java.util.Properties;
 
 @Slf4j
 @Service
@@ -42,14 +40,9 @@ public class ResultService {
         String response = null;
 
         try {
-
-            Properties properties = new Properties();
-            FileInputStream fis = new FileInputStream(commonProperties.getLocation());
-            properties.load(new java.io.BufferedInputStream(fis));
-            String location = properties.getProperty("location");
-
-            response = commonRestTemplate.callApi(HttpMethod.POST, location, monResult);
+            response = commonRestTemplate.callApi(HttpMethod.POST, commonProperties.getLocation(), monResult);
         } catch (Exception e) {
+            e.printStackTrace();
             log.info("SEND RESULT ERROR");
         }
 
