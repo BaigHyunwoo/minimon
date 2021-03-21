@@ -2,11 +2,10 @@ package com.minimon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.minimon.entity.MonAct;
-import com.minimon.entity.MonUrl;
 import com.minimon.enums.ResponseEnum;
 import com.minimon.service.MonActService;
 import org.apache.http.entity.ContentType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -24,7 +23,6 @@ import java.nio.file.Paths;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -66,7 +64,7 @@ public class MonActControllerTest {
     public void getAct() throws Exception {
         MonAct monAct = monActService.save(getDefaultMonAct());
 
-        mockMvc.perform(get("/monAct/"+monAct.getSeq())
+        mockMvc.perform(get("/monAct/" + monAct.getSeq())
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.meta.code", is(ResponseEnum.SUCCESS.getCode())))
