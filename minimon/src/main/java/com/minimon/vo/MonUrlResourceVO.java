@@ -12,13 +12,7 @@ import lombok.ToString;
 public class MonUrlResourceVO {
 
     @ApiModelProperty(value = "걸린 시간")
-    private long loadTime;
-
-    @ApiModelProperty(value = "요청 시간")
-    private long requestTime;
-
-    @ApiModelProperty(value = "완료 시간")
-    private long endTime;
+    private double loadTime;
 
     @ApiModelProperty(value = "용량")
     private double payLoad;
@@ -36,14 +30,12 @@ public class MonUrlResourceVO {
     private int sortOrder;
 
     @Builder
-    public MonUrlResourceVO(String url, String type, int status, double payLoad, int sortOrder, long loadTime, long requestTime, long endTime) {
+    public MonUrlResourceVO(String url, String type, int status, double payLoad, int sortOrder, double loadTime) {
         this.url = url;
         this.type = type;
         this.status = status;
         this.payLoad = payLoad;
         this.sortOrder = sortOrder;
         this.loadTime = loadTime;
-        this.requestTime = requestTime;
-        this.endTime = endTime;
     }
 }
