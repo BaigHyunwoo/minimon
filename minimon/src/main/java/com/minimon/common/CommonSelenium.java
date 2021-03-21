@@ -214,41 +214,26 @@ public class CommonSelenium {
         String type = headers.containsKey("content-type") ? headers.get("content-type").toString() : "";
         int status = resourceResponse.getInt("status");
         String resourceUrl = resourceResponse.getString("url");
-        long resourceLoadTime = 0;
-        long resourceRequestTime = 0;
-        long resourceEndTime = 0;
+        double resourceLoadTime = 0;
 
-        /* TODO 리소스 타임 검사
         if (!resourceResponse.isNull("timing")) {
             JSONObject timing = resourceResponse.getJSONObject("timing");
-            Double requestTime = timing.getDouble("requestTime");
-
-            Double endTime = 0.0;
             for (Iterator<String> itt = timing.keys(); itt.hasNext(); ) {
                 String key = itt.next();
-                if (timing.getDouble(key) > 0) {
-                    endTime += timing.getDouble(key);
+                if (key.equals("requestTime") == false && timing.getDouble(key) > 0) {
+                    resourceLoadTime += timing.getDouble(key);
                 }
             }
-            Double loadTime = Math.ceil(endTime - requestTime);
-
-            resourceLoadTime = loadTime.longValue();
-            resourceRequestTime = CommonUtil.convertUTCtoGMT(requestTime);
-            resourceEndTime =  CommonUtil.convertUTCtoGMT(requestTime) + endTime.longValue();
         }
-        */
 
-        MonUrlResourceVO monUrlResourceVO = MonUrlResourceVO.builder()
+        return MonUrlResourceVO.builder()
                 .url(resourceUrl)
                 .type(type)
                 .status(status)
                 .payLoad(payLoad)
                 .sortOrder(sortOrder)
-                .requestTime(resourceRequestTime)
-                .endTime(resourceEndTime)
                 .loadTime(resourceLoadTime)
                 .build();
-        return monUrlResourceVO;
     }
 
 

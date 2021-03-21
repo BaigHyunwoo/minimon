@@ -74,4 +74,5 @@ dependencies {
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
 	testImplementation group: 'junit', name: 'junit', version: '4.13.2'
+    implementation 'org.testng:testng:6.9.6'
 }
