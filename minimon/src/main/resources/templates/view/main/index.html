@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Monitoring System</title>
@@ -10,6 +10,8 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/index.css">
 </head>
 
 <body>
@@ -19,6 +21,117 @@
             <div class="float-r" style="margin-right: 2%;">
                 <span id='defaultText'> Monitoring System</span>
             </div>
+        </div>
+    </div>
+
+    <div class='div-card'>
+        <p class='keyTitle'>
+            <span class='mon-type-Text'>URL</span>
+            <input id='createUrlBtn' class='btn btn-success default-btn float-r' type="button" value="등록"/>
+        </p>
+
+
+        <div class='mon-table'>
+            <table class="table table-striped table-hover dataTable no-footer table-custom" role="grid"
+                   aria-describedby="">
+                <thead>
+                <tr style="height:32px;">
+                    <th class="text-align-center" style="width:33px">Seq</th>
+                    <th class="text-align-center" style="width:100px">Title</th>
+                    <th class="text-align-center" style="width:100px">URL</th>
+                    <th class="text-align-center" style="width:70px">Execute</th>
+                    <th class="text-align-center" style="width:70px">Edit</th>
+                </tr>
+                </thead>
+                <tbody class="monList">
+                <tr th:each="result: ${urlList}">
+                    <td th:text="${result.seq}"></td>
+                    <td th:text="${result.title}"></td>
+                    <td th:if="${#strings.length(result.url) > 20}" th:text="${#strings.substring(result.url, 0, 20)} + '...'"></td>
+                    <td th:if="${#strings.length(result.url) <= 20}" th:text="${result.url}"></td>
+                    <td>
+                        <input th:attr="cd=${result.seq}" class='btn btn-success urlExecuteBtn default-btn' type="button" value="실행"/>
+                    </td>
+                    <td>
+                        <input th:attr="cd=${result.seq}" class='btn btn-success urlEditBtn default-btn' type="button" value="수정"/>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class='div-card'>
+        <p class='keyTitle'>
+            <span class='mon-type-Text'>API</span>
+            <input id='createApiBtn' class='btn btn-success default-btn float-r' type="button" value="등록"/>
+        </p>
+
+        <div class='mon-table'>
+            <table class="table table-striped table-hover dataTable no-footer table-custom" role="grid"
+                   aria-describedby="">
+                <thead>
+                <tr style="height:32px;">
+                    <th class="text-align-center" style="width:33px">Seq</th>
+                    <th class="text-align-center" style="width:100px">Title</th>
+                    <th class="text-align-center" style="width:100px">URL</th>
+                    <th class="text-align-center" style="width:70px">Execute</th>
+                    <th class="text-align-center" style="width:70px">Edit</th>
+                </tr>
+                </thead>
+                <tbody class="monList">
+                <tr th:each="result: ${apiList}">
+                    <td th:text="${result.seq}"></td>
+                    <td th:text="${result.title}"></td>
+                    <td th:if="${#strings.length(result.url) > 20}"
+                        th:text="${#strings.substring(result.url, 0, 20)} + '...'"></td>
+                    <td th:if="${#strings.length(result.url) <= 20}" th:text="${result.url}"></td>
+                    <td>
+                        <input th:attr="cd=${result.seq}" class='btn btn-success apiExecuteBtn default-btn' type="button"
+                               value="실행"/>
+                    </td>
+                    <td>
+                        <input th:attr="cd=${result.seq}" class='btn btn-success apiEditBtn default-btn' type="button"
+                               value="수정"/>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class='div-card'>
+        <p class='keyTitle'>
+            <span class='mon-type-Text'>ACT</span>
+            <input id='createActBtn' class='btn btn-success default-btn float-r' type="button" value="등록"/>
+        </p>
+
+        <div class='mon-table'>
+            <table class="table table-striped table-hover dataTable no-footer table-custom" role="grid"
+                   aria-describedby="">
+                <thead>
+                <tr style="height:32px;">
+                    <th class="text-align-center" style="width:33px">Seq</th>
+                    <th class="text-align-center" style="width:100px">Title</th>
+                    <th class="text-align-center" style="width:70px">Execute</th>
+                    <th class="text-align-center" style="width:70px">Edit</th>
+                </tr>
+                </thead>
+                <tbody class="monList">
+                <tr th:each="result: ${actList}">
+                    <td th:text="${result.seq}"></td>
+                    <td th:text="${result.title}"></td>
+                    <td>
+                        <input th:attr="cd=${result.seq}" class='btn btn-success actExecuteBtn default-btn'
+                               type="button" value="실행"/>
+                    </td>
+                    <td>
+                        <input th:attr="cd=${result.seq}" class='btn btn-success actEditBtn default-btn'
+                               type="button" value="수정"/>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
