@@ -12,6 +12,8 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/css/index.css">
+    <!-- Custom JS -->
+    <script src="/js/index.js"></script>
 </head>
 
 <body>
@@ -137,7 +139,99 @@
 </div>
 </body>
 
+<!-- URL 등록 모달 -->
+<div class="modal fade" id="saveUrlModal" aria-hidden="true">
+    <div class="modal-dialog resource-kanban-box" role="document" style="width:96%; max-width:500px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">URL</h5>
+                <button type="button" class="close btn btn-default" data-dismiss="modal"
+                        aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="/url" id="saveUrlForm" name="saveUrlForm">
+                    <div class="card" style="width: 100%;">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <input type="hidden" name="seq" value="">
+                                <label>사용 여부</label>
+                                <br>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="monitoringUseYn" id="monitoringUseYn_on" value="Y" checked>
+                                    <label class="form-check-label" for="monitoringUseYn_on">
+                                        사용
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="monitoringUseYn" id="monitoringUseYn_off" value="N">
+                                    <label class="form-check-label" for="monitoringUseYn_off">
+                                        미사용
+                                    </label>
+                                </div>
+                                <br>
+                                <label>Title</label>
+                                <input name="title" type="text" class='form-control' autocomplete="off"/>
+
+                                <label>URL</label>
+                                <input name="url" type="text" class='form-control' autocomplete="off"/>
+                                <div class="row">
+                                    <div class="col">
+                                        <label>Timeout</label>
+                                        <input name="timeout" type="number" class='form-control' value="30"/>
+                                    </div>
+                                </div>
+
+                                <input id='urlCheck' class='btn btn-success' type="button" value="검사"/>
+                            </li>
+
+                            <li class="list-group-item">
+                                <label>로딩 시간 검사</label>
+                                <br>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="url_loadTimeCheckYn" id="url_loadTimeCheckYn_on" value="Y" checked>
+                                    <label class="form-check-label" for="url_loadTimeCheckYn_on">
+                                        사용
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="url_loadTimeCheckYn" id="url_loadTimeCheckYn_off" value="N">
+                                    <label class="form-check-label" for="url_loadTimeCheckYn_off">
+                                        미사용
+                                    </label>
+                                </div>
+                                <br>
+                                <label>LoadTime</label>
+                                <div class="input-group">
+                                    <input name="loadTime" type="text" class='form-control' readOnly autocomplete="off" value="0"/>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">Ms</span>
+                                        <input type="number" name="errLoadTime" value="3000" class="form-control" style="width: 100px;">
+                                        <span class="input-group-text">Ms</span>
+                                    </div>
+                                </div>
+
+                                <label>Status</label>
+                                <input name="status" type="text" class='form-control' value="200"/>
+                                <div class="mgt15 text-right resource-btz">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+                                    <button type="button" id="deleteUrl" class="btn btn btn-success">삭제</button>
+                                    <button type="button" id="saveUrl" class="btn btn btn-success">저장</button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
+    $(document).ready(function () {
+        monInit();
+    });
 </script>
 </html>
 
