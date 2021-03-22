@@ -24,6 +24,11 @@ public class MonitoringResultVO {
     @ApiModelProperty(value = "응답")
     private Object response;
 
+    @ApiModelProperty(value = "결과 코드 Value")
+    public int getStatusCode() {
+        return status.value();
+    }
+
     @Builder
     public MonitoringResultVO(String url, int totalLoadTime, HttpStatus status, Object response) {
         this.url = url;
