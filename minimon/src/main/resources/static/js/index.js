@@ -15,13 +15,20 @@ function monInit() {
         if (url == '') {
             alert('URL을 입력해주세요');
         } else {
-            let body = {url: url, timeout: $("#saveUrlForm [name='timeout']").val()};
+            let body = {
+                url: url,
+                timeout: $("#saveUrlForm [name='timeout']").val()
+            };
+
             $.ajax({
                 type: 'POST',
                 url: '/monUrl/check',
                 data: JSON.stringify(body),
                 contentType: "application/json",
                 dataType: 'json',
+                error: function(e){
+                    alert(e.responseJSON.meta.message);
+                },
                 success: function (result) {
                     if (result.meta.code == 200) {
                         $("#saveUrlForm [name='loadTime']").val(result.data.totalLoadTime);
@@ -29,30 +36,26 @@ function monInit() {
                         $("#urlCheck").attr('cd', url);
                         alert('검사 완료');
                     }
-                },
-                error: function(e){
-                    console.log(e);
-                    alert(e.message);
                 }
             });
         }
     });
 
     $('body').on('click', '#deleteUrl', function () {
+        if(!confirm("정말 삭제 하시겠습니까?")) {
+            return false;
+        }
         $.ajax({
             type: 'DELETE',
-            url: '/url/' + $("#saveUrlForm [name='seq']").val(),
+            url: '/monUrl/' + $("#saveUrlForm [name='seq']").val(),
             dataType: 'json',
-            success: function (data) {
-                let errorCode = data.errorCode;
-                if (typeof errorCode != "undefined") {
-                    $('#errorCode').val(errorCode);
-                    $('#errorCreate').submit();
-                } else {
-                    if (data.result == "success") {
-                        alert('삭제 완료');
-                        window.location.reload();
-                    }
+            error: function(e){
+                alert(e.responseJSON.meta.message);
+            },
+            success: function (result) {
+                if (result.meta.code == 200) {
+                    alert('삭제 완료');
+                    window.location.reload();
                 }
             }
         });
@@ -66,108 +69,52 @@ function monInit() {
         }
 
         let method = 'POST';
-        let url = '/url';
         if ($("#saveUrlForm [name='seq']").val() != '') {
             method = 'PUT';
-            url = '/url/' + $("#saveUrlForm [name='seq']").val();
+        }
+
+        let body = {
+            seq: $("#saveUrlForm [name='seq']").val(),
+            url: $("#saveUrlForm [name='url']").val(),
+            title: $("#saveUrlForm [name='title']").val(),
+            timeout: $("#saveUrlForm [name='timeout']").val(),
+            errorLoadTime: $("#saveUrlForm [name='errorLoadTime']").val(),
+            monitoringUseYn: $("#saveUrlForm [name='monitoringUseYn']").val(),
+            loadTimeCheckYn: $("#saveUrlForm [name='loadTimeCheckYn']").val(),
+            status: $("#saveUrlForm [name='status']").val(),
+            loadTime: $("#saveUrlForm [name='loadTime']").val(),
         }
 
         $.ajax({
             type: method,
-            url: url,
-            data: $("#saveUrlForm").serialize(),
+            url: '/monUrl',
+            data: JSON.stringify(body),
             dataType: 'json',
-            success: function (data) {
-                let errorCode = data.errorCode;
-                if (typeof errorCode != "undefined") {
-                    $('#errorCode').val(errorCode);
-                    $('#errorCreate').submit();
-                } else {
-                    if (data.result == "success") {
-
-                        $("#saveUrlModal").hide();
-                        alert("저장 완료");
-                        window.location.reload();
-
-                    }
+            contentType: "application/json",
+            error: function(e){
+                alert(e.responseJSON.meta.message);
+            },
+            success: function (result) {
+                if (result.meta.code == 200) {
+                    alert("저장 완료");
+                    $("#saveUrlModal").hide();
+                    window.location.reload();
                 }
             }
         });
     });
-
-
-    $('body').on('click', '.urlEditBtn', function () {
-
-        /* URL 출력 */
-        $.ajax({
-            type: 'GET',
-            url: '/url/' + $(this).attr('cd'),
-            dataType: 'json',
-            success: function (data) {
-                let errorCode = data.errorCode;
-                if (typeof errorCode != "undefined") {
-                    $('#errorCode').val(errorCode);
-                    $('#errorCreate').submit();
-                } else {
-                    if (data.result == "success") {
-
-
-                        $("#saveUrlForm [name='seq']").val(data.data.seq);
-                        $("#saveUrlForm [name='url']").val(data.data.url);
-                        $("#saveUrlForm [name='title']").val(data.data.title);
-                        $("#saveUrlForm [name='timeout']").val(data.data.timeout);
-                        $("#saveUrlForm [name='timer']").val(data.data.timer);
-                        $("#saveUrlForm [name='url_start_date']").val(getFormatDate(new Date(data.data.startDate)));
-                        $("#saveUrlForm [name='url_end_date']").val(getFormatDate(new Date(data.data.endDate)));
-                        $("#saveUrlForm [name='url_start_hour']").val(data.data.startHour);
-                        $("#saveUrlForm [name='url_end_hour']").val(data.data.endHour);
-                        $("#saveUrlForm [name='errLoadTime']").val(data.data.errLoadTime);
-                        $("#saveUrlForm [name='payLoadPer']").val(data.data.payLoadPer);
-                        $("#saveUrlForm [name='useable']").each(function () {
-                            if ($(this).val() == data.data.useable) $(this).attr('checked', 'true');
-                            else $(this).removeAttr('checked');
-                        });
-                        $("#saveUrlForm [name='status']").val(data.data.status);
-                        $("#saveUrlForm [name='loadTime']").val(data.data.loadTime);
-                        $("#saveUrlForm [name='url_loadTimeCheck']").each(function () {
-                            if ($(this).val() == data.data.loadTimeCheck) $(this).attr('checked', 'true');
-                            else $(this).removeAttr('checked');
-                        });
-                        $("#saveUrlForm [name='textCheckValue']").val(data.data.textCheckValue);
-                        $("#saveUrlForm [name='textCheck']").each(function () {
-                            if ($(this).val() == data.data.textCheck) $(this).attr('checked', 'true');
-                            else $(this).removeAttr('checked');
-                        });
-                        $("#saveUrlForm [name='payLoad']").val(data.data.payLoad);
-                        $("#saveUrlForm [name='url_payLoadCheck']").each(function () {
-                            if ($(this).val() == data.data.payLoadCheck) $(this).attr('checked', 'true');
-                            else $(this).removeAttr('checked');
-                        });
-                        $("#urlCheck").attr('cd', data.data.url);
-                        $('#saveUrlModal').modal('show');
-
-                    }
-                }
-            }
-        });
-    });
-
 
     $('body').on('click', '.urlExecuteBtn', function () {
-
         $.ajax({
             type: 'GET',
-            url: '/urlExecute/' + $(this).attr('cd'),
+            url: '/monUrl/' + $(this).attr('cd')+'/execute',
             dataType: 'json',
-            success: function (data) {
-                let errorCode = data.errorCode;
-                if (typeof errorCode != "undefined") {
-                    $('#errorCode').val(errorCode);
-                    $('#errorCreate').submit();
-                } else {
-                    if (data.result == "success") {
-                        alert("실행 완료");
-                    }
+            error: function(e){
+                alert(e.responseJSON.meta.message);
+            },
+            success: function (result) {
+                if (result.meta.code == 200) {
+                    alert("실행 완료");
                 }
             }
         });
