@@ -79,8 +79,8 @@ function monInit() {
             title: $("#saveUrlForm [name='title']").val(),
             timeout: $("#saveUrlForm [name='timeout']").val(),
             errorLoadTime: $("#saveUrlForm [name='errorLoadTime']").val(),
-            monitoringUseYn: $("#saveUrlForm [name='monitoringUseYn']").val(),
-            loadTimeCheckYn: $("#saveUrlForm [name='loadTimeCheckYn']").val(),
+            monitoringUseYn: $("#saveUrlForm [name='monitoringUseYn']:checked").val(),
+            loadTimeCheckYn: $("#saveUrlForm [name='loadTimeCheckYn']:checked").val(),
             status: $("#saveUrlForm [name='status']").val(),
             loadTime: $("#saveUrlForm [name='loadTime']").val(),
         }
@@ -115,6 +115,39 @@ function monInit() {
             success: function (result) {
                 if (result.meta.code == 200) {
                     alert("실행 완료");
+                }
+            }
+        });
+    });
+
+    $('body').on('click', '.urlEditBtn', function () {
+        $.ajax({
+            type: 'GET',
+            url: '/monUrl/' + $(this).attr('cd'),
+            dataType: 'json',
+            error: function(e){
+                alert(e.responseJSON.meta.message);
+            },
+            success: function (result) {
+                if (result.meta.code == 200) {
+                    let monUrl = result.data;
+                    $("#saveUrlForm [name='seq']").val(monUrl.seq);
+                    $("#saveUrlForm [name='url']").val(monUrl.url);
+                    $("#saveUrlForm [name='title']").val(monUrl.title);
+                    $("#saveUrlForm [name='errorLoadTime']").val(monUrl.errorLoadTime);
+                    $("#saveUrlForm [name='timeout']").val(monUrl.timeout);
+                    $("#saveUrlForm [name='monitoringUseYn']").each(function () {
+                        if ($(this).val() == monUrl.monitoringUseYn) $(this).attr('checked', 'true');
+                        else $(this).removeAttr('checked');
+                    });
+                    $("#saveUrlForm [name='status']").val(monUrl.status);
+                    $("#saveUrlForm [name='loadTime']").val(monUrl.loadTime);
+                    $("#saveUrlForm [name='loadTimeCheckYn']").each(function () {
+                        if ($(this).val() == monUrl.loadTimeCheckYn) $(this).attr('checked', 'true');
+                        else $(this).removeAttr('checked');
+                    });
+                    $("#urlCheck").attr('cd', monUrl.url);
+                    $('#saveUrlModal').modal('show');
                 }
             }
         });
