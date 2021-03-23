@@ -216,6 +216,114 @@
     </div>
 </div>
 
+<!-- API 등록 모달 -->
+<div class="modal fade" id="saveApiModal" aria-hidden="true">
+    <div class="modal-dialog resource-kanban-box" role="document" style="width:96%; max-width:500px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">API</h5>
+                <button type="button" class="close btn btn-default" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="/monApi" id="saveApiForm" name="saveApiForm" class="form-group">
+                    <div class="card" style="width: 100%;">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <input type="hidden" name="seq" value="">
+                                <label>사용여부</label>
+                                <br>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="monitoringUseYn" value="Y" checked> Y
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="monitoringUseYn" value="N"> N
+                                </div>
+                                <br>
+                                <label>Title</label>
+                                <input name="title" type="text" class='form-control' autocomplete="off"/>
+
+                                <label>URL</label>
+                                <input name="url" type="text" class='form-control' autocomplete="off"/>
+                                <div class="row">
+                                    <div class="col">
+                                        <label>Timeout</label>
+                                        <input name="timeout" type="number" class='form-control' value="30"/>
+                                    </div>
+                                </div>
+
+                                <label>Method</label>
+                                <select id="api_method" name="method" class="form-control form-control-sm">
+                                    <option value='GET'>GET</option>
+                                    <option value='POST'>POST</option>
+                                    <option value='PUT'>PUT</option>
+                                    <option value='DELETE'>DELETE</option>
+                                </select>
+
+                                <label>Data-Type</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="data_type" id="data_type_json" value="Json" checked> Json
+                                </div>
+
+                                <label>Params <a href="#" class="add_api_param badge badge-pill">new</a></label>
+                                <ul class="list-group api_params">
+                                </ul>
+                                <input id='apiCheck' class='btn btn-success' type="button" value="검사"/>
+                            </li>
+                            <li class="list-group-item">
+                                <label>LoadTime Check</label>
+                                <br>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="loadTimeCheckYn" value="Y" checked> Y
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="loadTimeCheckYn" value="N"> N
+                                </div>
+                                <br>
+                                <label>LoadTime</label>
+                                <div class="input-group">
+                                    <div class="input-group-append">
+                                        <input name="loadTime" type="text" class='form-control' readOnly autocomplete="off" value="0"/>
+                                        <span class="input-group-text">Ms</span>
+
+                                        <input type="number" name="errLoadTime" value="3000" class="form-control" style="width: 100px;">
+                                        <span class="input-group-text">Ms</span>
+                                    </div>
+                                </div>
+
+                                <label>Status</label>
+                                <input name="status" type="text" class='form-control' value="200"/>
+                                <label>Response Check</label>
+                                <br>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="responseCheckYn" value="Y" checked> Y
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="responseCheckYn" value="N"> N
+                                </div>
+                                <br>
+                                <label>Response</label>
+                                <input name="response" type="hidden" class='form-control' value="200" readOnly/>
+                                <div class="card" style="width: 18rem;">
+                                    <div class="card-body">
+                                        <p class="card-text" id="api_response"></p>
+                                    </div>
+                                </div>
+                                <div class="mgt15 text-right resource-btz">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+                                    <button type="button" id="deleteApi" class="btn btn btn-success">삭제</button>
+                                    <button type="button" id="saveApi" class="btn btn btn-success">저장</button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     $(document).ready(function () {
         monInit();
