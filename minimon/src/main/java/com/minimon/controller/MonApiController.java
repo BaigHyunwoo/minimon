@@ -69,7 +69,7 @@ public class MonApiController {
     }
 
     @ApiOperation(value = "API 검사 실행", response = MonResult.class)
-    @PostMapping(path = "/{seq}/execute")
+    @GetMapping(path = "/{seq}/execute")
     public CommonResponse execute(@PathVariable("seq") int seq) {
         MonResult monResult = monApiService.execute(seq);
         if (monResult == null) {
