@@ -36,7 +36,7 @@ public class MonitoringScheduler {
         log.info("API Monitoring Execute Complete");
     }
 
-    public void transactionMonitoring() {
+    public void actMonitoring() {
         List<MonResult> monResults = new ArrayList();
         monResults.addAll(monActService.checkList(monActService.findScheduledList()));
         check(monResults);

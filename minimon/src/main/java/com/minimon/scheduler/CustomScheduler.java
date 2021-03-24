@@ -133,7 +133,7 @@ public class CustomScheduler implements InitializingBean {
             case API_MONITORING:
                 return () -> monitoringScheduler.apiMonitoring();
             case ACT_MONITORING:
-                return () -> monitoringScheduler.transactionMonitoring();
+                return () -> monitoringScheduler.actMonitoring();
             default:
                 return null;
         }
