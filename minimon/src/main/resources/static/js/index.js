@@ -336,12 +336,15 @@ function monInit() {
                 },
                 success: function (result) {
                     let monAct = result.data;
-                    // 수정
+                    let codeDataList = new Array();
+                    $.each(monAct.response, function(key, value){
+                        codeDataList[key] = value.monCodeData;
+                    });
 
-                   $("#actCheck").attr('cd', actFile);
+                    $("#actCheck").attr('cd', actFile);
                     $("#saveActForm [name=status]").val(monAct.statusCode);
                     $("#saveActForm [name=loadTime]").val(monAct.totalLoadTime);
-                    $("#saveActForm [name=codeDataList]").val(JSON.stringify(monAct.codeDataList));
+                    $("#saveActForm [name=codeDataList]").val(JSON.stringify(codeDataList));
                     $("#saveActForm [name=actCode]").val(actFile);
                     $("#actFile").attr('cd', actFile);
                     alert('검사 완료');
