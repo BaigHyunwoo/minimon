@@ -10,6 +10,22 @@ function monInit() {
         window.location.reload();
     });
 
+    $('body').on('click', '#createApiBtn', function () {
+        $('#saveApiModal').modal('show');
+    });
+
+    $('body').on('hide.bs.modal', '#saveApiModal', function (e) {
+        window.location.reload();
+    });
+
+    $('body').on('click', '#createActBtn', function () {
+        $('#saveActModal').modal('show');
+    });
+
+    $('body').on('hide.bs.modal', '#saveActModal', function (e) {
+        window.location.reload();
+    });
+
     $('body').on('click', '#urlCheck', function () {
         let url = $("#saveUrlForm [name='url']").val();
         if (url == '') {
@@ -149,6 +165,148 @@ function monInit() {
                     $("#urlCheck").attr('cd', monUrl.url);
                     $('#saveUrlModal').modal('show');
                 }
+            }
+        });
+    });
+
+    $('body').on('click', '#apiCheck', function () {
+        alert("준비중인 기능입니다.");
+        return;
+
+        let url = $("#saveApiForm [name='url']").val();
+        if (url == '') {
+            alert('URL을 입력해주세요');
+        } else {
+
+            let body = {
+                url: url,
+                method: $("#saveApiForm [name='method']").val(),
+                data: $("#saveApiForm [name='data']").val()
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '/monApi/check',
+                data: JSON.stringify(body),
+                dataType: 'json',
+                contentType: "application/json",
+                error: function(e){
+                    alert(e.responseJSON.meta.message);
+                },
+                success: function (result) {
+                    if (result.meta.code == 200) {
+                        $("#saveApiForm [name='loadTime']").val(result.data.loadTime);
+                        $("#saveApiForm [name='status']").val(result.data.status);
+                        $("#api_response").text(result.data.response);
+                        $("#saveApiForm [name='response']").val(result.data.response);
+                        $("#apiCheck").attr('cd', url);
+                        alert('검사 완료');
+                    }
+                }
+            });
+        }
+    });
+
+
+    $('body').on('click', '.apiEditBtn', function () {
+        $.ajax({
+            type: 'GET',
+            url: '/monApi/' + $(this).attr('cd'),
+            dataType: 'json',
+            error: function(e){
+                alert(e.responseJSON.meta.message);
+            },
+            success: function (result) {
+                let monApi = result.data;
+
+                $("#apiCheck").attr('cd', monApi.url);
+                $("#saveApiForm [name='seq']").val(monApi.seq);
+                $("#saveApiForm [name='url']").val(monApi.url);
+                $("#saveApiForm [name='title']").val(monApi.title);
+                $("#saveApiForm [name='timeout']").val(monApi.timeout);
+                $("#saveApiForm [name='errorLoadTime']").val(monApi.errorLoadTime);
+                $("#saveApiForm [name='monitoringUseYn']").each(function () {
+                    if ($(this).val() == monApi.monitoringUseYn) $(this).attr('checked', 'true');
+                    else $(this).removeAttr('checked');
+                });
+                $("#saveApiForm [name='method']").val(monApi.method);
+                $("#saveApiForm [name='status']").val(monApi.status);
+                $("#saveApiForm [name='loadTimeCheckYn']").each(function () {
+                    if ($(this).val() == monApi.loadTimeCheckYn) $(this).attr('checked', 'true');
+                    else $(this).removeAttr('checked');
+                });
+                $("#saveApiForm [name='loadTime']").val(monApi.loadTime);
+
+                $("#saveApiForm [name='responseCheckYn']").each(function () {
+                    if ($(this).val() == monApi.responseCheckYn) $(this).attr('checked', 'true');
+                    else $(this).removeAttr('checked');
+                });
+
+                $("#api_response").text(monApi.response);
+                $("#saveApiForm [name='response']").val(monApi.response);
+
+                $('#saveApiModal').modal('show');
+            }
+        });
+    });
+
+
+    $('body').on('click', '#saveApi', function () {
+
+        if ($("#apiCheck").attr('cd') != $("#saveApiForm [name='url']").val()) {
+            alert('API 검사를 진행해주세요.');
+            return;
+        }
+
+        let method = 'POST';
+        if ($("#saveApiForm [name='seq']").val() != '') {
+            method = 'PUT';
+        }
+
+        $.ajax({
+            type: method,
+            url: '/monApi',
+            data: getApiSaveData(),
+            dataType: 'json',
+            contentType: "application/json",
+            error: function(e){
+                alert(e.responseJSON.meta.message);
+            },
+            success: function (result) {
+                $("#saveApiModal").hide();
+                alert("저장 완료");
+                window.location.reload();
+            }
+        });
+    });
+
+    $('body').on('click', '#deleteApi', function () {
+        $.ajax({
+            type: 'DELETE',
+            url: '/monApi/' + $("#saveApiForm [name='seq']").val(),
+            dataType: 'json',
+            contentType: "application/json",
+            error: function(e){
+                alert(e.responseJSON.meta.message);
+            },
+            success: function (result) {
+                alert('삭제 완료');
+                window.location.reload();
+            }
+        });
+    });
+
+    $('body').on('click', '.apiExecuteBtn', function () {
+        $.ajax({
+            type: 'GET',
+            url: '/monApi/' + $(this).attr('cd')+'/execute',
+            dataType: 'json',
+            contentType: "application/json",
+            error: function(e){
+                alert(e.responseJSON.meta.message);
+            },
+            success: function (result) {
+                alert("실행 완료");
             }
         });
     });
