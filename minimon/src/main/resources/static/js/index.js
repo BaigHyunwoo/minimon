@@ -314,7 +314,7 @@ function monInit() {
     });
 
     $('body').on('click', '#actCheck', function () {
-        let actFile = $("#saveTransactionForm [name='actFile']").val();
+        let actFile = $("#saveActForm [name='actFile']").val();
 
         if (actFile == '') {
             alert('actFile를 첨부해주세요');
@@ -351,5 +351,104 @@ function monInit() {
                 }
             });
         }
+    });
+
+    $('body').on('click', '.actExecuteBtn', function () {
+        $.ajax({
+            type: 'GET',
+            url: '/monAct/' + $(this).attr('cd')+'/execute',
+            dataType: 'json',
+            error: function(e){
+                alert(e.responseJSON.meta.message);
+            },
+            success: function (result) {
+                alert("실행 완료");
+            }
+        });
+    });
+
+
+    $('body').on('click', '#deleteAct', function () {
+        alert("준비중인 기능입니다.");
+        return;
+
+        $.ajax({
+            type: 'DELETE',
+            url: '/monAct/'+$("#saveActForm [name='seq']").val() ,
+            dataType: 'json',
+            error: function(e){
+                alert(e.responseJSON.meta.message);
+            },
+            success: function (result) {
+                alert('삭제 완료');
+                window.location.reload();
+            }
+        });
+    });
+
+
+    $('body').on('click', '#saveAct', function () {
+        alert("준비중인 기능입니다.");
+        return;
+
+        if ($("#actCheck").attr('cd') != $("#actFile").attr('cd')) {
+            alert('Act 검사를 진행해주세요.');
+            return;
+        }
+
+        let method = 'POST';
+        if ($("#saveActForm [name='seq']").val() != '') {
+            method = 'PUT';
+        }
+
+        $.ajax({
+            type: method,
+            url: '/monAct',
+            data: $("#saveActForm").serialize(),
+            dataType: 'json',
+            error: function(e){
+                alert(e.responseJSON.meta.message);
+            },
+            success: function (result) {
+                alert("저장 완료");
+                $("#saveActModal").hide();
+                window.location.reload();
+            }
+        });
+    });
+
+
+    $('body').on('click', '.actEditBtn', function () {
+        alert("준비중인 기능입니다.");
+        return;
+
+        $.ajax({
+            type: 'GET',
+            url: '/monAct/' + $(this).attr('cd'),
+            dataType: 'json',
+            error: function(e){
+                alert(e.responseJSON.meta.message);
+            },
+            success: function (result) {
+                let monAct = result.data;
+                $("#saveActForm [name='seq']").val(monAct.seq);
+                $("#saveActForm [name='title']").val(monAct.title);
+                $("#saveActForm [name='timeout']").val(monAct.timeout);
+                $("#saveActForm [name='errorLoadTime']").val(monAct.errorLoadTime);
+                $("#saveActForm [name='monitoringUseYn']").each(function () {
+                    if ($(this).val() == monAct.monitoringUseYn) $(this).attr('checked', 'true');
+                    else $(this).removeAttr('checked');
+                });
+
+                $("#saveActForm [name='loadTimeCheckYn']").each(function () {
+                    if ($(this).val() == monAct.loadTimeCheckYn) $(this).attr('checked', 'true');
+                    else $(this).removeAttr('checked');
+                });
+                $("#saveActForm [name='status']").val(monAct.status);
+                $("#saveActForm [name='loadTime']").val(monAct.loadTime);
+                $("#saveActForm [name='codeDataList']").val(JSON.stringify(monAct.codeDataList));
+                $('#saveActModal').modal('show');
+            }
+        });
     });
 }
