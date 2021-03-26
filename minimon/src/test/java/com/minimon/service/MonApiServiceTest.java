@@ -2,13 +2,17 @@ package com.minimon.service;
 
 import com.minimon.common.CommonSearchSpec;
 import com.minimon.entity.MonApi;
+import com.minimon.entity.MonResult;
 import com.minimon.entity.MonUrl;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -50,8 +54,13 @@ class MonApiServiceTest {
         assertEquals(monApi.getSeq(), selectMonApi.getSeq());
     }
 
+
     @Test
     void remove() {
+        MonApi monApi = monApiService.save(getDefaultMonApi());
+        monApiService.remove(monApi.getSeq());
+        Optional selectMonApi = monApiService.get(monApi.getSeq());
+        assertNotEquals(true, selectMonApi.isPresent());
     }
 
     @Test
