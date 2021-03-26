@@ -33,35 +33,35 @@ public class MonUrlServiceTest {
     }
 
     @Test
-    public void save() {
+    void save() {
         MonUrl monUrl = getDefaultMonUrl();
         assertEquals(monUrl, monUrlService.save(monUrl));
     }
 
     @Test
-    public void getList() {
+    void getList() {
         monUrlService.save(getDefaultMonUrl());
         long size = monUrlService.getList(new CommonSearchSpec()).getTotalElements();
         assertNotEquals(0, size);
     }
 
     @Test
-    public void get() {
+    void get() {
         MonUrl monUrl = monUrlService.save(getDefaultMonUrl());
-        MonUrl selectMonUrl = monUrlService.get(1).get();
+        MonUrl selectMonUrl = monUrlService.get(monUrl.getSeq()).get();
         assertEquals(monUrl.getSeq(), selectMonUrl.getSeq());
     }
 
     @Test
-    public void remove() {
+    void remove() {
         MonUrl monUrl = monUrlService.save(getDefaultMonUrl());
         monUrlService.remove(monUrl.getSeq());
-        Optional selectMonUrl = monUrlService.get(1);
+        Optional selectMonUrl = monUrlService.get(monUrl.getSeq());
         assertNotEquals(true, selectMonUrl.isPresent());
     }
 
     @Test
-    public void execute() {
+    void execute() {
         MonUrl monUrl = monUrlService.save(getDefaultMonUrl());
         MonResult monResult = monUrlService.execute(monUrl.getSeq());
         assertEquals(HttpStatus.OK, monResult.getStatus());
