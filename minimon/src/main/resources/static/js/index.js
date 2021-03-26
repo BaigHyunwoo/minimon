@@ -170,14 +170,10 @@ function monInit() {
     });
 
     $('body').on('click', '#apiCheck', function () {
-        alert("준비중인 기능입니다.");
-        return;
-
         let url = $("#saveApiForm [name='url']").val();
         if (url == '') {
             alert('URL을 입력해주세요');
         } else {
-
             let body = {
                 url: url,
                 method: $("#saveApiForm [name='method']").val(),
