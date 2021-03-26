@@ -1,14 +1,19 @@
 package com.minimon.service;
 
 import com.minimon.common.CommonSearchSpec;
+import com.minimon.entity.MonResult;
 import com.minimon.entity.MonUrl;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
@@ -17,7 +22,7 @@ public class MonUrlServiceTest {
     @Autowired
     private MonUrlService monUrlService;
 
-    private MonUrl getDefaultMonUrl(){
+    private MonUrl getDefaultMonUrl() {
         return MonUrl.builder()
                 .url("https://www.naver.com")
                 .title("네이버")
@@ -45,5 +50,20 @@ public class MonUrlServiceTest {
         MonUrl monUrl = monUrlService.save(getDefaultMonUrl());
         MonUrl selectMonUrl = monUrlService.get(1).get();
         assertEquals(monUrl.getSeq(), selectMonUrl.getSeq());
+    }
+
+    @Test
+    public void remove() {
+        MonUrl monUrl = monUrlService.save(getDefaultMonUrl());
+        monUrlService.remove(monUrl.getSeq());
+        Optional selectMonUrl = monUrlService.get(1);
+        assertNotEquals(true, selectMonUrl.isPresent());
+    }
+
+    @Test
+    public void execute() {
+        MonUrl monUrl = monUrlService.save(getDefaultMonUrl());
+        MonResult monResult = monUrlService.execute(monUrl.getSeq());
+        assertEquals(HttpStatus.OK, monResult.getStatus());
     }
 }
