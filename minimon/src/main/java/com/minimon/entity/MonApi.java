@@ -76,6 +76,7 @@ public class MonApi extends CommonEntity {
     @ApiModelProperty(name = "걸린 시간")
     private int loadTime;
 
+    @Lob
     @ApiModelProperty(name = "응답 데이터")
     private String response;
 
