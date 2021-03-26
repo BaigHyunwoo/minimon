@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -31,8 +33,8 @@ public class MonApiController {
     @ApiOperation(value = "API 조회", response = MonApi.class)
     @GetMapping(path = "/{seq}")
     public CommonResponse get(@PathVariable("seq") int seq) {
-        MonApi api = monApiService.get(seq);
-        if (api == null) {
+        Optional api = monApiService.get(seq);
+        if (!api.isPresent()) {
             return CommonResponse.notExistResponse();
         }
         return new CommonResponse(api);

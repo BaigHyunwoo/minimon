@@ -34,8 +34,8 @@ public class MonApiService {
         return monApiRepository.findAll(commonSearchSpec.searchSpecs(), commonSearchSpec.pageRequest());
     }
 
-    public MonApi get(int seq) {
-        return monApiRepository.findById(seq).orElse(null);
+    public Optional<MonApi> get(int seq) {
+        return monApiRepository.findById(seq);
     }
 
     @Transactional
