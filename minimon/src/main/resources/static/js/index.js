@@ -191,8 +191,8 @@ function monInit() {
                 },
                 success: function (result) {
                     if (result.meta.code == 200) {
-                        $("#saveApiForm [name='loadTime']").val(result.data.loadTime);
-                        $("#saveApiForm [name='status']").val(result.data.status);
+                        $("#saveApiForm [name='loadTime']").val(result.data.totalLoadTime);
+                        $("#saveApiForm [name='status']").val(result.data.statusCode);
                         $("#api_response").text(result.data.response);
                         $("#saveApiForm [name='response']").val(result.data.response);
                         $("#apiCheck").attr('cd', url);
@@ -261,10 +261,26 @@ function monInit() {
             method = 'PUT';
         }
 
+
+        let body = {
+            seq: $("#saveApiForm [name='seq']").val(),
+            method: $("#saveApiForm [name='method']").val(),
+            url: $("#saveApiForm [name='url']").val(),
+            title: $("#saveApiForm [name='title']").val(),
+            timeout: $("#saveApiForm [name='timeout']").val(),
+            errorLoadTime: $("#saveApiForm [name='errorLoadTime']").val(),
+            monitoringUseYn: $("#saveApiForm [name='monitoringUseYn']:checked").val(),
+            loadTimeCheckYn: $("#saveApiForm [name='loadTimeCheckYn']:checked").val(),
+            responseCheckYn: $("#saveApiForm [name='responseCheckYn']:checked").val(),
+            data: $("#saveApiForm [name='data']").val(),
+            status: $("#saveApiForm [name='status']").val(),
+            loadTime: $("#saveApiForm [name='loadTime']").val(),
+            response: $("#saveApiForm [name='response']").val(),
+        }
         $.ajax({
             type: method,
             url: '/monApi',
-            data: getApiSaveData(),
+            data: JSON.stringify(body),
             dataType: 'json',
             contentType: "application/json",
             error: function(e){
