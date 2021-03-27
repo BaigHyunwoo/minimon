@@ -59,6 +59,12 @@ public class MonResult {
     @ApiModelProperty(value = "등록일", hidden = true)
     private LocalDateTime regDate;
 
+    @Transient
+    @ApiModelProperty(value = "결과 코드 Value")
+    public int getStatusCode() {
+        return status.value();
+    }
+
     @Builder
     public MonResult(MonitoringTypeEnum monitoringTypeEnum, int relationSeq, String title, MonitoringResultCodeEnum resultCode, HttpStatus status, double loadTime) {
         this.monitoringType = monitoringTypeEnum;
