@@ -22,7 +22,7 @@ public class SchedulerController {
     @PostMapping(path = "/execute")
     @ApiOperation(value = "특정 스케줄 작업 수동 실행 1회")
     public CommonResponse execute(@RequestParam String schedulerType) {
-        return new CommonResponse(customScheduler.execute(schedulerType));
+        return new CommonResponse(customScheduler.execute(SchedulerTypeEnum.valueOf(schedulerType)));
     }
 
     @PostMapping(path = "/run")

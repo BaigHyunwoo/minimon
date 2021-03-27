@@ -18,7 +18,7 @@ public class SchedulerTaskVO {
     private SchedulerTypeEnum schedulerType;
 
     @ApiModelProperty(value = "실행 상태")
-    private SchedulerStatusEnum Status;
+    private SchedulerStatusEnum status;
 
     @ApiModelProperty(value = "실행 작업")
     private ScheduledFuture scheduler;

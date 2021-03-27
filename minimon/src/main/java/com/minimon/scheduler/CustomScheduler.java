@@ -146,8 +146,8 @@ public class CustomScheduler implements InitializingBean {
         }
     }
 
-    public boolean execute(String schedulerType) {
-        Optional.ofNullable(getTaskBySchedulerType(SchedulerTypeEnum.valueOf(schedulerType))).ifPresent(task -> task.run());
+    public boolean execute(SchedulerTypeEnum schedulerType) {
+        Optional.ofNullable(getTaskBySchedulerType(schedulerType)).ifPresent(task -> task.run());
         return true;
     }
 }
