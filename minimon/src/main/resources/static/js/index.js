@@ -353,12 +353,12 @@ function monInit() {
                         codeDataList[key] = value.monCodeData;
                     });
 
-                    $("#actCheck").attr('cd', actFile);
                     $("#saveActForm [name=status]").val(monAct.statusCode);
                     $("#saveActForm [name=loadTime]").val(monAct.totalLoadTime);
                     $("#saveActForm [name=codeDataList]").val(JSON.stringify(codeDataList));
-                    $("#saveActForm [name=actCode]").val(actFile);
+                    $("#saveActForm [name=codeFileName]").val(actFile);
                     $("#actFile").attr('cd', actFile);
+                    $("#actCheck").attr('cd', actFile);
                     alert('검사 완료');
                 }
             });
@@ -424,6 +424,8 @@ function monInit() {
             status: $("#saveActForm [name='status']").val(),
             loadTime: $("#saveActForm [name='loadTime']").val(),
             response: $("#saveActForm [name='response']").val(),
+            codeFileName: $("#saveActForm [name='codeFileName']").val(),
+            codeDataList: $("#saveActForm [name='codeDataList']").val(),
         }
 
         $.ajax({
@@ -470,6 +472,7 @@ function monInit() {
                 $("#saveActForm [name='status']").val(monAct.status);
                 $("#saveActForm [name='loadTime']").val(monAct.loadTime);
                 $("#saveActForm [name='codeDataList']").val(JSON.stringify(monAct.codeDataList));
+                $("#saveActForm [name='codeFileName']").val(monAct.codeFileName);
                 $('#saveActModal').modal('show');
             }
         });

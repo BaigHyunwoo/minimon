@@ -1,9 +1,7 @@
 package com.minimon.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.minimon.common.CommonSearchSpec;
 import com.minimon.entity.MonAct;
-import com.minimon.entity.MonApi;
 import com.minimon.entity.MonCodeData;
 import com.minimon.vo.MonitoringResultVO;
 import org.apache.http.entity.ContentType;
@@ -30,9 +28,6 @@ public class MonActServiceTest {
 
     @Autowired
     private MonActService monActService;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     private final String testFilePath = "src/main/resources/testFiles/FindTest.java";
 
