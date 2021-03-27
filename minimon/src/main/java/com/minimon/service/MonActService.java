@@ -4,6 +4,7 @@ import com.minimon.common.CommonSearchSpec;
 import com.minimon.common.CommonSelenium;
 import com.minimon.common.CommonUtil;
 import com.minimon.entity.MonAct;
+import com.minimon.entity.MonApi;
 import com.minimon.entity.MonCodeData;
 import com.minimon.entity.MonResult;
 import com.minimon.enums.*;
@@ -145,24 +146,27 @@ public class MonActService {
     }
 
     private MonResult errorCheck(MonAct monAct, MonitoringResultVO monitoringResultVO) {
-        MonitoringResultCodeEnum resultCode = MonitoringResultCodeEnum.SUCCESS;
-
-        if (monAct.getStatus() != monitoringResultVO.getStatus().value()) {
-            resultCode = MonitoringResultCodeEnum.UNKNOWN;
-        }
-
-        if (monitoringResultVO.getTotalLoadTime() > CommonUtil.getPerData(monAct.getLoadTime(), monAct.getErrorLoadTime(), 1)) {
-            resultCode = MonitoringResultCodeEnum.LOAD_TIME;
-        }
-
         return MonResult.builder()
                 .title(monAct.getTitle())
                 .monitoringTypeEnum(MonitoringTypeEnum.ACT)
                 .relationSeq(monAct.getSeq())
-                .resultCode(resultCode)
+                .resultCode(getResultCode(
+                        monitoringResultVO.getStatus(),
+                        monitoringResultVO.getTotalLoadTime(),
+                        monAct))
                 .status(monitoringResultVO.getStatus())
                 .loadTime(monitoringResultVO.getTotalLoadTime())
                 .build();
+    }
+
+    private MonitoringResultCodeEnum getResultCode(HttpStatus status, double totalLoadTime, MonAct monAct) {
+        if (monAct.getLoadTimeCheckYn().equals(UseStatusEnum.Y) && totalLoadTime >= monAct.getErrorLoadTime()) {
+            return MonitoringResultCodeEnum.LOAD_TIME;
+        } else if (status == HttpStatus.OK) {
+            return MonitoringResultCodeEnum.SUCCESS;
+        } else {
+            return MonitoringResultCodeEnum.UNKNOWN;
+        }
     }
 
     public List<MonCodeData> getTestSource(MultipartFile monActFile) {

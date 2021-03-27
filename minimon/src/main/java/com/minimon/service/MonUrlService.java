@@ -112,10 +112,10 @@ public class MonUrlService {
     }
 
     private MonitoringResultCodeEnum getResultCode(HttpStatus status, double totalLoadTime, MonUrl url) {
-        if (status == HttpStatus.OK) {
-            return MonitoringResultCodeEnum.SUCCESS;
-        } else if (url.getLoadTimeCheckYn().equals(UseStatusEnum.Y) && totalLoadTime >= url.getErrorLoadTime()) {
+        if (url.getLoadTimeCheckYn().equals(UseStatusEnum.Y) && totalLoadTime >= url.getErrorLoadTime()) {
             return MonitoringResultCodeEnum.LOAD_TIME;
+        } else if (status == HttpStatus.OK) {
+            return MonitoringResultCodeEnum.SUCCESS;
         } else {
             return MonitoringResultCodeEnum.UNKNOWN;
         }

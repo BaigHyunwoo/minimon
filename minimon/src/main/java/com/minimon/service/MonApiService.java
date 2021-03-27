@@ -108,14 +108,15 @@ public class MonApiService {
     }
 
     private MonitoringResultCodeEnum getResultCode(HttpStatus status, double totalLoadTime, Object response, MonApi api) {
-        if (status == HttpStatus.OK)
-            return MonitoringResultCodeEnum.SUCCESS;
-        else if (api.getLoadTimeCheckYn().equals(UseStatusEnum.Y) && totalLoadTime >= api.getErrorLoadTime())
+        if (api.getLoadTimeCheckYn().equals(UseStatusEnum.Y) && totalLoadTime >= api.getErrorLoadTime()) {
             return MonitoringResultCodeEnum.LOAD_TIME;
-        else if (api.getResponseCheckYn().equals(UseStatusEnum.Y) && !response.equals(api.getResponse()))
+        } else if (api.getResponseCheckYn().equals(UseStatusEnum.Y) && !response.equals(api.getResponse())) {
             return MonitoringResultCodeEnum.RESPONSE;
-        else
+        } else if (status == HttpStatus.OK) {
+            return MonitoringResultCodeEnum.SUCCESS;
+        } else {
             return MonitoringResultCodeEnum.UNKNOWN;
+        }
     }
 
     private MonitoringResultVO request(String url, HttpMethod method, String data) {
