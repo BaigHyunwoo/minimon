@@ -48,6 +48,7 @@ public class MonitoringScheduler {
         monResults.forEach(monResult -> {
             switch (monResult.getResultCode()) {
                 case SUCCESS:
+                    resultService.save(monResult);
                     break;
                 default:
                     resultService.save(monResult);
