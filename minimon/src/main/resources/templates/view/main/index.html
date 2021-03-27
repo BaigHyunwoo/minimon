@@ -140,7 +140,7 @@
     <div class='div-card'>
         <p class='keyTitle'>
             <span class='mon-type-Text'>모니터링 동작 목록</span>
-            <input id='runAllTasks' class='btn btn-success default-btn float-r' type="button" value="전체 실행"/>
+            <input id='runAllTasks' class='btn btn-success default-btn float-r' type="button" value="전체 동작"/>
             <input id='stopAllTasks' class='btn btn-success default-btn float-r' type="button" value="전체 중지"/>
         </p>
 
@@ -161,13 +161,13 @@
                     <td th:text="${result.key}"></td>
                     <td th:text="${result.value.status}"></td>
                     <td>
-                        <input th:attr="cd=${result.key}" class='btn btn-success default-btn' type="button" value="Execute"/>
+                        <input th:attr="cd=${result.key}" class='btn btn-success executeTask default-btn' type="button" value="Execute"/>
                     </td>
                     <td>
-                        <input th:attr="cd=${result.key}" class='btn btn-success default-btn'type="button" value="Run"/>
+                        <input th:attr="cd=${result.key}" class='btn btn-success runTask default-btn'type="button" value="Run"/>
                     </td>
                     <td>
-                        <input th:attr="cd=${result.key}" class='btn btn-success default-btn'type="button" value="Stop"/>
+                        <input th:attr="cd=${result.key}" class='btn btn-success stopTask default-btn'type="button" value="Stop"/>
                     </td>
                 </tr>
                 </tbody>

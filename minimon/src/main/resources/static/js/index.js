@@ -477,4 +477,84 @@ function monInit() {
             }
         });
     });
+
+
+    $('body').on('click', '#runAllTasks', function () {
+        $.ajax({
+            type: 'POST',
+            url: '/scheduler/run/all',
+            dataType: 'json',
+            error: function(e){
+                alert(e.responseJSON.meta.message);
+            },
+            success: function (result) {
+                alert('전체 동작 처리 완료');
+                window.location.reload();
+            }
+        });
+    });
+
+
+    $('body').on('click', '#stopAllTasks', function () {
+        $.ajax({
+            type: 'POST',
+            url: '/scheduler/stop/all',
+            dataType: 'json',
+            error: function(e){
+                alert(e.responseJSON.meta.message);
+            },
+            success: function (result) {
+                alert('전체 동작 중지 완료');
+                window.location.reload();
+            }
+        });
+    });
+
+
+    $('body').on('click', '.executeTask', function () {
+        $.ajax({
+            type: 'POST',
+            url: '/scheduler/execute?schedulerType='+$(this).attr('cd'),
+            dataType: 'json',
+            error: function(e){
+                alert(e.responseJSON.meta.message);
+            },
+            success: function (result) {
+                alert('동작 실행 완료');
+                window.location.reload();
+            }
+        });
+    });
+
+
+    $('body').on('click', '.runTask', function () {
+        $.ajax({
+            type: 'POST',
+            url: '/scheduler/run?schedulerType='+$(this).attr('cd'),
+            dataType: 'json',
+            error: function(e){
+                alert(e.responseJSON.meta.message);
+            },
+            success: function (result) {
+                alert('동작 실행 완료');
+                window.location.reload();
+            }
+        });
+    });
+
+
+    $('body').on('click', '.stopTask', function () {
+        $.ajax({
+            type: 'POST',
+            url: '/scheduler/stop?schedulerType='+$(this).attr('cd'),
+            dataType: 'json',
+            error: function(e){
+                alert(e.responseJSON.meta.message);
+            },
+            success: function (result) {
+                alert('동작 중지 완료');
+                window.location.reload();
+            }
+        });
+    });
 }
