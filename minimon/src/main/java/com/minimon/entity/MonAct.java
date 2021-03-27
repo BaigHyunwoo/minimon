@@ -1,5 +1,8 @@
 package com.minimon.entity;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.minimon.common.CommonUtil;
 import com.minimon.enums.UseStatusEnum;
 import com.sun.istack.NotNull;
 import io.swagger.annotations.ApiModelProperty;
@@ -66,6 +69,10 @@ public class MonAct extends CommonEntity {
     @NotNull
     @ApiModelProperty(name = "검사 파일 명")
     private String codeFileName;
+
+    public void setCodeDataList(String codeDataList) {
+        this.codeDataList = CommonUtil.convertToObject(codeDataList, List.class);
+    }
 
     @Builder
     public MonAct(String title, int timeout, int errorLoadTime, List<MonCodeData> codeDataList, int loadTime, String codeFileName) {

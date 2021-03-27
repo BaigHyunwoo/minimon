@@ -5,8 +5,7 @@ import com.minimon.enums.CodeSelectorTypeEnum;
 import com.sun.istack.NotNull;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -14,6 +13,7 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "MON_CODE_DATA")
+@NoArgsConstructor
 public class MonCodeData {
 
     @Id
@@ -36,5 +36,4 @@ public class MonCodeData {
 
     @ApiModelProperty(name = "코드 입력 값")
     private String codeValue;
-
 }
