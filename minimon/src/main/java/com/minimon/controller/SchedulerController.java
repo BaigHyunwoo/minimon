@@ -1,7 +1,9 @@
 package com.minimon.controller;
 
 import com.minimon.common.CommonResponse;
+import com.minimon.enums.SchedulerTypeEnum;
 import com.minimon.scheduler.CustomScheduler;
+import com.minimon.vo.RunningSchedulerVO;
 import com.minimon.vo.SchedulerTaskVO;
 import com.minimon.vo.SchedulerVO;
 import io.swagger.annotations.Api;
@@ -26,17 +28,17 @@ public class SchedulerController {
     @PostMapping(path = "/run")
     @ApiOperation(value = "특정 스케줄 작업 실행")
     public CommonResponse run(@RequestParam String schedulerType) {
-        return new CommonResponse(customScheduler.run(schedulerType));
+        return new CommonResponse(customScheduler.run(SchedulerTypeEnum.valueOf(schedulerType)));
     }
 
     @PostMapping(path = "/stop")
     @ApiOperation(value = "특정 스케줄 작업 중지")
     public CommonResponse stop(@RequestParam String schedulerType) {
-        return new CommonResponse(customScheduler.stop(schedulerType));
+        return new CommonResponse(customScheduler.stop(SchedulerTypeEnum.valueOf(schedulerType)));
     }
 
     @GetMapping(path = "/running/scheduler/list")
-    @ApiOperation(value = "활성화 스케줄 작업 목록 조회", responseContainer = "Map", response = SchedulerTaskVO.class)
+    @ApiOperation(value = "활성화 스케줄 작업 목록 조회", response = RunningSchedulerVO.class)
     public CommonResponse getRunningScheduler() {
         return new CommonResponse(customScheduler.getRunningScheduler());
     }

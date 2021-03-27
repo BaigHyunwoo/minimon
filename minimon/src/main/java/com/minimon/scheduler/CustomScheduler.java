@@ -3,6 +3,7 @@ package com.minimon.scheduler;
 import com.minimon.enums.SchedulerActiveTypeEnum;
 import com.minimon.enums.SchedulerStatusEnum;
 import com.minimon.enums.SchedulerTypeEnum;
+import com.minimon.vo.RunningSchedulerVO;
 import com.minimon.vo.SchedulerTaskVO;
 import com.minimon.vo.SchedulerVO;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ import java.util.concurrent.ScheduledFuture;
 public class CustomScheduler implements InitializingBean {
     private final TaskScheduler scheduler;
     private final MonitoringScheduler monitoringScheduler;
-    private Map<String, SchedulerTaskVO> scheduledTasks = new ConcurrentHashMap<>();
+    private RunningSchedulerVO runningSchedulerVO = new RunningSchedulerVO();
 
 
     /**
@@ -35,37 +36,39 @@ public class CustomScheduler implements InitializingBean {
      */
     @Override
     public void afterPropertiesSet() {
+        initRunningSchedulerVO();
         runAllTasks();
     }
 
-    public Map getRunningScheduler() {
-        Map<String, Object> tasks = new HashMap<>();
-        tasks.put("CURRENT THREAD SIZE", Thread.activeCount());
-        tasks.put("TOTAL TASK SIZE", scheduledTasks.size());
+    public RunningSchedulerVO getRunningScheduler() {
+        initRunningSchedulerVO();
+        return runningSchedulerVO;
+    }
+
+    private void initRunningSchedulerVO(){
+        runningSchedulerVO.setCurrentThreadSize(Thread.activeCount());
+        runningSchedulerVO.setTotalTaskSize(runningSchedulerVO.getScheduledTasks().size());
 
         for (SchedulerTypeEnum schedulerTypeEnum : SchedulerTypeEnum.values()) {
-            String status = SchedulerStatusEnum.STOP.getCode();
+            SchedulerStatusEnum status = SchedulerStatusEnum.STOP;
             SchedulerTaskVO task = new SchedulerTaskVO();
-            if (scheduledTasks.containsKey(schedulerTypeEnum.getCode())) {
-                task = scheduledTasks.get(schedulerTypeEnum.getCode());
-                ScheduledFuture scheduledFuture = task.getScheduler();
-                status = (scheduledFuture.isDone() == false ? SchedulerStatusEnum.RUNNING.getCode() : SchedulerStatusEnum.STOP.getCode());
+
+            if (runningSchedulerVO.getScheduledTasks().containsKey(schedulerTypeEnum)) {
+                task = runningSchedulerVO.getScheduledTasks().get(schedulerTypeEnum);
+                status = task.getStatus();
             }
 
             task.setSchedulerType(schedulerTypeEnum);
             task.setStatus(status);
-            tasks.put(schedulerTypeEnum.getCode(), task);
+            runningSchedulerVO.setScheduledTasks(schedulerTypeEnum, task);
         }
-
-        log.info(tasks.toString());
-        return tasks;
+        log.info(runningSchedulerVO.toString());
     }
 
-    public boolean run(String schedulerType) {
-        if (scheduledTasks.containsKey(schedulerType) == false) {
-            SchedulerTypeEnum schedulerTypeEnum = SchedulerTypeEnum.valueOf(schedulerType);
+    public boolean run(SchedulerTypeEnum schedulerTypeEnum) {
+        if (runningSchedulerVO.getScheduledTasks().get(schedulerTypeEnum).getStatus().equals(SchedulerStatusEnum.STOP)) {
             Optional.ofNullable(getTaskBySchedulerType(schedulerTypeEnum)).ifPresent(task -> {
-                run(task, schedulerTypeEnum.getCode(), schedulerTypeEnum.getActiveType(), schedulerTypeEnum.getTime());
+                run(task, schedulerTypeEnum, schedulerTypeEnum.getActiveType(), schedulerTypeEnum.getTime());
             });
             return true;
         }
@@ -73,8 +76,8 @@ public class CustomScheduler implements InitializingBean {
     }
 
     private boolean run(SchedulerVO customExecutorVO) {
-        if (scheduledTasks.containsKey(customExecutorVO.getSchedulerType()) == false) {
-            Optional.ofNullable(getTaskBySchedulerType(SchedulerTypeEnum.valueOf(customExecutorVO.getSchedulerType()))).ifPresent(task -> {
+        if (runningSchedulerVO.getScheduledTasks().get(customExecutorVO.getSchedulerType()).getStatus().equals(SchedulerStatusEnum.STOP)) {
+            Optional.ofNullable(getTaskBySchedulerType(customExecutorVO.getSchedulerType())).ifPresent(task -> {
                 run(task, customExecutorVO.getSchedulerType(), customExecutorVO.getActiveType(), customExecutorVO.getTime());
             });
             return true;
@@ -82,9 +85,9 @@ public class CustomScheduler implements InitializingBean {
         return false;
     }
 
-    private void run(Runnable task, String schedulerType, String activeType, String time) {
+    private void run(Runnable task, SchedulerTypeEnum schedulerTypeEnum, String activeType, String time) {
         SchedulerTaskVO schedulerTaskVO = new SchedulerTaskVO();
-        schedulerTaskVO.setSchedulerType(SchedulerTypeEnum.valueOf(schedulerType));
+        schedulerTaskVO.setSchedulerType(schedulerTypeEnum);
         switch (SchedulerActiveTypeEnum.valueOf(activeType)) {
             case CRON:
                 schedulerTaskVO.setScheduler(scheduler.schedule(task, new CronTrigger(time)));
@@ -93,17 +96,21 @@ public class CustomScheduler implements InitializingBean {
                 schedulerTaskVO.setScheduler(scheduler.scheduleAtFixedRate(task, Integer.parseInt(time)));
                 break;
         }
-        scheduledTasks.put(schedulerType, schedulerTaskVO);
-        log.info("RUN TASK " + schedulerType + " " + activeType + " " + time);
+
+        schedulerTaskVO.setStatus(SchedulerStatusEnum.RUNNING);
+        runningSchedulerVO.setScheduledTasks(schedulerTypeEnum, schedulerTaskVO);
+        log.info("RUN TASK " + schedulerTypeEnum.getCode() + " " + activeType + " " + time);
     }
 
-    public boolean stop(String schedulerType) {
-        if (Optional.ofNullable(scheduledTasks.get(schedulerType)).isPresent()) {
-            SchedulerTaskVO schedulerTaskVO = scheduledTasks.get(schedulerType);
-            ScheduledFuture scheduledFuture = schedulerTaskVO.getScheduler();
-            log.info(schedulerType + " isCancel ? " + scheduledFuture.cancel(true));
-            scheduledTasks.remove(schedulerType);
-            log.info("STOP TASK " + schedulerType);
+    public boolean stop(SchedulerTypeEnum schedulerTypeEnum) {
+        if (Optional.ofNullable(runningSchedulerVO.getScheduledTasks().get(schedulerTypeEnum)).isPresent()) {
+            SchedulerTaskVO schedulerTaskVO = runningSchedulerVO.getScheduledTasks().get(schedulerTypeEnum);
+            if(schedulerTaskVO.getStatus().equals(SchedulerStatusEnum.RUNNING)) {
+                ScheduledFuture scheduledFuture = schedulerTaskVO.getScheduler();
+                log.info(schedulerTypeEnum.getCode() + " isCancel ? " + scheduledFuture.cancel(true));
+                runningSchedulerVO.getScheduledTasks().remove(schedulerTypeEnum);
+                log.info("STOP TASK " + schedulerTypeEnum.getCode());
+            }
             return true;
         }
         return false;
@@ -112,7 +119,7 @@ public class CustomScheduler implements InitializingBean {
     public boolean runAllTasks() {
         Arrays.stream(SchedulerTypeEnum.values()).forEach(s ->
                 run(SchedulerVO.builder()
-                        .schedulerType(s.getCode())
+                        .schedulerType(s)
                         .activeType(s.getActiveType())
                         .time(s.getTime())
                         .build()));
@@ -121,7 +128,7 @@ public class CustomScheduler implements InitializingBean {
     }
 
     public boolean stopAllTasks() {
-        Arrays.stream(SchedulerTypeEnum.values()).forEach(s -> stop(s.getCode()));
+        Arrays.stream(SchedulerTypeEnum.values()).forEach(s -> stop(s));
         log.info("STOP ALL TASK");
         return true;
     }
