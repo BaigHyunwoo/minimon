@@ -34,7 +34,7 @@ public class MonActServiceTest {
 
     private MockMultipartFile getTestFile() {
         Path path = Paths.get(testFilePath);
-        String name = "transactionFile";
+        String name = "actFile";
         String originalFileName = "FindTest.java";
         String contentType = ContentType.TEXT_PLAIN.getMimeType();
         byte[] content = null;
