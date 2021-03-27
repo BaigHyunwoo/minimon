@@ -14,10 +14,7 @@ import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 
 @Slf4j
@@ -45,7 +42,7 @@ public class CustomScheduler implements InitializingBean {
         return runningSchedulerVO;
     }
 
-    private void initRunningSchedulerVO(){
+    private void initRunningSchedulerVO() {
         runningSchedulerVO.setCurrentThreadSize(Thread.activeCount());
         runningSchedulerVO.setTotalTaskSize(runningSchedulerVO.getScheduledTasks().size());
 
@@ -62,7 +59,6 @@ public class CustomScheduler implements InitializingBean {
             task.setStatus(status);
             runningSchedulerVO.setScheduledTasks(schedulerTypeEnum, task);
         }
-        log.info(runningSchedulerVO.toString());
     }
 
     public boolean run(SchedulerTypeEnum schedulerTypeEnum) {
@@ -105,7 +101,7 @@ public class CustomScheduler implements InitializingBean {
     public boolean stop(SchedulerTypeEnum schedulerTypeEnum) {
         if (Optional.ofNullable(runningSchedulerVO.getScheduledTasks().get(schedulerTypeEnum)).isPresent()) {
             SchedulerTaskVO schedulerTaskVO = runningSchedulerVO.getScheduledTasks().get(schedulerTypeEnum);
-            if(schedulerTaskVO.getStatus().equals(SchedulerStatusEnum.RUNNING)) {
+            if (schedulerTaskVO.getStatus().equals(SchedulerStatusEnum.RUNNING)) {
                 ScheduledFuture scheduledFuture = schedulerTaskVO.getScheduler();
                 log.info(schedulerTypeEnum.getCode() + " isCancel ? " + scheduledFuture.cancel(true));
                 runningSchedulerVO.getScheduledTasks().remove(schedulerTypeEnum);

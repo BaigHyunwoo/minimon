@@ -27,7 +27,7 @@ public class CommonSearchSpec {
     private int index = 1;
 
     @ApiModelProperty(value = "페이지 내 개수 (기본값 20)")
-    private int size = 20;
+    private int size = 100;
 
     @ApiModelProperty(value = "조건 키")
     private String[] keys;
