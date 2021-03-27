@@ -87,7 +87,7 @@ public class MonApiControllerTest {
     @Test
     public void check() throws Exception {
         mockMvc.perform(post("/monApi/check")
-                .content(objectMapper.writeValueAsString(MonApiCheckVO.builder().method(HttpMethod.GET.toString()).url("https://www.naver.com").build()))
+                .content(objectMapper.writeValueAsString(MonApiCheckVO.builder().method(HttpMethod.GET.name()).url("https://www.naver.com").build()))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

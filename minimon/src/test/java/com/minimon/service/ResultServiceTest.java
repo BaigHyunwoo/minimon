@@ -1,6 +1,7 @@
 package com.minimon.service;
 
 import com.minimon.entity.MonResult;
+import com.minimon.entity.MonUrl;
 import com.minimon.enums.MonitoringResultCodeEnum;
 import com.minimon.enums.MonitoringTypeEnum;
 import org.junit.jupiter.api.Test;
@@ -19,15 +20,20 @@ public class ResultServiceTest {
     @Autowired
     private ResultService resultService;
 
-    @Test
-    public void resultSendTest() {
-        assertNotNull(resultService.sendResultByProperties(MonResult.builder()
+
+    private MonResult getDefaultMonResult() {
+        return MonResult.builder()
                 .title("GOOGLE")
                 .relationSeq(0)
                 .monitoringTypeEnum(MonitoringTypeEnum.URL)
                 .resultCode(MonitoringResultCodeEnum.SUCCESS)
                 .status(HttpStatus.OK)
                 .loadTime(2000)
-                .build()));
+                .build();
+    }
+
+    @Test
+    public void resultSendTest() {
+        assertNotNull(resultService.sendResultByProperties(getDefaultMonResult()));
     }
 }

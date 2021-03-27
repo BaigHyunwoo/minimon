@@ -1,9 +1,14 @@
 package com.minimon.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.minimon.common.CommonSearchSpec;
 import com.minimon.entity.MonApi;
 import com.minimon.entity.MonResult;
-import com.minimon.entity.MonUrl;
+import com.minimon.enums.MonitoringResultCodeEnum;
+import com.minimon.enums.MonitoringTypeEnum;
+import com.minimon.vo.MonApiCheckVO;
+import com.minimon.vo.MonitoringResultVO;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +19,15 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 class MonApiServiceTest {
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
     private MonApiService monApiService;
@@ -31,6 +40,17 @@ class MonApiServiceTest {
                 .timeout(5)
                 .loadTime(2000)
                 .errorLoadTime(3000)
+                .build();
+    }
+
+    private MonResult getDefaultMonResult() {
+        return MonResult.builder()
+                .title("GOOGLE")
+                .relationSeq(0)
+                .monitoringTypeEnum(MonitoringTypeEnum.URL)
+                .resultCode(MonitoringResultCodeEnum.SUCCESS)
+                .status(HttpStatus.OK)
+                .loadTime(2000)
                 .build();
     }
 
@@ -64,6 +84,14 @@ class MonApiServiceTest {
     }
 
     @Test
-    void execute() {
+    void executeGetMethod() {
+        MonitoringResultVO result = monApiService.execute("https://www.naver.com", HttpMethod.GET.name(), null);
+        assertEquals(HttpStatus.OK, result.getStatus());
+    }
+
+    @Test
+    void executePostMethod() throws JsonProcessingException {
+        MonitoringResultVO result = monApiService.execute("http://localhost:8080/result/receive", HttpMethod.POST.name(), objectMapper.writeValueAsString(getDefaultMonResult()));
+        assertEquals(HttpStatus.OK, result.getStatus());
     }
 }
