@@ -5,9 +5,11 @@ import com.minimon.scheduler.CustomScheduler;
 import com.minimon.service.MonActService;
 import com.minimon.service.MonApiService;
 import com.minimon.service.MonUrlService;
+import com.minimon.service.ResultService;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,12 +30,19 @@ public class MainController {
 
     private final CustomScheduler customScheduler;
 
+    private final ResultService resultService;
+
     @RequestMapping(path = "/index", method = RequestMethod.GET)
     public ModelAndView main() {
+        CommonSearchSpec commonSearchSpec = new CommonSearchSpec();
+        commonSearchSpec.setSortKey("regDate");
+        commonSearchSpec.setSortType(Sort.Direction.DESC.name());
+
         ModelAndView mav = new ModelAndView("view/main/index");
-        mav.addObject("urlList", monUrlService.getList(new CommonSearchSpec()));
-        mav.addObject("apiList", monApiService.getList(new CommonSearchSpec()));
-        mav.addObject("actList", monActService.getList(new CommonSearchSpec()));
+        mav.addObject("urlList", monUrlService.getList(commonSearchSpec));
+        mav.addObject("apiList", monApiService.getList(commonSearchSpec));
+        mav.addObject("actList", monActService.getList(commonSearchSpec));
+        mav.addObject("resultList", resultService.getList(commonSearchSpec));
         mav.addObject("monList", customScheduler.getRunningScheduler());
         return mav;
     }
