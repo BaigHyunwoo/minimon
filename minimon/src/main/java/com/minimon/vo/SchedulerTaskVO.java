@@ -1,5 +1,6 @@
 package com.minimon.vo;
 
+import com.minimon.enums.SchedulerStatusEnum;
 import com.minimon.enums.SchedulerTypeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -17,7 +18,7 @@ public class SchedulerTaskVO {
     private SchedulerTypeEnum schedulerType;
 
     @ApiModelProperty(value = "실행 상태")
-    private String Status;
+    private SchedulerStatusEnum Status;
 
     @ApiModelProperty(value = "실행 작업")
     private ScheduledFuture scheduler;

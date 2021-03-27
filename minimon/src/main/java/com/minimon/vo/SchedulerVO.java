@@ -1,5 +1,6 @@
 package com.minimon.vo;
 
+import com.minimon.enums.SchedulerTypeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -12,7 +13,7 @@ import lombok.Setter;
 public class SchedulerVO {
 
     @ApiModelProperty(value = "실행 종류")
-    private String schedulerType;
+    private SchedulerTypeEnum schedulerType;
 
     @ApiModelProperty(value = "반복 설정 종류")
     private String activeType;
@@ -21,7 +22,7 @@ public class SchedulerVO {
     private String time;
 
     @Builder
-    public SchedulerVO(String schedulerType, String activeType, String time) {
+    public SchedulerVO(SchedulerTypeEnum schedulerType, String activeType, String time) {
         this.schedulerType = schedulerType;
         this.activeType = activeType;
         this.time = time;
