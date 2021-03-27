@@ -41,16 +41,22 @@ public class MonActControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private MockMultipartFile getTestFile() throws IOException {
+    private MockMultipartFile getTestFile() {
         Path path = Paths.get("src/main/resources/testFiles/FindTest.java");
         String name = "transactionFile";
         String originalFileName = "FindTest.java";
         String contentType = ContentType.TEXT_PLAIN.getMimeType();
-        byte[] content = Files.readAllBytes(path);
+        byte[] content = null;
+
+        try {
+            content = Files.readAllBytes(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return new MockMultipartFile(name, originalFileName, contentType, content);
     }
 
-    private MonAct getDefaultMonAct() throws IOException {
+    private MonAct getDefaultMonAct() {
         return MonAct.builder()
                 .title("네이버 검색")
                 .errorLoadTime(8000)
