@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Map;
 
 @Data
 @Entity
@@ -36,4 +37,12 @@ public class MonCodeData {
 
     @ApiModelProperty(name = "코드 입력 값")
     private String codeValue;
+
+    public MonCodeData(Map<String, Object> codeData){
+        this.seq = Integer.valueOf(codeData.get("seq").toString());
+        this.codeAction = codeData.get("codeAction") != null ? CodeActionEnum.valueOf(codeData.get("codeAction").toString()) : null;
+        this.codeSelectorType = codeData.get("codeSelectorType") != null ?  CodeSelectorTypeEnum.valueOf(codeData.get("codeSelectorType").toString()) : null;
+        this.codeSelectorValue = codeData.get("codeSelectorValue") != null ?  codeData.get("codeSelectorValue").toString() : null;
+        this.codeValue = codeData.get("codeValue") != null ?  codeData.get("codeValue").toString() : null;
+    }
 }

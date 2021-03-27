@@ -14,7 +14,9 @@ import org.hibernate.annotations.GenericGenerator;
 import org.springframework.http.HttpStatus;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -71,7 +73,11 @@ public class MonAct extends CommonEntity {
     private String codeFileName;
 
     public void setCodeDataList(String codeDataList) {
-        this.codeDataList = CommonUtil.convertToObject(codeDataList, List.class);
+        this.codeDataList = new ArrayList<>();
+        List<Map<String, Object>> objList = CommonUtil.convertToObject(codeDataList, List.class);
+        for(Map<String, Object> obj : objList){
+            this.codeDataList.add(new MonCodeData(obj));
+        }
     }
 
     @Builder
