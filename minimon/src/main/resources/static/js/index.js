@@ -576,6 +576,7 @@ function monInit() {
                         '                    <td>'+monResult.title+'</td>\n' +
                         '                    <td>'+monResult.resultCode+'</td>\n' +
                         '                    <td>'+monResult.statusCode+'</td>\n' +
+                        '                    <td>'+monResult.regDate+'</td>\n' +
                         '                    <td>\n' +
                         '                        <input cd="'+monResult.seq+'" class="btn btn-success .resultDetail default-btn" type="button" value="View"/>\n' +
                         '                    </td>\n' +
