@@ -1,5 +1,6 @@
 package com.minimon.vo;
 
+import com.minimon.enums.SchedulerStatusEnum;
 import com.minimon.enums.SchedulerTypeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -8,7 +9,6 @@ import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ScheduledFuture;
 
 @Getter
 @Setter
@@ -21,10 +21,18 @@ public class RunningSchedulerVO {
     @ApiModelProperty(value = "실행 상태")
     private int totalTaskSize;
 
-    @ApiModelProperty(value = "실행 작업")
+    @ApiModelProperty(value = "작업 목록")
     private Map<SchedulerTypeEnum, SchedulerTaskVO> scheduledTasks = new HashMap<>();
 
-    public void setScheduledTasks(SchedulerTypeEnum schedulerTypeEnum, SchedulerTaskVO schedulerTaskVO){
+    @ApiModelProperty(value = "실행 작업 수")
+    public long getRunningTaskCount() {
+        return this.scheduledTasks.entrySet()
+                .stream()
+                .filter(scheduledTask -> scheduledTask.getValue().getStatus().equals(SchedulerStatusEnum.RUNNING))
+                .count();
+    }
+
+    public void setScheduledTasks(SchedulerTypeEnum schedulerTypeEnum, SchedulerTaskVO schedulerTaskVO) {
         this.scheduledTasks.put(schedulerTypeEnum, schedulerTaskVO);
     }
 }
