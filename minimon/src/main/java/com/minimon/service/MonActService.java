@@ -157,7 +157,7 @@ public class MonActService {
 
         return MonResult.builder()
                 .title(monAct.getTitle())
-                .monitoringTypeEnum(MonitoringTypeEnum.TRANSACTION)
+                .monitoringTypeEnum(MonitoringTypeEnum.ACT)
                 .relationSeq(monAct.getSeq())
                 .resultCode(resultCode)
                 .status(monitoringResultVO.getStatus())

@@ -35,11 +35,11 @@ public class MonActController {
     @ApiOperation(value = "조회", response = MonAct.class)
     @GetMapping(path = "/{seq}")
     public CommonResponse get(@PathVariable("seq") int seq) {
-        Optional transaction = monActService.get(seq);
-        if (!transaction.isPresent()) {
+        Optional act = monActService.get(seq);
+        if (!act.isPresent()) {
             return CommonResponse.notExistResponse();
         }
-        return new CommonResponse(transaction.get());
+        return new CommonResponse(act.get());
     }
 
     @ApiOperation(value = "생성", response = MonAct.class)
@@ -50,8 +50,8 @@ public class MonActController {
 
     @ApiOperation(value = "수정", response = void.class)
     @PutMapping(path = "")
-    public CommonResponse update(@RequestBody MonAct monTransaction) {
-        if (!monActService.edit(monTransaction)) {
+    public CommonResponse update(@RequestBody MonAct monAct) {
+        if (!monActService.edit(monAct)) {
             return CommonResponse.notExistResponse();
         }
         return new CommonResponse();
