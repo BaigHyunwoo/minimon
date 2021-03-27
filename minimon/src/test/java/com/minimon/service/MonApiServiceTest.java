@@ -34,9 +34,9 @@ class MonApiServiceTest {
 
     private MonApi getDefaultMonApi() {
         return MonApi.builder()
-                .title("API 모니터링 목록 조회")
+                .title("DAUM 조회")
                 .method(HttpMethod.GET)
-                .url("http://localhost:8080/monApi")
+                .url("https://www.daum.net")
                 .timeout(5)
                 .loadTime(2000)
                 .errorLoadTime(3000)
@@ -84,8 +84,24 @@ class MonApiServiceTest {
     }
 
     @Test
+    void checkResponseFail() {
+        MonApi monApi = monApiService.save(getDefaultMonApi());
+        MonResult result = monApiService.execute(monApi.getSeq());
+        assertEquals(MonitoringResultCodeEnum.RESPONSE, result.getResultCode());
+    }
+
+    @Test
+    void checkLoadTimeFail() {
+        MonApi monApi = getDefaultMonApi();
+        monApi.setErrorLoadTime(10);
+        monApi = monApiService.save(monApi);
+        MonResult result = monApiService.execute(monApi.getSeq());
+        assertEquals(MonitoringResultCodeEnum.LOAD_TIME, result.getResultCode());
+    }
+
+    @Test
     void executeGetMethod() {
-        MonitoringResultVO result = monApiService.execute("https://www.naver.com", HttpMethod.GET.name(), null);
+        MonitoringResultVO result = monApiService.execute("https://www.daum.net", HttpMethod.GET.name(), null);
         assertEquals(HttpStatus.OK, result.getStatus());
     }
 
