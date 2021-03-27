@@ -1,19 +1,13 @@
 package com.minimon.common;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.*;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 
 @Slf4j
@@ -116,42 +110,5 @@ public class CommonRestTemplate {
      */
     public String callApi(HttpMethod method, String url, Object param) {
         return call(method, url, param);
-    }
-
-    /**
-     * convert String to Object
-     */
-    public <T> T convertToMap(String data, Class<T> T) {
-        try {
-            return new ObjectMapper().readValue(data, T);
-        } catch (IOException e) {
-            e.printStackTrace();
-            log.info("ERROR  Convert To Object " + data);
-        }
-        return null;
-    }
-
-    /**
-     * convert String to Map
-     */
-    public Map convertToMap(String data) {
-        try {
-            return new ObjectMapper().readValue(data, Map.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-            log.info("ERROR  Convert To Map " + data);
-        }
-        return null;
-    }
-
-    /**
-     * create new url with params
-     */
-    public String createUrlWithParams(HashMap<String, Object> param, String url) {
-        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromHttpUrl(url);
-        param.entrySet().forEach(entry -> {
-            uriComponentsBuilder.queryParam(entry.getKey(), entry.getValue());
-        });
-        return uriComponentsBuilder.build(false).toUriString();
     }
 }
