@@ -77,7 +77,7 @@ public class MonActController {
     }
 
     @ApiOperation(value = "검사 실행", response = MonResult.class)
-    @GetMapping(path = "/execute/{seq}")
+    @GetMapping(path = "/{seq}/execute")
     public CommonResponse execute(@PathVariable("seq") int seq) {
         MonResult monResult = monActService.execute(seq);
         if (monResult == null) {

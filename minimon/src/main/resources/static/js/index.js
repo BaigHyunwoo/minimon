@@ -80,7 +80,7 @@ function monInit() {
     $('body').on('click', '#saveUrl', function () {
 
         if ($("#urlCheck").attr('cd') != $("#saveUrlForm [name='url']").val()) {
-            alert('URL 검사를 진행해주세요.');
+            alert('검사를 진행해주세요.');
             return;
         }
 
@@ -252,7 +252,7 @@ function monInit() {
     $('body').on('click', '#saveApi', function () {
 
         if ($("#apiCheck").attr('cd') != $("#saveApiForm [name='url']").val()) {
-            alert('API 검사를 진행해주세요.');
+            alert('검사를 진행해주세요.');
             return;
         }
 
@@ -260,7 +260,6 @@ function monInit() {
         if ($("#saveApiForm [name='seq']").val() != '') {
             method = 'PUT';
         }
-
 
         let body = {
             seq: $("#saveApiForm [name='seq']").val(),
@@ -277,6 +276,7 @@ function monInit() {
             loadTime: $("#saveApiForm [name='loadTime']").val(),
             response: $("#saveApiForm [name='response']").val(),
         }
+
         $.ajax({
             type: method,
             url: '/monApi',
@@ -329,7 +329,7 @@ function monInit() {
         let actFile = $("#saveActForm [name='actFile']").val();
 
         if (actFile == '') {
-            alert('actFile를 첨부해주세요');
+            alert('검사 파일을 첨부해주세요');
         } else {
 
             let file = $("#saveActForm [name=actFile]")[0].files[0];
@@ -381,9 +381,6 @@ function monInit() {
 
 
     $('body').on('click', '#deleteAct', function () {
-        alert("준비중인 기능입니다.");
-        return;
-
         $.ajax({
             type: 'DELETE',
             url: '/monAct/'+$("#saveActForm [name='seq']").val() ,
@@ -400,24 +397,41 @@ function monInit() {
 
 
     $('body').on('click', '#saveAct', function () {
-        alert("준비중인 기능입니다.");
-        return;
-
-        if ($("#actCheck").attr('cd') != $("#actFile").attr('cd')) {
-            alert('Act 검사를 진행해주세요.');
-            return;
-        }
-
         let method = 'POST';
         if ($("#saveActForm [name='seq']").val() != '') {
             method = 'PUT';
+            if(!confirm("수정 시 파일을 새로 등록해야합니다. 변경 하시겠습니까?")) {
+                return false;
+            }
+        }
+
+        if ($("#actCheck").attr('cd') != $("#actFile").attr('cd')) {
+            alert('검사 파일을 등록 후 검사를 진행해주세요.');
+            return;
+        }
+
+        let body = {
+            seq: $("#saveActForm [name='seq']").val(),
+            method: $("#saveActForm [name='method']").val(),
+            url: $("#saveActForm [name='url']").val(),
+            title: $("#saveActForm [name='title']").val(),
+            timeout: $("#saveActForm [name='timeout']").val(),
+            errorLoadTime: $("#saveActForm [name='errorLoadTime']").val(),
+            monitoringUseYn: $("#saveActForm [name='monitoringUseYn']:checked").val(),
+            loadTimeCheckYn: $("#saveActForm [name='loadTimeCheckYn']:checked").val(),
+            responseCheckYn: $("#saveActForm [name='responseCheckYn']:checked").val(),
+            data: $("#saveActForm [name='data']").val(),
+            status: $("#saveActForm [name='status']").val(),
+            loadTime: $("#saveActForm [name='loadTime']").val(),
+            response: $("#saveActForm [name='response']").val(),
         }
 
         $.ajax({
             type: method,
             url: '/monAct',
-            data: $("#saveActForm").serialize(),
+            data: JSON.stringify(body),
             dataType: 'json',
+            contentType: "application/json",
             error: function(e){
                 alert(e.responseJSON.meta.message);
             },
@@ -431,9 +445,6 @@ function monInit() {
 
 
     $('body').on('click', '.actEditBtn', function () {
-        alert("준비중인 기능입니다.");
-        return;
-
         $.ajax({
             type: 'GET',
             url: '/monAct/' + $(this).attr('cd'),
