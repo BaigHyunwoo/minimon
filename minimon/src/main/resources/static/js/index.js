@@ -557,4 +557,40 @@ function monInit() {
             }
         });
     });
+
+
+    function getMonResultList(){
+        $.ajax({
+            type: 'GET',
+            url: '/result?sortKey=regDate&sortType=DESC',
+            dataType: 'json',
+            error: function(e){
+                alert(e.responseJSON.meta.message);
+            },
+            success: function (result) {
+                $(".resultList > tr").hide();
+                $(".resultList > tr").remove();
+                $.each(result.data.content, function(i, monResult){
+                    let resultHtml = $('<tr>\n' +
+                        '                    <td>'+monResult.monitoringType+'</td>\n' +
+                        '                    <td>'+monResult.title+'</td>\n' +
+                        '                    <td>'+monResult.resultCode+'</td>\n' +
+                        '                    <td>'+monResult.statusCode+'</td>\n' +
+                        '                    <td>\n' +
+                        '                        <input cd="'+monResult.seq+'" class="btn btn-success .resultDetail default-btn" type="button" value="View"/>\n' +
+                        '                    </td>\n' +
+                        '                </tr>').hide();
+                    $('.resultList').append($(resultHtml));
+                    $(resultHtml).fadeIn("slow");
+                });
+            }
+        });
+    }
+
+    function loadingNewResult() {
+        getMonResultList();
+        setTimeout(loadingNewResult, 5000);
+    }
+
+    loadingNewResult();
 }

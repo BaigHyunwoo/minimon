@@ -174,6 +174,37 @@
             </table>
         </div>
     </div>
+
+    <div class='div-card'>
+        <p class='keyTitle'>
+            <span class='mon-type-Text'>검사 결과 목록</span>
+        </p>
+
+        <div class='mon-table'>
+            <table class="table table-striped table-hover dataTable no-footer table-custom" role="grid" aria-describedby="">
+                <thead>
+                <tr style="height:32px;">
+                    <th class="text-align-center" style="width:100px">Type</th>
+                    <th class="text-align-center" style="width:70px">Title</th>
+                    <th class="text-align-center" style="width:70px">Result</th>
+                    <th class="text-align-center" style="width:70px">Status</th>
+                    <th class="text-align-center" style="width:70px">Detail</th>
+                </tr>
+                </thead>
+                <tbody class="resultList">
+                <tr th:each="result: ${resultList}">
+                    <td th:text="${result.monitoringType}"></td>
+                    <td th:text="${result.title}"></td>
+                    <td th:text="${result.resultCode}"></td>
+                    <td th:text="${result.statusCode}"></td>
+                    <td>
+                        <input th:attr="cd=${result.seq}" class='btn btn-success .resultDetail default-btn' type="button" value="View"/>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 </body>
 
@@ -239,7 +270,7 @@
                                 </div>
 
                                 <label>Status</label>
-                                <input name="status" type="text" class='form-control' value="200"/>
+                                <input name="status" type="text" class='form-control' value="200" readOnly />
                                 <div class="mgt15 text-right resource-btz">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
                                     <button type="button" id="deleteUrl" class="btn btn btn-success">삭제</button>
@@ -330,7 +361,8 @@
                                 </div>
 
                                 <label>Status</label>
-                                <input name="status" type="text" class='form-control' value="200"/>
+                                <input name="status" type="text" class='form-control' value="200" readOnly/>
+
                                 <label>Response Check</label>
                                 <br>
                                 <div class="form-check form-check-inline">
@@ -341,7 +373,7 @@
                                 </div>
                                 <br>
                                 <label>Response</label>
-                                <input name="response" type="hidden" class='form-control' value="200" readOnly/>
+                                <input name="response" type="hidden" class='form-control' value="200" readOnly />
                                 <div class="card" style="width: 18rem;">
                                     <div class="card-body">
                                         <p class="card-text" id="api_response"></p>
