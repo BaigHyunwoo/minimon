@@ -41,8 +41,10 @@ public class MonActControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private final String testFilePath = "src/main/resources/testFiles/FindTest.java";
+
     private MockMultipartFile getTestFile() {
-        Path path = Paths.get("src/main/resources/testFiles/FindTest.java");
+        Path path = Paths.get(testFilePath);
         String name = "transactionFile";
         String originalFileName = "FindTest.java";
         String contentType = ContentType.TEXT_PLAIN.getMimeType();
@@ -63,6 +65,7 @@ public class MonActControllerTest {
                 .timeout(10)
                 .loadTime(7000)
                 .codeDataList(monActService.getTestSource(getTestFile()))
+                .codeFileName(testFilePath)
                 .build();
     }
 

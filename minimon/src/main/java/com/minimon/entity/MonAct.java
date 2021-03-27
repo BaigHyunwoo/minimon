@@ -63,8 +63,12 @@ public class MonAct extends CommonEntity {
     @ApiModelProperty(name = "걸린 시간")
     private int loadTime;
 
+    @NotNull
+    @ApiModelProperty(name = "검사 파일 명")
+    private String codeFileName;
+
     @Builder
-    public MonAct(String title, int timeout, int errorLoadTime, List<MonCodeData> codeDataList, int loadTime) {
+    public MonAct(String title, int timeout, int errorLoadTime, List<MonCodeData> codeDataList, int loadTime, String codeFileName) {
         this.title = title;
         this.timeout = timeout;
         this.errorLoadTime = errorLoadTime;
@@ -73,5 +77,6 @@ public class MonAct extends CommonEntity {
         this.monitoringUseYn = UseStatusEnum.Y;
         this.loadTimeCheckYn = UseStatusEnum.Y;
         this.status = HttpStatus.OK.value();
+        this.codeFileName = codeFileName;
     }
 }
