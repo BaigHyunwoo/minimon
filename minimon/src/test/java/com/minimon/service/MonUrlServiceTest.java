@@ -3,6 +3,8 @@ package com.minimon.service;
 import com.minimon.common.CommonSearchSpec;
 import com.minimon.entity.MonResult;
 import com.minimon.entity.MonUrl;
+import com.minimon.enums.MonitoringResultCodeEnum;
+import com.minimon.vo.MonUrlCheckVO;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,9 +63,24 @@ public class MonUrlServiceTest {
     }
 
     @Test
-    void execute() {
+    void executeSuccess() {
         MonUrl monUrl = monUrlService.save(getDefaultMonUrl());
         MonResult monResult = monUrlService.execute(monUrl.getSeq());
-        assertEquals(HttpStatus.OK, monResult.getStatus());
+        assertEquals(MonitoringResultCodeEnum.SUCCESS, monResult.getResultCode());
+    }
+
+    @Test
+    void executeFail() {
+        MonUrl monUrl = getDefaultMonUrl();
+        monUrl.setErrorLoadTime(1000);
+        monUrl = monUrlService.save(monUrl);
+        MonResult monResult = monUrlService.execute(monUrl.getSeq());
+        assertNotEquals(MonitoringResultCodeEnum.SUCCESS, monResult.getResultCode());
+    }
+
+    @Test
+    void check() {
+        assertEquals(HttpStatus.OK, monUrlService.execute("https://www.daum.net", 3).getStatus());
+        assertEquals(HttpStatus.OK, monUrlService.execute("https://www.naver.com", 1).getStatus());
     }
 }
