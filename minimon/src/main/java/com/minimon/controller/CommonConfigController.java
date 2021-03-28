@@ -4,6 +4,7 @@ import com.minimon.common.CommonProperties;
 import com.minimon.common.CommonResponse;
 import com.minimon.service.PropertiesService;
 import com.minimon.vo.MonitoringResultVO;
+import com.minimon.vo.ResultReceiveEditVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -38,8 +39,8 @@ public class CommonConfigController {
 
     @ApiOperation(value = "모니터링 수신 API 경로 설정")
     @PutMapping(path = "/path/result")
-    public CommonResponse setResultPath(@RequestParam String path) {
-        propertiesService.setResultReceivePath(path);
+    public CommonResponse setResultPath(@RequestBody ResultReceiveEditVO resultReceiveEditVO) {
+        propertiesService.setResultReceivePath(resultReceiveEditVO.getResultReceivePath());
         return new CommonResponse();
     }
 }
