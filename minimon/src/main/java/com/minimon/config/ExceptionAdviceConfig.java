@@ -8,6 +8,7 @@ import com.minimon.exception.UndefinedDriverException;
 import com.minimon.exception.UndefinedResultReceiveException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.WebDriverException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -62,6 +63,13 @@ public class ExceptionAdviceConfig {
     protected CommonResponse driverUploadException(HttpServletRequest request, Exception e) {
         log.error(e.getMessage());
         return CommonResponse.fail(CommonMessage.getMessage("driverUploadFail.code"), CommonMessage.getMessage("driverUploadFail.msg"));
+    }
+
+    @ExceptionHandler(WebDriverException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResponse webDriverException(HttpServletRequest request, Exception e) {
+        log.error(e.getMessage());
+        return CommonResponse.fail(CommonMessage.getMessage("webDriverError.code"), CommonMessage.getMessage("webDriverError.msg"));
     }
 }
 

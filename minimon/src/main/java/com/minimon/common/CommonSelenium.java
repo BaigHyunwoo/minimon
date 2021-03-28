@@ -82,7 +82,7 @@ public class CommonSelenium {
         try {
 
             // 기존 프로세스 킬
-            Runtime.getRuntime().exec("taskkill /F /IM chromedriver");
+            Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
 
             // 크롬 드라이버 파일 경로설정
             System.setProperty(commonProperties.getDriverName(), commonProperties.getDriverPath() + commonProperties.getDriverFileName());
