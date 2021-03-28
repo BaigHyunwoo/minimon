@@ -31,8 +31,8 @@ public class CommonConfigController {
     }
 
     @ApiOperation(value = "드라이버 파일 변경", produces = "multipart/form-data")
-    @PutMapping(path = "/path/driver")
-    public CommonResponse setDriverPath(@RequestParam MultipartFile driver) {
+    @PutMapping(path = "/set/driver")
+    public CommonResponse setDriver(@RequestParam MultipartFile driver) {
         propertiesService.setDriverPath(driver);
         return new CommonResponse();
     }

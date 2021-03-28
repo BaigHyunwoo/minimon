@@ -28,7 +28,12 @@
 
     <div class='div-card'>
         <p class='keyTitle'>
-            <span class='mon-type-Text'>설정</span>
+            <form id="driverUploadForm" name="driverUploadForm" method="PUT" enctype="multipart/form-data">
+                <span class='mon-type-Text'>설정
+                </span>
+                <input class='float-r btn btn-success default-btn' id="driverFileSave" type="button" value="Save"/>
+                <input class="float-r" type="file" name="driver" id="driver">
+            </form>
         </p>
 
         <div class='mon-table'>

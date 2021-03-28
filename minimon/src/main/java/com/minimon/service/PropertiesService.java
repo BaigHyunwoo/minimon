@@ -25,6 +25,7 @@ public class PropertiesService {
 
     public void setDriverPath(MultipartFile driver){
         try {
+            Runtime.getRuntime().exec("taskkill /F /IM chromedriver");
             String path = new File(commonProperties.getDriverPath()).getAbsolutePath() + commonProperties.getDriverFileName();
             File file = new File(path);
             driver.transferTo(file);

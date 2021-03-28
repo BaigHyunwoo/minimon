@@ -3,6 +3,7 @@ package com.minimon.common;
 import lombok.Getter;
 import lombok.Setter;
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.SessionNotCreatedException;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.InitializingBean;
@@ -27,15 +28,18 @@ public class CommonProperties implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        if (this.driverVersion == null) {
-            System.setProperty(this.driverName, this.driverPath + this.driverFileName);
-            ChromeOptions options = new ChromeOptions();
-            options.setExperimentalOption("w3c", false);
-            options.addArguments("headless");
-            ChromeDriver driver = new ChromeDriver(options);
-            Capabilities capabilities = driver.getCapabilities();
-            this.driverVersion = capabilities.getVersion();
-            driver.quit();
+        try {
+            if (this.driverVersion == null) {
+                System.setProperty(this.driverName, this.driverPath + this.driverFileName);
+                ChromeOptions options = new ChromeOptions();
+                options.setExperimentalOption("w3c", false);
+                options.addArguments("headless");
+                ChromeDriver driver = new ChromeDriver(options);
+                Capabilities capabilities = driver.getCapabilities();
+                this.driverVersion = capabilities.getVersion();
+                driver.quit();
+            }
+        } catch (SessionNotCreatedException SE) {
         }
     }
 }

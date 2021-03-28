@@ -589,6 +589,29 @@ function monInit() {
     });
 
 
+    $('body').on('click', '#driverFileSave', function () {
+        let driver = $("#driverUploadForm [name=driver]")[0].files[0];
+        let formData = new FormData();
+        formData.append("driver", driver);
+
+        $.ajax({
+            type: 'PUT',
+            url: '/commonConfig/set/driver',
+            data: formData,
+            processData: false,
+            contentType: false,
+            enctype: 'multipart/form-data',
+            error: function(e){
+                alert(e.responseJSON.meta.message);
+            },
+            success: function (result) {
+                alert('저장 완료');
+                window.location.reload();
+            }
+        });
+    });
+
+
     function getMonResultList(){
         $.ajax({
             type: 'GET',
