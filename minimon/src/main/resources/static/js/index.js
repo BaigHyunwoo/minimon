@@ -26,6 +26,14 @@ function monInit() {
         window.location.reload();
     });
 
+    $('body').on('click', '#resultReceivePathEditBtn', function () {
+        $('#editResultReceivePathModal').modal('show');
+    });
+
+    $('body').on('hide.bs.modal', '#resultReceivePathEditBtn', function (e) {
+        window.location.reload();
+    });
+
     $('body').on('click', '#urlCheck', function () {
         let url = $("#saveUrlForm [name='url']").val();
         if (url == '') {
@@ -553,6 +561,28 @@ function monInit() {
             },
             success: function (result) {
                 alert('동작 중지 완료');
+                window.location.reload();
+            }
+        });
+    });
+
+
+    $('body').on('click', '#resultReceivePathEdit', function () {
+        let body = {
+            "resultReceivePath" : $("#editResultReceivePathForm [name='resultReceivePath']").val()
+        }
+
+        $.ajax({
+            type: 'PUT',
+            url: '/commonConfig/path/result',
+            data: JSON.stringify(body),
+            dataType: 'json',
+            contentType: "application/json",
+            error: function(e){
+                alert(e.responseJSON.meta.message);
+            },
+            success: function (result) {
+                alert('수정 완료');
                 window.location.reload();
             }
         });

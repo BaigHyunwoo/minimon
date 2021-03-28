@@ -36,7 +36,7 @@
                 <thead>
                 <tr style="height:32px;">
                     <th class="text-align-center" style="width:100px">설정</th>
-                    <th class="text-align-center" style="width:200px">설정 값</th>
+                    <th class="text-align-center" style="width:200px">값</th>
                     <th class="text-align-center" style="width:70px">변경</th>
                 </tr>
                 </thead>
@@ -55,7 +55,7 @@
                     <td>결과 수신 경로</td>
                     <td th:text="${commonProperties.resultReceivePath}"></td>
                     <td>
-                        <input class='btn btn-success default-btn' type="button" value="Edit"/>
+                        <input class='btn btn-success default-btn' id="resultReceivePathEditBtn" type="button" value="Edit"/>
                     </td>
                 </tr>
                 </tbody>
@@ -511,6 +511,38 @@
                                     <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
                                     <button type="button" id="deleteAct" class="btn btn btn-success">삭제</button>
                                     <button type="button" id="saveAct" class="btn btn btn-success">저장</button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 결과 수신 경로 변경 모달 -->
+<div class="modal fade" id="editResultReceivePathModal" aria-hidden="true">
+    <div class="modal-dialog resource-kanban-box" role="document" style="width:96%; max-width:500px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">결과 수신 경로 변경</h5>
+                <button type="button" class="close btn btn-default" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editResultReceivePathForm" name="editResultReceivePathForm" class="form-group">
+                    <div class="card" style="width: 100%;">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <label>경로</label>
+                                <input name="resultReceivePath" type="text" class='form-control' autocomplete="off"/>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="mgt15 text-right resource-btz">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+                                    <button type="button" id="resultReceivePathEdit" class="btn btn btn-success">변경</button>
                                 </div>
                             </li>
                         </ul>
