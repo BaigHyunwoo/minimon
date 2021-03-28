@@ -2,6 +2,7 @@ package com.minimon.config;
 
 import com.minimon.common.CommonMessage;
 import com.minimon.common.CommonResponse;
+import com.minimon.exception.UndefinedDriverException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,14 @@ public class ExceptionAdviceConfig {
         e.printStackTrace();
         log.error(e.getMessage());
         return CommonResponse.fail(CommonMessage.getMessage("badRequest.code"), CommonMessage.getMessage("badRequest.msg"));
+    }
+
+    @ExceptionHandler(UndefinedDriverException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResponse undefinedDriverException(HttpServletRequest request, Exception e) {
+        e.printStackTrace();
+        log.error(e.getMessage());
+        return CommonResponse.fail(CommonMessage.getMessage("undefinedDriver.code"), CommonMessage.getMessage("undefinedDriver.msg"));
     }
 }
 

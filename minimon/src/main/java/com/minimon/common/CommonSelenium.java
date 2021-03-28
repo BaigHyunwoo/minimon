@@ -2,6 +2,7 @@ package com.minimon.common;
 
 import com.minimon.entity.MonCodeData;
 import com.minimon.enums.*;
+import com.minimon.exception.UndefinedDriverException;
 import com.minimon.vo.MonActCodeResultVO;
 import com.minimon.vo.MonUrlResourceVO;
 import com.minimon.vo.MonitoringResultVO;
@@ -23,6 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -104,9 +106,11 @@ public class CommonSelenium {
             vars = new HashMap<>();
             log.debug("WebDriver - 연결 완료");
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
             if (driver != null) driver.quit();
+        } catch (IllegalStateException ex) {
+            throw new UndefinedDriverException();
         }
 
         return driver;

@@ -6,6 +6,10 @@ badRequest:
   code: "400"
   msg: "입력한 데이터를 확인해주세요."
 
+undefinedDriver:
+  code: "500"
+  msg: "chromedriver를 찾을 수 없습니다."
+
 preparingFunction:
   code: "-2"
   msg: "아직 준비중인 기능입니다."
