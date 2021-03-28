@@ -23,7 +23,6 @@ import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -109,8 +108,9 @@ public class CommonSelenium {
         } catch (IOException e) {
             e.printStackTrace();
             if (driver != null) driver.quit();
+
         } catch (IllegalStateException ex) {
-            throw new UndefinedDriverException();
+            throw new UndefinedDriverException(ex);
         }
 
         return driver;

@@ -4,6 +4,7 @@ import com.minimon.common.CommonProperties;
 import com.minimon.common.CommonRestTemplate;
 import com.minimon.common.CommonSearchSpec;
 import com.minimon.entity.MonResult;
+import com.minimon.exception.UndefinedResultReceiveException;
 import com.minimon.repository.MonResultRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,13 +38,12 @@ public class ResultService {
     }
 
     public String sendResultByProperties(MonResult monResult) {
-        String response = null;
+        String response;
 
         try {
             response = commonRestTemplate.callApi(HttpMethod.POST, commonProperties.getResultReceivePath(), monResult);
         } catch (Exception e) {
-            e.printStackTrace();
-            log.info("SEND RESULT ERROR");
+            throw new UndefinedResultReceiveException(e);
         }
 
         return response;

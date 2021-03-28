@@ -8,7 +8,11 @@ badRequest:
 
 undefinedDriver:
   code: "500"
-  msg: "chromedriver를 찾을 수 없습니다."
+  msg: "크롬 드라이버 파일을 찾을 수 없습니다."
+
+undefinedResultReceive:
+  code: "500"
+  msg: "결과 수신 경로를 찾을 수 없습니다."
 
 preparingFunction:
   code: "-2"
