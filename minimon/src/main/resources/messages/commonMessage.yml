@@ -20,7 +20,7 @@ driverVersionNotMatch:
 
 driverUploadFail:
   code: "500"
-  msg: "크롬 드라이버 업로드가 실패했습니다. 동작중인 모든 크롬드라이버를 종료 후 다시 시도해주세요."
+  msg: "크롬 드라이버 업로드가 실패했습니다. 다시 시도해주세요. 해당 현상이 반복되면 동작중인 모든 크롬드라이버를 종료 후 다시 시도해주세요."
 
 webDriverError:
   code: "500"

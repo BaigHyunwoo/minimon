@@ -30,21 +30,23 @@ public class CommonProperties implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        if (this.driverVersion == null) {
-            ChromeDriver driver = null;
-            try {
-                Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
-                System.setProperty(this.driverName, this.driverPath + this.driverFileName);
-                ChromeOptions options = new ChromeOptions();
-                options.setExperimentalOption("w3c", false);
-                options.addArguments("headless");
-                driver = new ChromeDriver(options);
-                Capabilities capabilities = driver.getCapabilities();
-                this.driverVersion = capabilities.getVersion();
-            } catch (SessionNotCreatedException | IOException SE) {
-            } finally {
-                if (driver != null) driver.quit();
-            }
+        setDriverVersion();
+    }
+
+    public void setDriverVersion(){
+        ChromeDriver driver = null;
+        try {
+            Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
+            System.setProperty(this.driverName, this.driverPath + this.driverFileName);
+            ChromeOptions options = new ChromeOptions();
+            options.setExperimentalOption("w3c", false);
+            options.addArguments("headless");
+            driver = new ChromeDriver(options);
+            Capabilities capabilities = driver.getCapabilities();
+            this.driverVersion = capabilities.getVersion();
+        } catch (SessionNotCreatedException | IOException SE) {
+        } finally {
+            if (driver != null) driver.quit();
         }
     }
 }

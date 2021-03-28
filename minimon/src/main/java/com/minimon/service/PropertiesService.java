@@ -32,6 +32,8 @@ public class PropertiesService {
             String path = new File(commonProperties.getDriverPath()).getAbsolutePath() + commonProperties.getDriverFileName();
             File file = new File(path);
             driver.transferTo(file);
+
+            commonProperties.setDriverVersion();
         } catch (FileUploadException e) {
             throw new DriverUploadException(e);
         } catch (IOException e) {
