@@ -11,7 +11,7 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 @ConfigurationProperties("common")
 public class CommonProperties {
 
-    private String location;
+    private String resultReceivePath;
 
     private String driverName;
 

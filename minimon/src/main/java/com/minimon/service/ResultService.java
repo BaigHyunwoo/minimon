@@ -40,7 +40,7 @@ public class ResultService {
         String response = null;
 
         try {
-            response = commonRestTemplate.callApi(HttpMethod.POST, commonProperties.getLocation(), monResult);
+            response = commonRestTemplate.callApi(HttpMethod.POST, commonProperties.getResultReceivePath(), monResult);
         } catch (Exception e) {
             e.printStackTrace();
             log.info("SEND RESULT ERROR");
