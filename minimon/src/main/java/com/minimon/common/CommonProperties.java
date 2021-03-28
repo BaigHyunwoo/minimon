@@ -28,18 +28,20 @@ public class CommonProperties implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        try {
-            if (this.driverVersion == null) {
+        if (this.driverVersion == null) {
+            ChromeDriver driver = null;
+            try {
                 System.setProperty(this.driverName, this.driverPath + this.driverFileName);
                 ChromeOptions options = new ChromeOptions();
                 options.setExperimentalOption("w3c", false);
                 options.addArguments("headless");
-                ChromeDriver driver = new ChromeDriver(options);
+                driver = new ChromeDriver(options);
                 Capabilities capabilities = driver.getCapabilities();
                 this.driverVersion = capabilities.getVersion();
-                driver.quit();
+            } catch (SessionNotCreatedException SE) {
+            } finally {
+                if (driver != null) driver.quit();
             }
-        } catch (SessionNotCreatedException SE) {
         }
     }
 }
