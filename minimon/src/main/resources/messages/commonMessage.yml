@@ -18,6 +18,10 @@ driverVersionNotMatch:
   code: "500"
   msg: "크롬 드라이버 버전이 맞지 않습니다. 크롬 브라우저 버전을 확인 후 버전에 맞는 드라이버를 설정해주세요."
 
+driverUploadFail:
+  code: "500"
+  msg: "크롬 드라이버 업로드가 실패했습니다. 동작중인 모든 크롬드라이버를 종료 후 다시 시도해주세요."
+
 preparingFunction:
   code: "-2"
   msg: "아직 준비중인 기능입니다."
