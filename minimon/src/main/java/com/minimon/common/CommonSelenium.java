@@ -2,6 +2,7 @@ package com.minimon.common;
 
 import com.minimon.entity.MonCodeData;
 import com.minimon.enums.*;
+import com.minimon.exception.DriverVersionException;
 import com.minimon.exception.UndefinedDriverException;
 import com.minimon.vo.MonActCodeResultVO;
 import com.minimon.vo.MonUrlResourceVO;
@@ -105,12 +106,14 @@ public class CommonSelenium {
             vars = new HashMap<>();
             log.debug("WebDriver - 연결 완료");
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException IOE) {
+            IOE.printStackTrace();
             if (driver != null) driver.quit();
 
-        } catch (IllegalStateException ex) {
-            throw new UndefinedDriverException(ex);
+        } catch (IllegalStateException IllE) {
+            throw new UndefinedDriverException(IllE);
+        } catch (SessionNotCreatedException SE) {
+            throw new DriverVersionException(SE);
         }
 
         return driver;
