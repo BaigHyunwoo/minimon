@@ -35,4 +35,4 @@ logging:
 common:
   location: http://localhost:8080/result/receive
   driverName: webdriver.chrome.driver
-  driverPath: C:\\Users\\user\\Downloads
+  driverPath: src/main/resources/driver
