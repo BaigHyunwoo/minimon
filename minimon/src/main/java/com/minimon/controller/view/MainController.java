@@ -1,5 +1,6 @@
 package com.minimon.controller.view;
 
+import com.minimon.common.CommonProperties;
 import com.minimon.common.CommonSearchSpec;
 import com.minimon.scheduler.CustomScheduler;
 import com.minimon.service.MonActService;
@@ -29,6 +30,8 @@ public class MainController {
 
     private final CustomScheduler customScheduler;
 
+    private final CommonProperties commonProperties;
+
     @RequestMapping(path = "/index", method = RequestMethod.GET)
     public ModelAndView main() {
         CommonSearchSpec commonSearchSpec = new CommonSearchSpec();
@@ -40,6 +43,7 @@ public class MainController {
         mav.addObject("apiList", monApiService.getList(commonSearchSpec));
         mav.addObject("actList", monActService.getList(commonSearchSpec));
         mav.addObject("monList", customScheduler.getRunningScheduler());
+        mav.addObject("commonProperties", commonProperties);
         return mav;
     }
 }
