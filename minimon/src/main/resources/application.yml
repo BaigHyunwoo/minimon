@@ -36,3 +36,4 @@ common:
   location: http://localhost:8080/result/receive
   driverName: webdriver.chrome.driver
   driverPath: src/main/resources/driver
+  driverFileName: /chromedriver.exe

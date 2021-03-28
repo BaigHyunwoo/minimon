@@ -85,7 +85,7 @@ public class CommonSelenium {
             Runtime.getRuntime().exec("taskkill /F /IM chromedriver");
 
             // 크롬 드라이버 파일 경로설정
-            System.setProperty(commonProperties.getDriverName(), commonProperties.getDriverPath() + File.separator + "chromedriver.exe");
+            System.setProperty(commonProperties.getDriverName(), commonProperties.getDriverPath() + commonProperties.getDriverFileName());
 
             LoggingPreferences logPrefs = new LoggingPreferences();
 

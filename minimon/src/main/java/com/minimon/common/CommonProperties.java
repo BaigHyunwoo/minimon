@@ -16,4 +16,6 @@ public class CommonProperties {
     private String driverName;
 
     private String driverPath;
+
+    private String driverFileName;
 }
