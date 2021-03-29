@@ -4,11 +4,8 @@ import com.minimon.common.CommonProperties;
 import com.minimon.exception.DriverUploadException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 
 @Slf4j
@@ -18,29 +15,18 @@ public class PropertiesService {
     private final CommonProperties commonProperties;
 
 
-    public void setDriverPath(MultipartFile driver) {
+    public void setDriverPath(String driverPath) {
         try {
 
-            killDriver();
-            String path = new File(commonProperties.getDriverPath()).getAbsolutePath() + commonProperties.getDriverFileName();
-            File file = new File(path);
-            driver.transferTo(file);
-
-            commonProperties.setDriverVersion();
-        } catch (FileUploadException e) {
-            throw new DriverUploadException(e);
-        } catch (IOException e) {
-            throw new DriverUploadException(e);
-        }
-    }
-
-    private void killDriver() {
-        try {
             Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
+            commonProperties.setDriverPath(driverPath);
+            commonProperties.setDriverVersion();
+
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new DriverUploadException(e);
         }
     }
+
 
     public void setResultReceivePath(String path) {
         commonProperties.setResultReceivePath(path);
