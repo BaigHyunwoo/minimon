@@ -1,12 +1,10 @@
 package com.minimon.service;
 
 import com.minimon.common.CommonProperties;
-import com.minimon.exception.DriverUploadException;
+import com.minimon.exception.UndefinedDriverException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
 
 @Slf4j
 @Service
@@ -16,15 +14,17 @@ public class PropertiesService {
 
 
     public void setDriverPath(String driverPath) {
+        commonProperties.killDriver();
+
         try {
 
-            Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
-            commonProperties.setDriverPath(driverPath);
-            commonProperties.setDriverVersion();
+            commonProperties.setDriverVersion(driverPath);
 
-        } catch (IOException e) {
-            throw new DriverUploadException(e);
+        } catch (IllegalStateException SE) {
+            throw new UndefinedDriverException(SE);
         }
+
+        commonProperties.setDriverPath(driverPath);
     }
 
 

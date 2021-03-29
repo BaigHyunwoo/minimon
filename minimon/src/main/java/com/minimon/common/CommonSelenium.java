@@ -81,6 +81,9 @@ public class CommonSelenium {
 
         try {
 
+            // 기존 드라이버 종료
+            commonProperties.killDriver();
+
             // 크롬 드라이버 파일 경로설정
             System.setProperty(commonProperties.getDriverName(), commonProperties.getDriverPath() + commonProperties.getDriverFileName());
 
