@@ -28,12 +28,7 @@
 
     <div class='div-card'>
         <p class='keyTitle'>
-            <form id="driverUploadForm" name="driverUploadForm" method="PUT" enctype="multipart/form-data">
-                <span class='mon-type-Text'>설정
-                </span>
-                <input class='float-r btn btn-success default-btn' id="driverFileSave" type="button" value="Save"/>
-                <input class="float-r" type="file" name="driver" id="driver">
-            </form>
+            <span class='mon-type-Text'>설정</span>
         </p>
 
         <div class='mon-table'>
@@ -54,7 +49,9 @@
                 <tr>
                     <td>ChromeDriver Path</td>
                     <td th:text="${commonProperties.driverPath}"></td>
-                    <td></td>
+                    <td>
+                        <input class='btn btn-success default-btn' id="driverPathEditBtn" type="button" value="Edit"/>
+                    </td>
                 </tr>
                 <tr>
                     <td>ChromeDriver Version</td>
@@ -582,6 +579,38 @@
                                 <div class="mgt15 text-right resource-btz">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
                                     <button type="button" id="resultReceivePathEdit" class="btn btn btn-success">변경</button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 결과 수신 경로 변경 모달 -->
+<div class="modal fade" id="editDriverPathModal" aria-hidden="true">
+    <div class="modal-dialog resource-kanban-box" role="document" style="width:96%; max-width:500px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">크롬 드라이버 경로 변경</h5>
+                <button type="button" class="close btn btn-default" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editDriverPathForm" name="editDriverPathForm" class="form-group">
+                    <div class="card" style="width: 100%;">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <label>경로</label>
+                                <input name="driverPath" type="text" class='form-control' autocomplete="off"/>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="mgt15 text-right resource-btz">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+                                    <button type="button" id="driverPathEdit" class="btn btn btn-success">변경</button>
                                 </div>
                             </li>
                         </ul>
