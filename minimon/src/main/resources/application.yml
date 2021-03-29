@@ -35,5 +35,6 @@ logging:
 common:
   resultReceivePath: http://localhost:8080/result/receive
   driverName: webdriver.chrome.driver
-  driverPath: src/main/resources/driver
+  driverPath: C:\Users\user\Desktop\dev\driver
   driverFileName: /chromedriver.exe
+  driverFileDownloadPath: http://chromedriver.chromium.org/downloads?tmpl=%2Fsystem%2Fapp%2Ftemplates%2Fprint%2F&showPrintDialog=1

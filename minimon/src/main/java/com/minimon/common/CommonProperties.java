@@ -26,6 +26,8 @@ public class CommonProperties implements InitializingBean {
 
     private String driverVersion;
 
+    private String driverFileDownloadPath;
+
 
     @Override
     public void afterPropertiesSet() {

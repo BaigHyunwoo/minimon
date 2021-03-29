@@ -3,6 +3,7 @@ package com.minimon.controller;
 import com.minimon.common.CommonProperties;
 import com.minimon.common.CommonResponse;
 import com.minimon.service.PropertiesService;
+import com.minimon.vo.DriverPathEditVO;
 import com.minimon.vo.MonitoringResultVO;
 import com.minimon.vo.ResultReceiveEditVO;
 import io.swagger.annotations.Api;
@@ -30,10 +31,10 @@ public class CommonConfigController {
         return new CommonResponse(commonProperties);
     }
 
-    @ApiOperation(value = "드라이버 파일 변경", produces = "multipart/form-data")
-    @PutMapping(path = "/set/driver")
-    public CommonResponse setDriver(@RequestParam MultipartFile driver) {
-        propertiesService.setDriverPath(driver);
+    @ApiOperation(value = "드라이버 파일 경로 변경", produces = "multipart/form-data")
+    @PutMapping(path = "/path/driver")
+    public CommonResponse setDriver(@RequestBody DriverPathEditVO driverPathEditVO) {
+        propertiesService.setDriverPath(driverPathEditVO.getDriverPath());
         return new CommonResponse();
     }
 
