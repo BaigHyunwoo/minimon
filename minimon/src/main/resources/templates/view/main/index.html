@@ -124,6 +124,7 @@
                     <th class="text-align-center" style="width:100px">Title</th>
                     <th class="text-align-center" style="width:70px">Result</th>
                     <th class="text-align-center" style="width:50px">Status</th>
+                    <th class="text-align-center" style="width:50px">send</th>
                     <th class="text-align-center" style="width:100px">Date</th>
                     <th class="text-align-center" style="width:70px">Detail</th>
                 </tr>
@@ -134,6 +135,7 @@
                     <td th:text="${result.title}"></td>
                     <td th:text="${result.resultCode}"></td>
                     <td th:text="${result.statusCode}"></td>
+                    <td th:text="${result.resultSendUseYn}"></td>
                     <td th:text="${result.regDate}"></td>
                     <td>
                         <input th:attr="cd=${result.seq}" class='btn btn-success .resultDetail default-btn' type="button" value="View"/>
@@ -283,6 +285,15 @@
                                     <input class="form-check-input" type="radio" name="monitoringUseYn" value="N"> N
                                 </div>
                                 <br>
+                                <label>결과 수신 사용 여부</label>
+                                <br>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="resultSendUseYn" value="Y" checked> Y
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="resultSendUseYn" value="N"> N
+                                </div>
+                                <br>
                                 <label>Title</label>
                                 <input name="title" type="text" class='form-control' autocomplete="off"/>
 
@@ -357,6 +368,15 @@
                                 </div>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="monitoringUseYn" value="N"> N
+                                </div>
+                                <br>
+                                <label>결과 수신 사용 여부</label>
+                                <br>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="resultSendUseYn" value="Y" checked> Y
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="resultSendUseYn" value="N"> N
                                 </div>
                                 <br>
                                 <label>Title</label>
@@ -469,7 +489,16 @@
                                     <input class="form-check-input" type="radio" name="monitoringUseYn" value="N"> N
                                 </div>
                                 <br>
+                                <label>결과 수신 사용 여부</label>
+                                <br>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="resultSendUseYn" value="Y" checked> Y
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="resultSendUseYn" value="N"> N
+                                </div>
 
+                                <br>
                                 <label>Title</label>
                                 <input name="title" type="text" class='form-control' autocomplete="off"/>
 

@@ -105,8 +105,9 @@ function monInit() {
             errorLoadTime: $("#saveUrlForm [name='errorLoadTime']").val(),
             monitoringUseYn: $("#saveUrlForm [name='monitoringUseYn']:checked").val(),
             loadTimeCheckYn: $("#saveUrlForm [name='loadTimeCheckYn']:checked").val(),
+            resultSendUseYn: $("#saveUrlForm [name='resultSendUseYn']:checked").val(),
             status: $("#saveUrlForm [name='status']").val(),
-            loadTime: $("#saveUrlForm [name='loadTime']").val(),
+            loadTime: $("#saveUrlForm [name='loadTime']").val()
         }
 
         $.ajax({
@@ -162,6 +163,10 @@ function monInit() {
                     $("#saveUrlForm [name='timeout']").val(monUrl.timeout);
                     $("#saveUrlForm [name='monitoringUseYn']").each(function () {
                         if ($(this).val() == monUrl.monitoringUseYn) $(this).attr('checked', 'true');
+                        else $(this).removeAttr('checked');
+                    });
+                    $("#saveUrlForm [name='resultSendUseYn']").each(function () {
+                        if ($(this).val() == monUrl.resultSendUseYn) $(this).attr('checked', 'true');
                         else $(this).removeAttr('checked');
                     });
                     $("#saveUrlForm [name='status']").val(monUrl.status);
@@ -233,6 +238,10 @@ function monInit() {
                     if ($(this).val() == monApi.monitoringUseYn) $(this).attr('checked', 'true');
                     else $(this).removeAttr('checked');
                 });
+                $("#saveApiForm [name='resultSendUseYn']").each(function () {
+                    if ($(this).val() == monApi.resultSendUseYn) $(this).attr('checked', 'true');
+                    else $(this).removeAttr('checked');
+                });
                 $("#saveApiForm [name='method']").val(monApi.method);
                 $("#saveApiForm [name='status']").val(monApi.status);
                 $("#saveApiForm [name='loadTimeCheckYn']").each(function () {
@@ -279,10 +288,11 @@ function monInit() {
             monitoringUseYn: $("#saveApiForm [name='monitoringUseYn']:checked").val(),
             loadTimeCheckYn: $("#saveApiForm [name='loadTimeCheckYn']:checked").val(),
             responseCheckYn: $("#saveApiForm [name='responseCheckYn']:checked").val(),
+            resultSendUseYn: $("#saveApiForm [name='resultSendUseYn']:checked").val(),
             data: $("#saveApiForm [name='data']").val(),
             status: $("#saveApiForm [name='status']").val(),
             loadTime: $("#saveApiForm [name='loadTime']").val(),
-            response: $("#saveApiForm [name='response']").val(),
+            response: $("#saveApiForm [name='response']").val()
         }
 
         $.ajax({
@@ -428,12 +438,13 @@ function monInit() {
             monitoringUseYn: $("#saveActForm [name='monitoringUseYn']:checked").val(),
             loadTimeCheckYn: $("#saveActForm [name='loadTimeCheckYn']:checked").val(),
             responseCheckYn: $("#saveActForm [name='responseCheckYn']:checked").val(),
+            resultSendUseYn: $("#saveActForm [name='resultSendUseYn']:checked").val(),
             data: $("#saveActForm [name='data']").val(),
             status: $("#saveActForm [name='status']").val(),
             loadTime: $("#saveActForm [name='loadTime']").val(),
             response: $("#saveActForm [name='response']").val(),
             codeFileName: $("#saveActForm [name='codeFileName']").val(),
-            codeDataList: $("#saveActForm [name='codeDataList']").val(),
+            codeDataList: $("#saveActForm [name='codeDataList']").val()
         }
 
         $.ajax({
@@ -470,6 +481,11 @@ function monInit() {
                 $("#saveActForm [name='errorLoadTime']").val(monAct.errorLoadTime);
                 $("#saveActForm [name='monitoringUseYn']").each(function () {
                     if ($(this).val() == monAct.monitoringUseYn) $(this).attr('checked', 'true');
+                    else $(this).removeAttr('checked');
+                });
+
+                $("#saveActForm [name='resultSendUseYn']").each(function () {
+                    if ($(this).val() == monAct.resultSendUseYn) $(this).attr('checked', 'true');
                     else $(this).removeAttr('checked');
                 });
 
@@ -629,6 +645,7 @@ function monInit() {
                         '                    <td>'+monResult.title+'</td>\n' +
                         '                    <td>'+monResult.resultCode+'</td>\n' +
                         '                    <td>'+monResult.statusCode+'</td>\n' +
+                        '                    <td>'+monResult.resultSendUseYn+'</td>\n' +
                         '                    <td>'+monResult.regDate+'</td>\n' +
                         '                    <td>\n' +
                         '                        <input cd="'+monResult.seq+'" class="btn btn-success .resultDetail default-btn" type="button" value="View"/>\n' +
