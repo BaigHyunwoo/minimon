@@ -2,8 +2,8 @@ package com.minimon.config;
 
 import com.minimon.common.CommonMessage;
 import com.minimon.common.CommonResponse;
-import com.minimon.exception.DriverUploadException;
 import com.minimon.exception.DriverVersionException;
+import com.minimon.exception.KillDriverProcessException;
 import com.minimon.exception.UndefinedDriverException;
 import com.minimon.exception.UndefinedResultReceiveException;
 import lombok.RequiredArgsConstructor;
@@ -58,11 +58,11 @@ public class ExceptionAdviceConfig {
         return CommonResponse.fail(CommonMessage.getMessage("driverVersionNotMatch.code"), CommonMessage.getMessage("driverVersionNotMatch.msg"));
     }
 
-    @ExceptionHandler(DriverUploadException.class)
+    @ExceptionHandler(KillDriverProcessException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected CommonResponse driverUploadException(HttpServletRequest request, Exception e) {
         log.error(e.getMessage());
-        return CommonResponse.fail(CommonMessage.getMessage("driverUploadFail.code"), CommonMessage.getMessage("driverUploadFail.msg"));
+        return CommonResponse.fail(CommonMessage.getMessage("killDriverProcess.code"), CommonMessage.getMessage("killDriverProcess.msg"));
     }
 
     @ExceptionHandler(WebDriverException.class)
