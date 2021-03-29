@@ -108,6 +108,7 @@ public class MonUrlService {
                 .loadTime(monitoringResultVO.getTotalLoadTime())
                 .resultCode(getResultCode(monitoringResultVO.getStatus(), monitoringResultVO.getTotalLoadTime(), url))
                 .status(monitoringResultVO.getStatus())
+                .resultSendUseYn(url.getResultSendUseYn())
                 .build();
     }
 

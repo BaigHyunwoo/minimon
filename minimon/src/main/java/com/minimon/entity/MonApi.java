@@ -62,6 +62,12 @@ public class MonApi extends CommonEntity {
 
     @NotNull
     @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "char(1)")
+    @ApiModelProperty(name = "결과 전송 사용 여부")
+    private UseStatusEnum resultSendUseYn;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
     @ApiModelProperty(name = "사용 http 메소드")
     private HttpMethod method;
 
@@ -90,6 +96,7 @@ public class MonApi extends CommonEntity {
         this.monitoringUseYn = UseStatusEnum.Y;
         this.loadTimeCheckYn = UseStatusEnum.Y;
         this.responseCheckYn = UseStatusEnum.Y;
+        this.resultSendUseYn = UseStatusEnum.N;
         this.status = HttpStatus.OK.value();
         this.method = method;
         this.data = data;

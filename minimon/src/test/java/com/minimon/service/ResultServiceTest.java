@@ -4,6 +4,7 @@ import com.minimon.entity.MonResult;
 import com.minimon.entity.MonUrl;
 import com.minimon.enums.MonitoringResultCodeEnum;
 import com.minimon.enums.MonitoringTypeEnum;
+import com.minimon.enums.UseStatusEnum;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.testng.Assert.assertNull;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
@@ -29,11 +31,19 @@ public class ResultServiceTest {
                 .resultCode(MonitoringResultCodeEnum.SUCCESS)
                 .status(HttpStatus.OK)
                 .loadTime(2000)
+                .resultSendUseYn(UseStatusEnum.Y)
                 .build();
     }
 
     @Test
     public void resultSendTest() {
         assertNotNull(resultService.sendResultByProperties(getDefaultMonResult()));
+    }
+
+    @Test
+    public void resultSendIgnoreTest() {
+        MonResult monResult = getDefaultMonResult();
+        monResult.setResultSendUseYn(UseStatusEnum.N);
+        assertNull(resultService.sendResultByProperties(monResult));
     }
 }

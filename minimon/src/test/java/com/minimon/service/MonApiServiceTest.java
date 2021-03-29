@@ -7,6 +7,7 @@ import com.minimon.entity.MonApi;
 import com.minimon.entity.MonResult;
 import com.minimon.enums.MonitoringResultCodeEnum;
 import com.minimon.enums.MonitoringTypeEnum;
+import com.minimon.enums.UseStatusEnum;
 import com.minimon.vo.MonApiCheckVO;
 import com.minimon.vo.MonitoringResultVO;
 import org.junit.jupiter.api.Test;
@@ -51,6 +52,7 @@ class MonApiServiceTest {
                 .resultCode(MonitoringResultCodeEnum.SUCCESS)
                 .status(HttpStatus.OK)
                 .loadTime(2000)
+                .resultSendUseYn(UseStatusEnum.N)
                 .build();
     }
 

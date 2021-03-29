@@ -2,6 +2,7 @@ package com.minimon.entity;
 
 import com.minimon.enums.MonitoringResultCodeEnum;
 import com.minimon.enums.MonitoringTypeEnum;
+import com.minimon.enums.UseStatusEnum;
 import com.sun.istack.NotNull;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -54,6 +55,12 @@ public class MonResult {
     @ApiModelProperty(name = "응답 지연시간")
     private double loadTime;
 
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "char(1)")
+    @ApiModelProperty(name = "결과 전송 사용 여부")
+    private UseStatusEnum resultSendUseYn;
+
     @CreatedDate
     @Column(updatable = false)
     @ApiModelProperty(value = "등록일", hidden = true)
@@ -66,12 +73,13 @@ public class MonResult {
     }
 
     @Builder
-    public MonResult(MonitoringTypeEnum monitoringTypeEnum, int relationSeq, String title, MonitoringResultCodeEnum resultCode, HttpStatus status, double loadTime) {
+    public MonResult(MonitoringTypeEnum monitoringTypeEnum, int relationSeq, String title, MonitoringResultCodeEnum resultCode, HttpStatus status, double loadTime, UseStatusEnum resultSendUseYn) {
         this.monitoringType = monitoringTypeEnum;
         this.relationSeq = relationSeq;
         this.title = title;
         this.resultCode = resultCode;
         this.loadTime = loadTime;
         this.status = status;
+        this.resultSendUseYn = resultSendUseYn;
     }
 }

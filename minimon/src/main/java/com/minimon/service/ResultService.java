@@ -4,6 +4,7 @@ import com.minimon.common.CommonProperties;
 import com.minimon.common.CommonRestTemplate;
 import com.minimon.common.CommonSearchSpec;
 import com.minimon.entity.MonResult;
+import com.minimon.enums.UseStatusEnum;
 import com.minimon.exception.UndefinedResultReceiveException;
 import com.minimon.repository.MonResultRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,10 +39,14 @@ public class ResultService {
     }
 
     public String sendResultByProperties(MonResult monResult) {
-        String response;
+        String response = null;
 
         try {
-            response = commonRestTemplate.callApi(HttpMethod.POST, commonProperties.getResultReceivePath(), monResult);
+
+            if (monResult.getResultSendUseYn().equals(UseStatusEnum.Y)) {
+                response = commonRestTemplate.callApi(HttpMethod.POST, commonProperties.getResultReceivePath(), monResult);
+            }
+
         } catch (Exception e) {
             throw new UndefinedResultReceiveException(e);
         }

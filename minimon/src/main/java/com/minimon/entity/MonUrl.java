@@ -54,6 +54,12 @@ public class MonUrl extends CommonEntity {
     private UseStatusEnum loadTimeCheckYn;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "char(1)")
+    @ApiModelProperty(name = "결과 전송 사용 여부")
+    private UseStatusEnum resultSendUseYn;
+
+    @NotNull
     @ApiModelProperty(name = "응답 코드")
     private int status;
 
@@ -70,6 +76,7 @@ public class MonUrl extends CommonEntity {
         this.loadTime = loadTime;
         this.monitoringUseYn = UseStatusEnum.Y;
         this.loadTimeCheckYn = UseStatusEnum.Y;
+        this.resultSendUseYn = UseStatusEnum.N;
         this.status = HttpStatus.OK.value();
     }
 }

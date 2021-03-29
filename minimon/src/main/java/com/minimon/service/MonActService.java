@@ -156,6 +156,7 @@ public class MonActService {
                         monAct))
                 .status(monitoringResultVO.getStatus())
                 .loadTime(monitoringResultVO.getTotalLoadTime())
+                .resultSendUseYn(monAct.getResultSendUseYn())
                 .build();
     }
 

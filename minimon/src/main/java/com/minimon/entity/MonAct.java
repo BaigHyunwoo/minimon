@@ -55,6 +55,12 @@ public class MonAct extends CommonEntity {
     @ApiModelProperty(name = "지연 시간 검사 여부")
     private UseStatusEnum loadTimeCheckYn;
 
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "char(1)")
+    @ApiModelProperty(name = "결과 전송 사용 여부")
+    private UseStatusEnum resultSendUseYn;
+
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "mon_act_seq")
     @ApiModelProperty(name = "검사 코드")
@@ -89,6 +95,7 @@ public class MonAct extends CommonEntity {
         this.codeDataList = codeDataList;
         this.monitoringUseYn = UseStatusEnum.Y;
         this.loadTimeCheckYn = UseStatusEnum.Y;
+        this.resultSendUseYn = UseStatusEnum.N;
         this.status = HttpStatus.OK.value();
         this.codeFileName = codeFileName;
     }
