@@ -81,9 +81,6 @@ public class CommonSelenium {
 
         try {
 
-            // 기존 프로세스 킬
-            Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
-
             // 크롬 드라이버 파일 경로설정
             System.setProperty(commonProperties.getDriverName(), commonProperties.getDriverPath() + commonProperties.getDriverFileName());
 
@@ -106,13 +103,11 @@ public class CommonSelenium {
             vars = new HashMap<>();
             log.debug("WebDriver - 연결 완료");
 
-        } catch (IOException IOE) {
-            IOE.printStackTrace();
-            if (driver != null) driver.quit();
-
         } catch (IllegalStateException IllE) {
+            if (driver != null) driver.quit();
             throw new UndefinedDriverException(IllE);
         } catch (SessionNotCreatedException SE) {
+            if (driver != null) driver.quit();
             throw new DriverVersionException(SE);
         }
 

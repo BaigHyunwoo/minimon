@@ -10,8 +10,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 
-import java.io.IOException;
-
 @Getter
 @Setter
 @ConstructorBinding
@@ -28,15 +26,16 @@ public class CommonProperties implements InitializingBean {
 
     private String driverVersion;
 
+
     @Override
     public void afterPropertiesSet() {
         setDriverVersion();
     }
 
-    public void setDriverVersion(){
+    public void setDriverVersion() {
         ChromeDriver driver = null;
         try {
-            Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
+
             System.setProperty(this.driverName, this.driverPath + this.driverFileName);
             ChromeOptions options = new ChromeOptions();
             options.setExperimentalOption("w3c", false);
@@ -44,7 +43,9 @@ public class CommonProperties implements InitializingBean {
             driver = new ChromeDriver(options);
             Capabilities capabilities = driver.getCapabilities();
             this.driverVersion = capabilities.getVersion();
-        } catch (SessionNotCreatedException | IOException SE) {
+
+        } catch (SessionNotCreatedException SE) {
+
         } finally {
             if (driver != null) driver.quit();
         }
