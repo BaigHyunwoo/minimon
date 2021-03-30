@@ -105,6 +105,7 @@ public class MonApiService {
                         api))
                 .status(monitoringResultVO.getStatus())
                 .resultSendUseYn(api.getResultSendUseYn())
+                .response(monitoringResultVO.getResponse())
                 .build();
     }
 

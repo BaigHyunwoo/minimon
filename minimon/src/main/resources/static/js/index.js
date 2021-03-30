@@ -375,7 +375,7 @@ function monInit() {
                 success: function (result) {
                     let monAct = result.data;
                     let codeDataList = new Array();
-                    $.each(monAct.response, function(key, value){
+                    $.each(JSON.parse(monAct.response), function(key, value){
                         codeDataList[key] = value.monCodeData;
                     });
 
@@ -682,7 +682,7 @@ function monInit() {
                     $("#resultDetailForm [name='resultCode']").val(monResult.resultCode);
                     $("#resultDetailForm [name='loadTime']").val(monResult.loadTime);
                     $("#resultDetailForm [name='statusCode']").val(monResult.statusCode);
-                    $("#resultDetailForm [name='response']").text(monResult.response);
+                    $("#resultDetailForm [name='response']").val(monResult.response);
                     $('#resultDetailModal').modal('show');
                 }
             }

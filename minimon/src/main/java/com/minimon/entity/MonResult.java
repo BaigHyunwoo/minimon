@@ -45,6 +45,7 @@ public class MonResult {
     @ApiModelProperty(name = "응답 결과 코드")
     private MonitoringResultCodeEnum resultCode;
 
+    @Lob
     @ApiModelProperty(name = "응답 결과 body")
     private String response;
 
