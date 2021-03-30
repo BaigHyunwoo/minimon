@@ -1,5 +1,6 @@
 package com.minimon.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.minimon.common.CommonSearchSpec;
 import com.minimon.common.CommonSelenium;
@@ -7,6 +8,7 @@ import com.minimon.entity.MonAct;
 import com.minimon.entity.MonCodeData;
 import com.minimon.entity.MonResult;
 import com.minimon.enums.*;
+import com.minimon.exception.ResponseParsingException;
 import com.minimon.repository.MonActRepository;
 import com.minimon.vo.MonActCodeResultVO;
 import com.minimon.vo.MonitoringResultVO;
@@ -117,6 +119,10 @@ public class MonActService {
         } catch (TimeoutException ex) {
 
             status = HttpStatus.REQUEST_TIMEOUT;
+
+        } catch (JsonProcessingException e) {
+
+            throw new ResponseParsingException(e);
 
         } catch (Exception e) {
 

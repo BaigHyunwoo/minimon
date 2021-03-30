@@ -26,6 +26,10 @@ webDriverError:
   code: "500"
   msg: "크롬 드라이버 버전이 맞지 않거나 해당 주소에 접근 할 수 없습니다."
 
+responseParsingError:
+  code: "500"
+  msg: "결과를 반환하는 중 오류가 발생했습니다."
+
 preparingFunction:
   code: "-2"
   msg: "아직 준비중인 기능입니다."

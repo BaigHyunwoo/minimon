@@ -2,10 +2,7 @@ package com.minimon.config;
 
 import com.minimon.common.CommonMessage;
 import com.minimon.common.CommonResponse;
-import com.minimon.exception.DriverVersionException;
-import com.minimon.exception.KillDriverProcessException;
-import com.minimon.exception.UndefinedDriverException;
-import com.minimon.exception.UndefinedResultReceiveException;
+import com.minimon.exception.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriverException;
@@ -70,6 +67,13 @@ public class ExceptionAdviceConfig {
     protected CommonResponse webDriverException(HttpServletRequest request, Exception e) {
         log.error(e.getMessage());
         return CommonResponse.fail(CommonMessage.getMessage("webDriverError.code"), CommonMessage.getMessage("webDriverError.msg"));
+    }
+
+    @ExceptionHandler(ResponseParsingException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResponse responseParseException(HttpServletRequest request, Exception e) {
+        log.error(e.getMessage());
+        return CommonResponse.fail(CommonMessage.getMessage("responseParsingError.code"), CommonMessage.getMessage("responseParsingError.msg"));
     }
 }
 

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.minimon.entity.MonCodeData;
 import com.minimon.enums.*;
 import com.minimon.exception.DriverVersionException;
+import com.minimon.exception.ResponseParsingException;
 import com.minimon.exception.UndefinedDriverException;
 import com.minimon.vo.MonActCodeResultVO;
 import com.minimon.vo.MonUrlResourceVO;
@@ -26,7 +27,6 @@ import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -187,9 +187,13 @@ public class CommonSelenium {
         }
 
         try {
+
             response = objectMapper.writeValueAsString(monUrlResourceVOList);
+
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+
+            throw new ResponseParsingException(e);
+
         }
 
         log.debug("WebDriver - Log 분석 완료");
