@@ -73,7 +73,7 @@ public class MonResult {
     }
 
     @Builder
-    public MonResult(MonitoringTypeEnum monitoringTypeEnum, int relationSeq, String title, MonitoringResultCodeEnum resultCode, HttpStatus status, double loadTime, UseStatusEnum resultSendUseYn) {
+    public MonResult(MonitoringTypeEnum monitoringTypeEnum, int relationSeq, String title, MonitoringResultCodeEnum resultCode, HttpStatus status, double loadTime, UseStatusEnum resultSendUseYn, String response) {
         this.monitoringType = monitoringTypeEnum;
         this.relationSeq = relationSeq;
         this.title = title;
@@ -81,5 +81,6 @@ public class MonResult {
         this.loadTime = loadTime;
         this.status = status;
         this.resultSendUseYn = resultSendUseYn;
+        this.response = response;
     }
 }

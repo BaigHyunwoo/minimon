@@ -1,10 +1,9 @@
 package com.minimon.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.minimon.common.CommonSearchSpec;
 import com.minimon.common.CommonSelenium;
-import com.minimon.common.CommonUtil;
 import com.minimon.entity.MonAct;
-import com.minimon.entity.MonApi;
 import com.minimon.entity.MonCodeData;
 import com.minimon.entity.MonResult;
 import com.minimon.enums.*;
@@ -33,6 +32,7 @@ import java.util.stream.Collectors;
 @Service
 public class MonActService {
 
+    private final ObjectMapper objectMapper;
     private final CommonSelenium commonSelenium;
     private final ResultService resultService;
     private final MonActRepository monActRepository;
@@ -98,9 +98,10 @@ public class MonActService {
     }
 
     private MonitoringResultVO executeCodeList(List<MonCodeData> codeDataList) {
-        List<MonActCodeResultVO> monActCodeResultVOList = new ArrayList<>();
+        List<MonActCodeResultVO> monActCodeResultVOList;
         long loadTime = 0;
         HttpStatus status;
+        String response = null;
 
         EventFiringWebDriver driver = commonSelenium.setUp();
 
@@ -111,7 +112,7 @@ public class MonActService {
 
             loadTime = endTime - startTime;
             status = checkStatus(monActCodeResultVOList);
-
+            response = objectMapper.writeValueAsString(monActCodeResultVOList);
 
         } catch (TimeoutException ex) {
 
@@ -128,10 +129,11 @@ public class MonActService {
 
         }
 
+
         return MonitoringResultVO.builder()
                 .status(status)
                 .totalLoadTime(Long.valueOf(loadTime).intValue())
-                .response(monActCodeResultVOList)
+                .response(response)
                 .build();
     }
 
@@ -157,6 +159,7 @@ public class MonActService {
                 .status(monitoringResultVO.getStatus())
                 .loadTime(monitoringResultVO.getTotalLoadTime())
                 .resultSendUseYn(monAct.getResultSendUseYn())
+                .response(monitoringResultVO.getResponse())
                 .build();
     }
 

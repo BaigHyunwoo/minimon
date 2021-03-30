@@ -1,5 +1,7 @@
 package com.minimon.common;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.minimon.entity.MonCodeData;
 import com.minimon.enums.*;
 import com.minimon.exception.DriverVersionException;
@@ -34,6 +36,8 @@ import java.util.logging.Level;
 @RequiredArgsConstructor
 public class CommonSelenium {
     private final CommonProperties commonProperties;
+
+    private final ObjectMapper objectMapper;
 
     private Map<String, Object> vars;
 
@@ -164,8 +168,9 @@ public class CommonSelenium {
     public MonitoringResultVO getResult(LogEntries logs, String currentURL, int totalLoadTime) {
         List<MonUrlResourceVO> monUrlResourceVOList = new ArrayList<>();
         HttpStatus resultStatus = HttpStatus.BAD_GATEWAY;
-
+        String response = null;
         int resourceCnt = 0;
+
         for (Iterator<LogEntry> it = logs.iterator(); it.hasNext(); resourceCnt++) {
             JSONObject resourceMessage = getResourceMessage(it.next());
             if (isExist(resourceMessage)) {
@@ -181,12 +186,18 @@ public class CommonSelenium {
             }
         }
 
+        try {
+            response = objectMapper.writeValueAsString(monUrlResourceVOList);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
         log.debug("WebDriver - Log 분석 완료");
         return MonitoringResultVO.builder()
                 .totalLoadTime(totalLoadTime)
                 .url(currentURL)
                 .status(resultStatus)
-                .response(monUrlResourceVOList)
+                .response(response)
                 .build();
     }
 

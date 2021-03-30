@@ -22,7 +22,7 @@ public class MonitoringResultVO {
     private int totalLoadTime;
 
     @ApiModelProperty(value = "응답")
-    private Object response;
+    private String response;
 
     @ApiModelProperty(value = "결과 코드 Value")
     public int getStatusCode() {
@@ -30,7 +30,7 @@ public class MonitoringResultVO {
     }
 
     @Builder
-    public MonitoringResultVO(String url, int totalLoadTime, HttpStatus status, Object response) {
+    public MonitoringResultVO(String url, int totalLoadTime, HttpStatus status, String response) {
         this.url = url;
         this.totalLoadTime = totalLoadTime;
         this.status = status;
