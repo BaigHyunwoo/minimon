@@ -285,10 +285,10 @@
                                 <label>결과 수신 사용 여부</label>
                                 <br>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="resultSendUseYn" value="Y" checked> Y
+                                    <input class="form-check-input" type="radio" name="resultSendUseYn" value="Y" > Y
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="resultSendUseYn" value="N"> N
+                                    <input class="form-check-input" type="radio" name="resultSendUseYn" value="N" checked> N
                                 </div>
                                 <br>
                                 <label>Title</label>
@@ -370,10 +370,10 @@
                                 <label>결과 수신 사용 여부</label>
                                 <br>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="resultSendUseYn" value="Y" checked> Y
+                                    <input class="form-check-input" type="radio" name="resultSendUseYn" value="Y" > Y
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="resultSendUseYn" value="N"> N
+                                    <input class="form-check-input" type="radio" name="resultSendUseYn" value="N" checked> N
                                 </div>
                                 <br>
                                 <label>Title</label>
@@ -489,10 +489,10 @@
                                 <label>결과 수신 사용 여부</label>
                                 <br>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="resultSendUseYn" value="Y" checked> Y
+                                    <input class="form-check-input" type="radio" name="resultSendUseYn" value="Y" > Y
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="resultSendUseYn" value="N"> N
+                                    <input class="form-check-input" type="radio" name="resultSendUseYn" value="N" checked > N
                                 </div>
 
                                 <br>
@@ -611,6 +611,49 @@
                                 <div class="mgt15 text-right resource-btz">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
                                     <button type="button" id="driverPathEdit" class="btn btn btn-success">변경</button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 결과 상세 모달 -->
+<div class="modal fade" id="resultDetailModal" aria-hidden="true">
+    <div class="modal-dialog resource-kanban-box" role="document" style="width:96%; max-width:500px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">결과 상세</h5>
+                <button type="button" class="close btn btn-default" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="resultDetailForm" name="resultDetailForm" class="form-group">
+                    <div class="card" style="width: 100%;">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <label>RegDate</label>
+                                <input name="regDate" type="text" class='form-control' readonly />
+                                <label>Title</label>
+                                <input name="title" type="text" class='form-control' readonly />
+                                <label>Type</label>
+                                <input name="monitoringType" type="text" class='form-control' readonly />
+                                <label>Result</label>
+                                <input name="resultCode" type="text" class='form-control' readonly />
+                                <label>Status</label>
+                                <input name="statusCode" type="text" class='form-control' readonly />
+                                <label>LoadTime</label>
+                                <input name="loadTime" type="text" class='form-control' readonly />
+                                <label>Response</label>
+                                <textarea name="response" />
+                            </li>
+                            <li class="list-group-item">
+                                <div class="mgt15 text-right resource-btz">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
                                 </div>
                             </li>
                         </ul>

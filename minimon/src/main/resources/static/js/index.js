@@ -655,7 +655,7 @@ function monInit() {
                         '                    <td>'+monResult.resultSendUseYn+'</td>\n' +
                         '                    <td>'+monResult.regDate+'</td>\n' +
                         '                    <td>\n' +
-                        '                        <input cd="'+monResult.seq+'" class="btn btn-success .resultDetail default-btn" type="button" value="View"/>\n' +
+                        '                        <input cd="'+monResult.seq+'" class="btn btn-success resultDetail default-btn" type="button" value="View"/>\n' +
                         '                    </td>\n' +
                         '                </tr>').hide();
                     $('.resultList').append($(resultHtml));
@@ -664,6 +664,30 @@ function monInit() {
             }
         });
     }
+
+    $('body').on('click', '.resultDetail', function () {
+        $.ajax({
+            type: 'GET',
+            url: '/result/' + $(this).attr('cd'),
+            dataType: 'json',
+            error: function(e){
+                alert(e.responseJSON.meta.message);
+            },
+            success: function (result) {
+                if (result.meta.code == 200) {
+                    let monResult = result.data;
+                    $("#resultDetailForm [name='regDate']").val(monResult.regDate);
+                    $("#resultDetailForm [name='title']").val(monResult.title);
+                    $("#resultDetailForm [name='monitoringType']").val(monResult.monitoringType);
+                    $("#resultDetailForm [name='resultCode']").val(monResult.resultCode);
+                    $("#resultDetailForm [name='loadTime']").val(monResult.loadTime);
+                    $("#resultDetailForm [name='statusCode']").val(monResult.statusCode);
+                    $("#resultDetailForm [name='response']").text(monResult.response);
+                    $('#resultDetailModal').modal('show');
+                }
+            }
+        });
+    });
 
     function loadingNewResult() {
         getMonResultList();
