@@ -8,7 +8,7 @@ import com.minimon.entity.MonResult;
 import com.minimon.enums.MonitoringResultCodeEnum;
 import com.minimon.enums.MonitoringTypeEnum;
 import com.minimon.enums.UseStatusEnum;
-import com.minimon.vo.MonApiCheckVO;
+import com.minimon.exception.UndefinedResultReceiveException;
 import com.minimon.vo.MonitoringResultVO;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -20,8 +20,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
@@ -102,6 +101,27 @@ class MonApiServiceTest {
     }
 
     @Test
+    void executeSuccessUncheckedLoadTime() {
+        MonApi monApi = getDefaultMonApi();
+        monApi.setErrorLoadTime(10);
+        monApi.setLoadTimeCheckYn(UseStatusEnum.N);
+        monApi = monApiService.save(monApi);
+        MonResult result = monApiService.execute(monApi.getSeq());
+        assertEquals(MonitoringResultCodeEnum.RESPONSE, result.getResultCode());
+    }
+
+    @Test
+    void executeSuccessUncheckedError() {
+        MonApi monApi = getDefaultMonApi();
+        monApi.setErrorLoadTime(10);
+        monApi.setLoadTimeCheckYn(UseStatusEnum.N);
+        monApi.setResponseCheckYn(UseStatusEnum.N);
+        monApi = monApiService.save(monApi);
+        MonResult result = monApiService.execute(monApi.getSeq());
+        assertEquals(MonitoringResultCodeEnum.SUCCESS, result.getResultCode());
+    }
+
+    @Test
     void executeGetMethod() {
         MonitoringResultVO result = monApiService.execute("https://www.daum.net", HttpMethod.GET.name(), null);
         assertEquals(HttpStatus.OK, result.getStatus());
@@ -111,5 +131,15 @@ class MonApiServiceTest {
     void executePostMethod() throws JsonProcessingException {
         MonitoringResultVO result = monApiService.execute("http://localhost:8080/result/receive", HttpMethod.POST.name(), objectMapper.writeValueAsString(getDefaultMonResult()));
         assertEquals(HttpStatus.OK, result.getStatus());
+    }
+
+    @Test
+    void sendResultFail() {
+        assertThrows(UndefinedResultReceiveException.class, () -> {
+            MonApi monApi = getDefaultMonApi();
+            monApi.setResultSendUseYn(UseStatusEnum.Y);
+            monApi = monApiService.save(monApi);
+            monApiService.execute(monApi.getSeq());
+        });
     }
 }
