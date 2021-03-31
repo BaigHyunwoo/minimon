@@ -3,6 +3,10 @@ package com.minimon.service;
 import com.minimon.common.CommonSearchSpec;
 import com.minimon.entity.MonAct;
 import com.minimon.entity.MonCodeData;
+import com.minimon.entity.MonResult;
+import com.minimon.enums.MonitoringResultCodeEnum;
+import com.minimon.enums.UseStatusEnum;
+import com.minimon.exception.UndefinedResultReceiveException;
 import com.minimon.vo.MonitoringResultVO;
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.Test;
@@ -96,5 +100,32 @@ public class MonActServiceTest {
     void executeCodeList() {
         MonitoringResultVO result = monActService.executeCodeList(getTestFile());
         assertEquals(HttpStatus.OK, result.getStatus());
+    }
+
+    @Test
+    void executeSuccess() {
+        MonAct monAct = getDefaultMonAct();
+        monActService.save(monAct);
+        MonResult result = monActService.execute(monAct.getSeq());
+        assertEquals(MonitoringResultCodeEnum.SUCCESS, result.getResultCode());
+    }
+
+    @Test
+    void executeLoadTimeFail() {
+        MonAct monAct = getDefaultMonAct();
+        monAct.setErrorLoadTime(3000);
+        monActService.save(monAct);
+        MonResult result = monActService.execute(monAct.getSeq());
+        assertEquals(MonitoringResultCodeEnum.LOAD_TIME, result.getResultCode());
+    }
+
+    @Test
+    void sendResultFail() {
+        assertThrows(UndefinedResultReceiveException.class, () -> {
+            MonAct monAct = getDefaultMonAct();
+            monAct.setResultSendUseYn(UseStatusEnum.Y);
+            monActService.save(monAct);
+            monActService.execute(monAct.getSeq());
+        });
     }
 }
