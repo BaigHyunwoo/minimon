@@ -28,8 +28,9 @@ public class PropertiesService {
     }
 
 
-    public void setResultReceivePath(String path) {
+    public CommonProperties setResultReceivePath(String path) {
         commonProperties.setResultReceivePath(path);
+        return commonProperties;
     }
 
 }
