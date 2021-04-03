@@ -4,18 +4,20 @@ import com.sun.istack.NotNull;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
 @Table(name = "LOG_HISTORY")
 @NoArgsConstructor
-public class LogHistory extends CommonEntity {
+@EntityListeners(AuditingEntityListener.class)
+public class LogHistory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
@@ -47,6 +49,11 @@ public class LogHistory extends CommonEntity {
     @NotNull
     @ApiModelProperty(name = "요청 파라미터")
     private String params;
+
+    @CreatedDate
+    @Column(updatable = false)
+    @ApiModelProperty(value = "등록일", hidden = true)
+    private LocalDateTime regDate;
 
     @Builder
     public LogHistory(String httpMethod, String uri, String className, String methodName, long progressTime, String params) {
