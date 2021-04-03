@@ -1,22 +1,17 @@
 package com.minimon.service;
 
-import com.minimon.common.CommonProperties;
-import com.minimon.common.CommonRestTemplate;
-import com.minimon.common.CommonSearchSpec;
+import com.google.common.base.Joiner;
 import com.minimon.entity.LogHistory;
-import com.minimon.entity.MonResult;
-import com.minimon.enums.UseStatusEnum;
-import com.minimon.exception.UndefinedResultReceiveException;
 import com.minimon.repository.LogHistoryRepository;
-import com.minimon.repository.MonResultRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import java.util.Optional;
+import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -31,4 +26,24 @@ public class LogHistoryWriteService {
         return logHistory;
     }
 
+    public LogHistory save(HttpServletRequest request, Method method, long totalTimeMillis) {
+        Map<String, String[]> paramMap = request.getParameterMap();
+        String params = paramMap.isEmpty() ? "" : paramMapToString(paramMap);
+
+        return save(LogHistory.builder()
+                .httpMethod(request.getMethod())
+                .uri(request.getRequestURI())
+                .className(method.getDeclaringClass().getName())
+                .methodName(method.getName())
+                .progressTime(totalTimeMillis)
+                .params(params)
+                .build());
+    }
+
+    private String paramMapToString(Map<String, String[]> paramMap) {
+        return paramMap.entrySet().stream()
+                .map(entry -> String.format("%s -> %s",
+                        entry.getKey(), Joiner.on(",").join(entry.getValue())))
+                .collect(Collectors.joining(", "));
+    }
 }
