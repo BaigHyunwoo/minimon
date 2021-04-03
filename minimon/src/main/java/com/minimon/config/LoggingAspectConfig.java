@@ -6,17 +6,18 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StopWatch;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -31,23 +32,27 @@ public class LoggingAspectConfig {
     }
 
     @Pointcut("within(com.minimon.controller..*)")
-    public void onRequest() {}
+    public void onRequest() {
+    }
+
     @Around("com.minimon.config.LoggingAspectConfig.onRequest()")
     public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
-        HttpServletRequest request =  ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+
+        String httpMethod = request.getMethod();
+
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        Method method = signature.getMethod();
 
         Map<String, String[]> paramMap = request.getParameterMap();
-        String params = "";
-        if (paramMap.isEmpty() == false) {
-            params = " [" + paramMapToString(paramMap) + "]";
-        }
+        String params = paramMap.isEmpty() ? "" : paramMapToString(paramMap);
 
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         Object proceed = joinPoint.proceed();
         stopWatch.stop();
 
-        log.info(stopWatch.getTotalTimeMillis()+" "+params);
+        log.info(httpMethod + " " + request.getRequestURI() + " " + method.getDeclaringClass() + " - " + method.getName() + " : " + stopWatch.getTotalTimeMillis() + "MS - " + params);
         return proceed;
     }
 
