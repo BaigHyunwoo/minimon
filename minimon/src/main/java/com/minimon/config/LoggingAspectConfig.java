@@ -13,10 +13,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -25,11 +21,6 @@ import java.util.stream.Collectors;
 @Aspect
 @Slf4j
 public class LoggingAspectConfig {
-
-    @Target(ElementType.METHOD)
-    @Retention(RetentionPolicy.RUNTIME)
-    @interface LogExecutionTime {
-    }
 
     @Pointcut("within(com.minimon.controller..*)")
     public void onRequest() {
