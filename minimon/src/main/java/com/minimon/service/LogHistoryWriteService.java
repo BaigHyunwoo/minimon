@@ -39,6 +39,8 @@ public class LogHistoryWriteService {
                 .progressTime(totalTimeMillis)
                 .params(params)
                 .status(status)
+                .errorName(errorName)
+                .errorMsg(errorMsg)
                 .build());
     }
 
