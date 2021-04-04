@@ -64,4 +64,8 @@ public class LogHistory {
         this.progressTime = progressTime;
         this.params = params;
     }
+
+    public String toString() {
+        return this.httpMethod + " " + this.uri + " {" + this.params + "} " + this.progressTime + "ms / " + this.className + "." + this.methodName;
+    }
 }
