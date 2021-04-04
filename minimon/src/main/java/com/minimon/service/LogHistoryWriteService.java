@@ -2,6 +2,7 @@ package com.minimon.service;
 
 import com.google.common.base.Joiner;
 import com.minimon.entity.LogHistory;
+import com.minimon.enums.ResponseEnum;
 import com.minimon.repository.LogHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +27,7 @@ public class LogHistoryWriteService {
         return logHistory;
     }
 
-    public LogHistory save(HttpServletRequest request, Method method, long totalTimeMillis) {
+    public LogHistory save(HttpServletRequest request, Method method, long totalTimeMillis, ResponseEnum status, String errorName, String errorMsg) {
         Map<String, String[]> paramMap = request.getParameterMap();
         String params = paramMap.isEmpty() ? "" : paramMapToString(paramMap);
 
@@ -37,6 +38,7 @@ public class LogHistoryWriteService {
                 .methodName(method.getName())
                 .progressTime(totalTimeMillis)
                 .params(params)
+                .status(status)
                 .build());
     }
 

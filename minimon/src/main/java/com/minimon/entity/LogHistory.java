@@ -1,5 +1,6 @@
 package com.minimon.entity;
 
+import com.minimon.enums.ResponseEnum;
 import com.sun.istack.NotNull;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
@@ -50,22 +51,37 @@ public class LogHistory {
     @ApiModelProperty(name = "요청 파라미터")
     private String params;
 
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @ApiModelProperty(name = "처리 결과")
+    private ResponseEnum status;
+
+    @ApiModelProperty(name = "에러")
+    private String errorName;
+
+    @Lob
+    @ApiModelProperty(name = "에러 MSG")
+    private String errorMsg;
+
     @CreatedDate
     @Column(updatable = false)
     @ApiModelProperty(value = "등록일", hidden = true)
     private LocalDateTime regDate;
 
     @Builder
-    public LogHistory(String httpMethod, String uri, String className, String methodName, long progressTime, String params) {
+    public LogHistory(String httpMethod, String uri, String className, String methodName, long progressTime, String params, ResponseEnum status, String errorName, String errorMsg) {
         this.httpMethod = httpMethod;
         this.uri = uri;
         this.className = className;
         this.methodName = methodName;
         this.progressTime = progressTime;
         this.params = params;
+        this.status = status;
+        this.errorName = errorName;
+        this.errorMsg = errorMsg;
     }
 
     public String toString() {
-        return this.httpMethod + " " + this.uri + " {" + this.params + "} " + this.progressTime + "ms / " + this.className + "." + this.methodName;
+        return this.httpMethod + " " + this.uri + " {" + this.params + "} " + this.status + " " + this.progressTime + "ms / " + this.className + "." + this.methodName;
     }
 }
