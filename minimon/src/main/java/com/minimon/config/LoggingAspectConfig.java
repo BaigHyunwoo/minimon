@@ -16,7 +16,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -41,7 +40,6 @@ public class LoggingAspectConfig {
         Object proceed = null;
         String errorName = null;
         String errorMsg = null;
-        Throwable throwable = null;
 
         StopWatch stopWatch = new StopWatch();
         try {
@@ -60,7 +58,7 @@ public class LoggingAspectConfig {
             LogHistory logHistory = logHistoryWriteService.save(request, method, stopWatch.getTotalTimeMillis(), status, errorName, errorMsg);
             log.info(logHistory.toString());
 
-            if(status.equals(ResponseEnum.FAIL)){
+            if (status.equals(ResponseEnum.FAIL)) {
                 log.error(errorName);
                 log.error(errorMsg);
             }
