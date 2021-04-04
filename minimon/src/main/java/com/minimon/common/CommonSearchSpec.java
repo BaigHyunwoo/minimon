@@ -44,6 +44,14 @@ public class CommonSearchSpec {
     @ApiModelProperty(value = "정렬 종류(ASC, DESC)")
     private String sortType;
 
+    public void setSize(int size){
+        this.size = size > 0 ? size : this.size;
+    }
+
+    public void setIndex(int index){
+        this.index = index > 0 ? index : this.index;
+    }
+
 
     public String getValueByKey(String input) {
         for (int i = 0; i < this.keys.length; i++) {
