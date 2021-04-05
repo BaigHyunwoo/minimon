@@ -51,6 +51,9 @@ public class LogHistory {
     @ApiModelProperty(name = "요청 파라미터")
     private String params;
 
+    @ApiModelProperty(name = "요청 QUERY")
+    private String query;
+
     @NotNull
     @Enumerated(EnumType.STRING)
     @ApiModelProperty(name = "처리 결과")
@@ -69,7 +72,7 @@ public class LogHistory {
     private LocalDateTime regDate;
 
     @Builder
-    public LogHistory(String httpMethod, String uri, String className, String methodName, long progressTime, String params, ResponseEnum status, String errorName, String errorMsg) {
+    public LogHistory(String httpMethod, String uri, String className, String methodName, long progressTime, String query, String params, ResponseEnum status, String errorName, String errorMsg) {
         this.httpMethod = httpMethod;
         this.uri = uri;
         this.className = className;
@@ -79,9 +82,11 @@ public class LogHistory {
         this.status = status;
         this.errorName = errorName;
         this.errorMsg = errorMsg;
+        this.query = query;
     }
 
     public String toString() {
-        return this.httpMethod + " " + this.uri + " {" + this.params + "} " + this.status + " " + this.progressTime + "ms / " + this.className + "." + this.methodName;
+        return this.httpMethod + " " + this.uri + "?" + query + " {" + this.params + "} " + this.status + " " + this.progressTime + "ms / "
+                + this.className + "." + this.methodName;
     }
 }
