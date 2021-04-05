@@ -33,11 +33,11 @@ public class LoggingAspectConfig {
     }
 
     @Around("com.minimon.config.LoggingAspectConfig.onRequest()")
-    public Object logExecutionTime(ProceedingJoinPoint joinPoint) {
+    public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         ResponseEnum status = ResponseEnum.FAIL;
-        Object proceed = null;
+        Object proceed;
         String errorName = null;
         String errorMsg = null;
 
@@ -53,15 +53,11 @@ public class LoggingAspectConfig {
             errorMsg = Arrays.stream(e.getStackTrace())
                     .map(stackTraceElement -> stackTraceElement.toString())
                     .collect(Collectors.joining("\n"));
+            throw e;
         } finally {
             stopWatch.stop();
             LogHistory logHistory = logHistoryWriteService.save(request, method, stopWatch.getTotalTimeMillis(), status, errorName, errorMsg);
             log.info(logHistory.toString());
-
-            if (status.equals(ResponseEnum.FAIL)) {
-                log.error(errorName);
-                log.error(errorMsg);
-            }
         }
         return proceed;
     }

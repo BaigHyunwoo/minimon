@@ -30,6 +30,7 @@ public class LogHistoryWriteService {
     public LogHistory save(HttpServletRequest request, Method method, long totalTimeMillis, ResponseEnum status, String errorName, String errorMsg) {
         Map<String, String[]> paramMap = request.getParameterMap();
         String params = paramMap.isEmpty() ? "" : paramMapToString(paramMap);
+        String query = request.getQueryString();
 
         return save(LogHistory.builder()
                 .httpMethod(request.getMethod())
@@ -37,6 +38,7 @@ public class LogHistoryWriteService {
                 .className(method.getDeclaringClass().getName())
                 .methodName(method.getName())
                 .progressTime(totalTimeMillis)
+                .query(query)
                 .params(params)
                 .status(status)
                 .errorName(errorName)
