@@ -10,9 +10,12 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
+import java.net.URLDecoder;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 
 @Slf4j
 @Service
@@ -27,10 +30,10 @@ public class LogHistoryWriteService {
         return logHistory;
     }
 
-    public LogHistory save(HttpServletRequest request, Method method, long totalTimeMillis, ResponseEnum status, String errorName, String errorMsg) {
+    public LogHistory save(HttpServletRequest request, Method method, long totalTimeMillis, ResponseEnum status, String errorName, String errorMsg) throws UnsupportedEncodingException {
         Map<String, String[]> paramMap = request.getParameterMap();
         String params = paramMap.isEmpty() ? "" : paramMapToString(paramMap);
-        String query = request.getQueryString();
+        String query = URLDecoder.decode(request.getQueryString(), "UTF-8");
 
         return save(LogHistory.builder()
                 .httpMethod(request.getMethod())
