@@ -33,7 +33,7 @@ public class LogHistoryWriteService {
     public LogHistory save(HttpServletRequest request, Method method, long totalTimeMillis, ResponseEnum status, String errorName, String errorMsg) throws UnsupportedEncodingException {
         Map<String, String[]> paramMap = request.getParameterMap();
         String params = paramMap.isEmpty() ? "" : paramMapToString(paramMap);
-        String query = URLDecoder.decode(request.getQueryString(), "UTF-8");
+        String query = request.getQueryString() != null ? URLDecoder.decode(request.getQueryString(), "UTF-8") : "";
 
         return save(LogHistory.builder()
                 .httpMethod(request.getMethod())
