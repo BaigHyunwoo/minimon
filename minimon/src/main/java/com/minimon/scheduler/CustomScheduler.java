@@ -157,6 +157,8 @@ public class CustomScheduler implements InitializingBean {
                     .progressCount(progressCount)
                     .progressTime(stopWatch.getTotalTimeMillis())
                     .build());
+
+            log.info(schedulerType.getValue()+" 처리: "+progressCount+"  시간: "+stopWatch.getTotalTimeMillis()+"ms");
         };
     }
 

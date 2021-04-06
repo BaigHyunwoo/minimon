@@ -26,7 +26,6 @@ public class MonitoringScheduler {
         List<MonResult> monResults = new ArrayList();
         monResults.addAll(monUrlService.checkList(monUrlService.findScheduledList()));
         check(monResults);
-        log.info("URL Monitoring Execute Complete");
         return monResults.size();
     }
 
@@ -34,7 +33,6 @@ public class MonitoringScheduler {
         List<MonResult> monResults = new ArrayList();
         monResults.addAll(monApiService.checkList(monApiService.findScheduledList()));
         check(monResults);
-        log.info("API Monitoring Execute Complete");
         return monResults.size();
     }
 
@@ -42,7 +40,6 @@ public class MonitoringScheduler {
         List<MonResult> monResults = new ArrayList();
         monResults.addAll(monActService.checkList(monActService.findScheduledList()));
         check(monResults);
-        log.info("ACT Monitoring Execute Complete");
         return monResults.size();
     }
 
@@ -59,6 +56,5 @@ public class MonitoringScheduler {
                     break;
             }
         });
-        log.debug("Monitoring check Complete");
     }
 }
