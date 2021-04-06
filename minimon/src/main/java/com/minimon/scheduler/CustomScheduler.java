@@ -1,8 +1,11 @@
 package com.minimon.scheduler;
 
+import com.minimon.entity.SchedulerHistory;
+import com.minimon.enums.MonitoringTypeEnum;
 import com.minimon.enums.SchedulerActiveTypeEnum;
 import com.minimon.enums.SchedulerStatusEnum;
 import com.minimon.enums.SchedulerTypeEnum;
+import com.minimon.repository.SchedulerHistoryRepository;
 import com.minimon.vo.RunningSchedulerVO;
 import com.minimon.vo.SchedulerTaskVO;
 import com.minimon.vo.SchedulerVO;
@@ -12,6 +15,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -23,6 +27,8 @@ import java.util.concurrent.ScheduledFuture;
 public class CustomScheduler implements InitializingBean {
     private final TaskScheduler scheduler;
     private final MonitoringScheduler monitoringScheduler;
+    private final SchedulerHistoryRepository schedulerHistoryRepository;
+
     private RunningSchedulerVO runningSchedulerVO = new RunningSchedulerVO();
 
 
@@ -130,16 +136,28 @@ public class CustomScheduler implements InitializingBean {
     }
 
     private Runnable getTaskBySchedulerType(SchedulerTypeEnum schedulerType) {
-        switch (schedulerType) {
-            case URL_MONITORING:
-                return () -> monitoringScheduler.urlMonitoring();
-            case API_MONITORING:
-                return () -> monitoringScheduler.apiMonitoring();
-            case ACT_MONITORING:
-                return () -> monitoringScheduler.actMonitoring();
-            default:
-                return null;
-        }
+        return () -> {
+            int progressCount = 0;
+            StopWatch stopWatch = new StopWatch();
+            stopWatch.start();
+            switch (schedulerType) {
+                case URL_MONITORING:
+                    progressCount = monitoringScheduler.urlMonitoring();
+                    break;
+                case API_MONITORING:
+                    progressCount = monitoringScheduler.apiMonitoring();
+                    break;
+                case ACT_MONITORING:
+                    progressCount = monitoringScheduler.actMonitoring();
+                    break;
+            }
+            stopWatch.stop();
+            schedulerHistoryRepository.save(SchedulerHistory.builder()
+                    .schedulerType(schedulerType)
+                    .progressCount(progressCount)
+                    .progressTime(stopWatch.getTotalTimeMillis())
+                    .build());
+        };
     }
 
     public boolean execute(SchedulerTypeEnum schedulerType) {

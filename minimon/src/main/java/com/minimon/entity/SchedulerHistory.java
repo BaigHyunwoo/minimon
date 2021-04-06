@@ -1,7 +1,6 @@
 package com.minimon.entity;
 
-import com.minimon.enums.MonitoringTypeEnum;
-import com.minimon.enums.ResponseEnum;
+import com.minimon.enums.SchedulerTypeEnum;
 import com.sun.istack.NotNull;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
@@ -30,7 +29,7 @@ public class SchedulerHistory {
     @NotNull
     @Enumerated(EnumType.STRING)
     @ApiModelProperty(name = "모니터링 종류")
-    private MonitoringTypeEnum monitoringType;
+    private SchedulerTypeEnum schedulerType;
 
     @NotNull
     @ApiModelProperty(name = "걸린 시간(MS)")
@@ -46,8 +45,8 @@ public class SchedulerHistory {
     private LocalDateTime regDate;
 
     @Builder
-    public SchedulerHistory(MonitoringTypeEnum monitoringType, long progressTime, int progressCount){
-        this.monitoringType = monitoringType;
+    public SchedulerHistory(SchedulerTypeEnum schedulerType, long progressTime, int progressCount) {
+        this.schedulerType = schedulerType;
         this.progressTime = progressTime;
         this.progressCount = progressCount;
     }
