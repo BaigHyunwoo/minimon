@@ -85,7 +85,7 @@ public class MonUrlControllerTest {
     void getListFail() throws Exception {
         monUrlService.save(getDefaultMonUrl());
 
-        mockMvc.perform(get("/monUrl?sortKey=regDate&sortType=DD")
+        mockMvc.perform(get("/monUrl?types=asdf")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.meta.code", is(ResponseEnum.FAIL.getCode())))
                 .andDo(print());
