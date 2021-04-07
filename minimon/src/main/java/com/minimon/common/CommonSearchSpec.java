@@ -44,11 +44,11 @@ public class CommonSearchSpec {
     @ApiModelProperty(value = "정렬 종류(ASC, DESC)")
     private String sortType;
 
-    public void setSize(int size){
+    public void setSize(int size) {
         this.size = size > 0 ? size : this.size;
     }
 
-    public void setIndex(int index){
+    public void setIndex(int index) {
         this.index = index > 0 ? index : this.index;
     }
 
@@ -71,13 +71,12 @@ public class CommonSearchSpec {
         int page = this.index - 1;
         if (page < 0) page = 0;
 
-        if (this.sortType == null || this.sortKey == null)
-            return PageRequest.of(page, this.size);
-        else if (this.sortType.equals(Sort.Direction.DESC.name()) == true)
+        if (this.sortType.equals(Sort.Direction.DESC.name()) == true) {
             return PageRequest.of(page, this.size, Sort.Direction.DESC, this.sortKey);
-        else if (this.sortType.equals(Sort.Direction.ASC.name()) == true)
+        } else if (this.sortType.equals(Sort.Direction.ASC.name()) == true) {
             return PageRequest.of(page, this.size, Sort.Direction.ASC, this.sortKey);
-        return null;
+        }
+        return PageRequest.of(page, this.size);
     }
 
     public Specification searchSpecs() {
