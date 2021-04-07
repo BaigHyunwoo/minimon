@@ -7,11 +7,12 @@ import com.minimon.service.MonActService;
 import com.minimon.service.MonApiService;
 import com.minimon.service.MonUrlService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -32,7 +33,8 @@ public class MainController {
 
     private final CommonProperties commonProperties;
 
-    @RequestMapping(path = "/index", method = RequestMethod.GET)
+    @ApiOperation(value = "메인 화면")
+    @GetMapping(path = "/index")
     public ModelAndView main() {
         CommonSearchSpec commonSearchSpec = new CommonSearchSpec();
         commonSearchSpec.setSortKey("regDate");
