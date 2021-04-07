@@ -1,6 +1,7 @@
 package com.minimon.scheduler;
 
 import com.minimon.enums.SchedulerTypeEnum;
+import com.minimon.repository.SchedulerHistoryRepository;
 import com.minimon.vo.RunningSchedulerVO;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -18,6 +19,9 @@ public class CustomSchedulerTest {
 
     @Autowired
     private CustomScheduler customScheduler;
+
+    @Autowired
+    private SchedulerHistoryRepository schedulerHistoryRepository;
 
     @Test
     void getRunningScheduler() {
@@ -77,5 +81,6 @@ public class CustomSchedulerTest {
     @Test
     void execute() {
         assertEquals(true, customScheduler.execute(SchedulerTypeEnum.API_MONITORING));
+        assertNotEquals(0, schedulerHistoryRepository.count());
     }
 }
