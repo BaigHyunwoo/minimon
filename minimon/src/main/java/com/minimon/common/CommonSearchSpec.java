@@ -1,5 +1,6 @@
 package com.minimon.common;
 
+import com.minimon.exception.SearchQueryParsingException;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -71,7 +72,10 @@ public class CommonSearchSpec {
         int page = this.index - 1;
         if (page < 0) page = 0;
 
-        if (this.sortType.equals(Sort.Direction.DESC.name()) == true) {
+
+        if (this.sortType == null || this.sortKey == null) {
+            return PageRequest.of(page, this.size);
+        } else if (this.sortType.equals(Sort.Direction.DESC.name()) == true) {
             return PageRequest.of(page, this.size, Sort.Direction.DESC, this.sortKey);
         } else if (this.sortType.equals(Sort.Direction.ASC.name()) == true) {
             return PageRequest.of(page, this.size, Sort.Direction.ASC, this.sortKey);
@@ -161,7 +165,7 @@ public class CommonSearchSpec {
                             break;
                     }
                 } catch (Exception e) {
-                    log.debug("CommonSearchSpec create query error");
+                    throw new SearchQueryParsingException();
                 }
             }
         });

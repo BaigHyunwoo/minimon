@@ -30,6 +30,10 @@ responseParsingError:
   code: "500"
   msg: "결과를 반환하는 중 오류가 발생했습니다."
 
+searchQueryParsingError:
+  code: "500"
+  msg: "검색 중 오류가 발생했습니다."
+
 preparingFunction:
   code: "-2"
   msg: "아직 준비중인 기능입니다."

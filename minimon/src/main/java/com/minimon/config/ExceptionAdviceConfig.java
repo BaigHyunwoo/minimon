@@ -75,5 +75,12 @@ public class ExceptionAdviceConfig {
         log.error(e.getMessage());
         return CommonResponse.fail(CommonMessage.getMessage("responseParsingError.code"), CommonMessage.getMessage("responseParsingError.msg"));
     }
+
+    @ExceptionHandler(SearchQueryParsingException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected CommonResponse searchQueryParsingException(HttpServletRequest request, Exception e) {
+        log.error(e.getMessage());
+        return CommonResponse.fail(CommonMessage.getMessage("searchQueryParsingError.code"), CommonMessage.getMessage("searchQueryParsingError.msg"));
+    }
 }
 
