@@ -1,21 +1,22 @@
 package com.minimon.scheduler;
 
-import com.minimon.entity.MonResult;
+import com.minimon.entity.MonAct;
+import com.minimon.entity.MonApi;
 import com.minimon.entity.MonUrl;
-import com.minimon.service.*;
+import com.minimon.service.MonActService;
+import com.minimon.service.MonApiService;
+import com.minimon.service.MonUrlService;
+import com.minimon.service.MonitoringService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class MonitoringScheduler {
-    private final ResultService resultService;
     private final MonUrlService monUrlService;
     private final MonApiService monApiService;
     private final MonActService monActService;
@@ -28,31 +29,14 @@ public class MonitoringScheduler {
     }
 
     public int apiMonitoring() {
-        List<MonResult> monResults = new ArrayList();
-        monResults.addAll(monApiService.checkList(monApiService.findScheduledList()));
-        check(monResults);
-        return monResults.size();
+        List<MonApi> monApiList = monApiService.findScheduledList();
+        monApiList.forEach(monApi -> monitoringService.addTask(() -> monApiService.execute(monApi.getSeq())));
+        return monApiList.size();
     }
 
     public int actMonitoring() {
-        List<MonResult> monResults = new ArrayList();
-        monResults.addAll(monActService.checkList(monActService.findScheduledList()));
-        check(monResults);
-        return monResults.size();
-    }
-
-    @Transactional
-    protected void check(List<MonResult> monResults) {
-        monResults.forEach(monResult -> {
-            switch (monResult.getResultCode()) {
-                case SUCCESS:
-                    resultService.save(monResult);
-                    break;
-                default:
-                    resultService.save(monResult);
-                    resultService.sendResultByProperties(monResult);
-                    break;
-            }
-        });
+        List<MonAct> monActList = monActService.findScheduledList();
+        monActList.forEach(monAct -> monitoringService.addTask(() -> monActService.execute(monAct.getSeq())));
+        return monActList.size();
     }
 }
