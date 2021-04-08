@@ -1,6 +1,7 @@
 package com.minimon.service;
 
 import com.minimon.enums.SwitchEnum;
+import com.minimon.exception.MonitoringExecutionException;
 import javafx.concurrent.Task;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,7 +23,11 @@ public class MonitoringService {
 
         Task task = MONITORING_QUEUE.poll();
         if (task != null) {
-            task.run();
+            try {
+                task.run();
+            } catch (Exception e) {
+                throw new MonitoringExecutionException(e);
+            }
         }
         log.info("RUN");
     }

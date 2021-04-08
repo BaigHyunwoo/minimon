@@ -82,5 +82,12 @@ public class ExceptionAdviceConfig {
         log.error(e.getMessage());
         return CommonResponse.fail(CommonMessage.getMessage("searchQueryParsingError.code"), CommonMessage.getMessage("searchQueryParsingError.msg"));
     }
+
+    @ExceptionHandler(MonitoringExecutionException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected void monitoringExecutionException(HttpServletRequest request, Exception e) {
+        log.error(CommonMessage.getMessage("monitoringExecutionError.code"), CommonMessage.getMessage("monitoringExecutionError.msg"));
+        log.error(e.getMessage());
+    }
 }
 
