@@ -1,10 +1,8 @@
 package com.minimon.scheduler;
 
 import com.minimon.entity.MonResult;
-import com.minimon.service.MonActService;
-import com.minimon.service.MonApiService;
-import com.minimon.service.MonUrlService;
-import com.minimon.service.ResultService;
+import com.minimon.entity.MonUrl;
+import com.minimon.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,12 +19,12 @@ public class MonitoringScheduler {
     private final MonUrlService monUrlService;
     private final MonApiService monApiService;
     private final MonActService monActService;
+    private final MonitoringService monitoringService;
 
     public int urlMonitoring() {
-        List<MonResult> monResults = new ArrayList();
-        monResults.addAll(monUrlService.checkList(monUrlService.findScheduledList()));
-        check(monResults);
-        return monResults.size();
+        List<MonUrl> monUrlList = monUrlService.findScheduledList();
+        monUrlList.forEach(monUrl -> monitoringService.addTask(() -> monUrlService.execute(monUrl.getSeq())));
+        return monUrlList.size();
     }
 
     public int apiMonitoring() {

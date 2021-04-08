@@ -13,7 +13,7 @@ import java.util.Queue;
 @Slf4j
 @Service
 public class MonitoringService {
-    private static Queue<Task> MONITORING_QUEUE = new LinkedList<>();
+    private static Queue<Runnable> MONITORING_QUEUE = new LinkedList<>();
     private static SwitchEnum QUEUE_SWITCH = SwitchEnum.ON;
 
 
@@ -21,7 +21,7 @@ public class MonitoringService {
     private void run() {
         if (QUEUE_SWITCH == SwitchEnum.OFF) return;
 
-        Task task = MONITORING_QUEUE.poll();
+        Runnable task = MONITORING_QUEUE.poll();
         if (task != null) {
             try {
                 task.run();
@@ -32,7 +32,7 @@ public class MonitoringService {
         log.info("RUN");
     }
 
-    public void addTask(Task task) {
+    public void addTask(Runnable task) {
         if (QUEUE_SWITCH == SwitchEnum.OFF) return;
 
         MONITORING_QUEUE.add(task);
