@@ -147,7 +147,7 @@ function monInit() {
             },
             success: function (result) {
                 if (result.meta.code == 200) {
-                    alert("실행 완료");
+                    alert("추가 완료");
                 }
             }
         });
@@ -346,7 +346,7 @@ function monInit() {
                 alert(e.responseJSON.meta.message);
             },
             success: function (result) {
-                alert("실행 완료");
+                alert("추가 완료");
             }
         });
     });
@@ -400,7 +400,7 @@ function monInit() {
                 alert(e.responseJSON.meta.message);
             },
             success: function (result) {
-                alert("실행 완료");
+                alert("추가 완료");
             }
         });
     });
