@@ -60,6 +60,14 @@ public class MonUrlService {
         return monUrlRepository.findByMonitoringUseYn(UseStatusEnum.Y);
     }
 
+    public Runnable urlExecuteTask(int seq){
+        return () -> {
+            MonResult monResult = execute(seq);
+            resultService.save(monResult);
+            resultService.sendResultByProperties(monResult);
+        };
+    }
+
     @Transactional
     public MonResult execute(int seq) {
         MonResult monResult = null;
@@ -68,10 +76,8 @@ public class MonUrlService {
         if (optionalMonUrl.isPresent()) {
             MonUrl monUrl = optionalMonUrl.get();
             MonitoringResultVO monitoringResultVO = check(monUrl.getUrl(), monUrl.getTimeout());
-            log.info(monUrl.getTitle()+" 실행 : "+monitoringResultVO.toString());
-
-            monResult = resultService.save(errorCheck(monUrl, check(monUrl.getUrl(), monUrl.getTimeout())));
-            resultService.sendResultByProperties(monResult);
+            monResult = errorCheck(monUrl, monitoringResultVO);
+            log.info(monUrl.getTitle() + " 실행 : " + monResult.toString());
         }
         return monResult;
     }

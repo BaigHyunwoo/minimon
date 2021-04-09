@@ -5,6 +5,7 @@ import com.minimon.common.CommonSearchSpec;
 import com.minimon.entity.MonResult;
 import com.minimon.entity.MonUrl;
 import com.minimon.service.MonUrlService;
+import com.minimon.service.MonitoringService;
 import com.minimon.vo.MonUrlCheckVO;
 import com.minimon.vo.MonitoringResultVO;
 import io.swagger.annotations.Api;
@@ -22,6 +23,7 @@ import java.util.Optional;
 @Api(tags = {"Monitoring Url Controller"})
 public class MonUrlController {
     private final MonUrlService monUrlService;
+    private final MonitoringService monitoringService;
 
 
     @ApiOperation(value = "URL 목록 조회", response = MonUrl.class)
@@ -70,13 +72,14 @@ public class MonUrlController {
         return new CommonResponse(monUrlService.check(monUrlCheckVO.getUrl(), monUrlCheckVO.getTimeout()));
     }
 
-    @ApiOperation(value = "URL 검사 실행", response = MonResult.class)
+    @ApiOperation(value = "URL 검사 실행 추가", response = MonResult.class)
     @GetMapping(path = "/{seq}/execute")
     public CommonResponse execute(@PathVariable("seq") int seq) {
-        MonResult monResult = monUrlService.execute(seq);
-        if (monResult == null) {
+        if (!monUrlService.get(seq).isPresent()) {
             return CommonResponse.notExistResponse();
         }
-        return new CommonResponse(monResult);
+
+        monitoringService.addTask(monUrlService.urlExecuteTask(seq));
+        return new CommonResponse();
     }
 }
