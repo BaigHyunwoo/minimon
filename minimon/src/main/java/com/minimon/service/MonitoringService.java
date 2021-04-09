@@ -29,7 +29,6 @@ public class MonitoringService {
                 throw new MonitoringExecutionException(e);
             }
         }
-        log.info("RUN");
     }
 
     public void addTask(Runnable task) {

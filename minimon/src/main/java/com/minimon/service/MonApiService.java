@@ -68,18 +68,21 @@ public class MonApiService {
         Optional<MonApi> optionalMonApi = monApiRepository.findById(seq);
         if (optionalMonApi.isPresent()) {
             MonApi monApi = optionalMonApi.get();
-            monResult = resultService.save(errorCheck(monApi, check(monApi)));
+            MonitoringResultVO monitoringResultVO = check(monApi);
+            log.info(monApi.getTitle()+" 실행 : "+monitoringResultVO.toString());
+
+            monResult = resultService.save(errorCheck(monApi, monitoringResultVO));
             resultService.sendResultByProperties(monResult);
         }
         return monResult;
     }
 
-    public MonitoringResultVO check(String url, String method, String data) {
-        return request(url, HttpMethod.valueOf(method), data);
-    }
-
     private MonitoringResultVO check(MonApi api) {
         return request(api.getUrl(), api.getMethod(), api.getData());
+    }
+
+    public MonitoringResultVO check(String url, String method, String data) {
+        return request(url, HttpMethod.valueOf(method), data);
     }
 
     private MonResult errorCheck(MonApi api, MonitoringResultVO monitoringResultVO) {

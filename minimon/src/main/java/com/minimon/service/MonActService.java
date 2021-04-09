@@ -78,7 +78,10 @@ public class MonActService {
         Optional<MonAct> optionalMonAct = get(seq);
         if (optionalMonAct.isPresent()) {
             MonAct monAct = optionalMonAct.get();
-            monResult = resultService.save(errorCheck(monAct, checkFile(monAct.getCodeDataList())));
+            MonitoringResultVO monitoringResultVO = checkFile(monAct.getCodeDataList());
+            log.info(monAct.getTitle()+" 실행 : "+monitoringResultVO.toString());
+
+            monResult = resultService.save(errorCheck(monAct, monitoringResultVO));
             resultService.sendResultByProperties(monResult);
         }
         return monResult;

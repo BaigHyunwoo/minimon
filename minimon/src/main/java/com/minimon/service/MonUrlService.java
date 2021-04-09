@@ -67,6 +67,9 @@ public class MonUrlService {
         Optional<MonUrl> optionalMonUrl = get(seq);
         if (optionalMonUrl.isPresent()) {
             MonUrl monUrl = optionalMonUrl.get();
+            MonitoringResultVO monitoringResultVO = check(monUrl.getUrl(), monUrl.getTimeout());
+            log.info(monUrl.getTitle()+" 실행 : "+monitoringResultVO.toString());
+
             monResult = resultService.save(errorCheck(monUrl, check(monUrl.getUrl(), monUrl.getTimeout())));
             resultService.sendResultByProperties(monResult);
         }
