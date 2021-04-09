@@ -73,7 +73,7 @@ public class MonUrlController {
     @ApiOperation(value = "URL 검사 실행", response = MonResult.class)
     @GetMapping(path = "/{seq}/execute")
     public CommonResponse execute(@PathVariable("seq") int seq) {
-        MonResult monResult = monUrlService.check(seq);
+        MonResult monResult = monUrlService.execute(seq);
         if (monResult == null) {
             return CommonResponse.notExistResponse();
         }

@@ -65,7 +65,7 @@ public class MonUrlServiceTest {
     @Test
     void executeSuccess() {
         MonUrl monUrl = monUrlService.save(getDefaultMonUrl());
-        MonResult monResult = monUrlService.check(monUrl.getSeq());
+        MonResult monResult = monUrlService.execute(monUrl.getSeq());
         assertEquals(MonitoringResultCodeEnum.SUCCESS, monResult.getResultCode());
     }
 
@@ -75,7 +75,7 @@ public class MonUrlServiceTest {
         monUrl.setErrorLoadTime(10);
         monUrl.setLoadTimeCheckYn(UseStatusEnum.N);
         monUrl = monUrlService.save(monUrl);
-        MonResult monResult = monUrlService.check(monUrl.getSeq());
+        MonResult monResult = monUrlService.execute(monUrl.getSeq());
         assertEquals(MonitoringResultCodeEnum.SUCCESS, monResult.getResultCode());
     }
 
@@ -84,7 +84,7 @@ public class MonUrlServiceTest {
         MonUrl monUrl = getDefaultMonUrl();
         monUrl.setErrorLoadTime(1000);
         monUrl = monUrlService.save(monUrl);
-        MonResult monResult = monUrlService.check(monUrl.getSeq());
+        MonResult monResult = monUrlService.execute(monUrl.getSeq());
         assertNotEquals(MonitoringResultCodeEnum.SUCCESS, monResult.getResultCode());
     }
 
@@ -94,7 +94,7 @@ public class MonUrlServiceTest {
             MonUrl monUrl = getDefaultMonUrl();
             monUrl.setResultSendUseYn(UseStatusEnum.Y);
             monUrl = monUrlService.save(monUrl);
-            monUrlService.check(monUrl.getSeq());
+            monUrlService.execute(monUrl.getSeq());
         });
     }
 

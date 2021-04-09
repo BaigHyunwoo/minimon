@@ -71,15 +71,6 @@ public class MonActService {
         return monActRepository.findByMonitoringUseYnOrderByRegDateDesc(UseStatusEnum.Y);
     }
 
-    public List<MonResult> checkList(List<MonAct> monActs) {
-        List<MonResult> monResults = new ArrayList<>();
-        monActs.forEach(monAct -> {
-            MonitoringResultVO monitoringResultVO = checkFile(monAct.getCodeDataList());
-            monResults.add(errorCheck(monAct, monitoringResultVO));
-        });
-        return monResults;
-    }
-
     @Transactional
     public MonResult execute(int seq) {
         MonResult monResult = null;

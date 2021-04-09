@@ -85,18 +85,18 @@ class MonApiServiceTest {
     }
 
     @Test
-    void checkResponseFail() {
+    void executeResponseFail() {
         MonApi monApi = monApiService.save(getDefaultMonApi());
-        MonResult result = monApiService.check(monApi.getSeq());
+        MonResult result = monApiService.execute(monApi.getSeq());
         assertEquals(MonitoringResultCodeEnum.RESPONSE, result.getResultCode());
     }
 
     @Test
-    void checkLoadTimeFail() {
+    void executeLoadTimeFail() {
         MonApi monApi = getDefaultMonApi();
         monApi.setErrorLoadTime(10);
         monApi = monApiService.save(monApi);
-        MonResult result = monApiService.check(monApi.getSeq());
+        MonResult result = monApiService.execute(monApi.getSeq());
         assertEquals(MonitoringResultCodeEnum.LOAD_TIME, result.getResultCode());
     }
 
@@ -106,7 +106,7 @@ class MonApiServiceTest {
         monApi.setErrorLoadTime(10);
         monApi.setLoadTimeCheckYn(UseStatusEnum.N);
         monApi = monApiService.save(monApi);
-        MonResult result = monApiService.check(monApi.getSeq());
+        MonResult result = monApiService.execute(monApi.getSeq());
         assertEquals(MonitoringResultCodeEnum.RESPONSE, result.getResultCode());
     }
 
@@ -117,7 +117,7 @@ class MonApiServiceTest {
         monApi.setLoadTimeCheckYn(UseStatusEnum.N);
         monApi.setResponseCheckYn(UseStatusEnum.N);
         monApi = monApiService.save(monApi);
-        MonResult result = monApiService.check(monApi.getSeq());
+        MonResult result = monApiService.execute(monApi.getSeq());
         assertEquals(MonitoringResultCodeEnum.SUCCESS, result.getResultCode());
     }
 
@@ -139,7 +139,7 @@ class MonApiServiceTest {
             MonApi monApi = getDefaultMonApi();
             monApi.setResultSendUseYn(UseStatusEnum.Y);
             monApi = monApiService.save(monApi);
-            monApiService.check(monApi.getSeq());
+            monApiService.execute(monApi.getSeq());
         });
     }
 }

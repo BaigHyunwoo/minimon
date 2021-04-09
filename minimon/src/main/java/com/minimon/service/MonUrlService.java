@@ -17,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,17 +60,8 @@ public class MonUrlService {
         return monUrlRepository.findByMonitoringUseYn(UseStatusEnum.Y);
     }
 
-    public List<MonResult> checkList(List<MonUrl> monUrls) {
-        List<MonResult> monResults = new ArrayList<>();
-        monUrls.forEach(monUrl -> {
-            MonitoringResultVO monitoringResultVO = check(monUrl.getUrl(), monUrl.getTimeout());
-            monResults.add(errorCheck(monUrl, monitoringResultVO));
-        });
-        return monResults;
-    }
-
     @Transactional
-    public MonResult check(int seq) {
+    public MonResult execute(int seq) {
         MonResult monResult = null;
 
         Optional<MonUrl> optionalMonUrl = get(seq);
