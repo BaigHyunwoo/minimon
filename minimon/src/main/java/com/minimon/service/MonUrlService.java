@@ -60,7 +60,7 @@ public class MonUrlService {
         return monUrlRepository.findByMonitoringUseYn(UseStatusEnum.Y);
     }
 
-    public Runnable urlExecuteTask(int seq){
+    public Runnable executeTask(int seq){
         return () -> {
             MonResult monResult = execute(seq);
             resultService.save(monResult);

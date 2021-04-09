@@ -72,14 +72,14 @@ public class MonUrlController {
         return new CommonResponse(monUrlService.check(monUrlCheckVO.getUrl(), monUrlCheckVO.getTimeout()));
     }
 
-    @ApiOperation(value = "URL 검사 실행 추가", response = MonResult.class)
+    @ApiOperation(value = "URL 검사 Task 추가", response = MonResult.class)
     @GetMapping(path = "/{seq}/execute")
     public CommonResponse execute(@PathVariable("seq") int seq) {
         if (!monUrlService.get(seq).isPresent()) {
             return CommonResponse.notExistResponse();
         }
 
-        monitoringService.addTask(monUrlService.urlExecuteTask(seq));
+        monitoringService.addTask(monUrlService.executeTask(seq));
         return new CommonResponse();
     }
 }

@@ -61,6 +61,14 @@ public class MonApiService {
         return monApiRepository.findByMonitoringUseYnOrderByRegDateDesc(UseStatusEnum.Y);
     }
 
+    public Runnable executeTask(int seq){
+        return () -> {
+            MonResult monResult = execute(seq);
+            resultService.save(monResult);
+            resultService.sendResultByProperties(monResult);
+        };
+    }
+
     @Transactional
     public MonResult execute(int seq) {
         MonResult monResult = null;
