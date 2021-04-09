@@ -87,7 +87,7 @@ class MonApiServiceTest {
     @Test
     void checkResponseFail() {
         MonApi monApi = monApiService.save(getDefaultMonApi());
-        MonResult result = monApiService.execute(monApi.getSeq());
+        MonResult result = monApiService.check(monApi.getSeq());
         assertEquals(MonitoringResultCodeEnum.RESPONSE, result.getResultCode());
     }
 
@@ -96,7 +96,7 @@ class MonApiServiceTest {
         MonApi monApi = getDefaultMonApi();
         monApi.setErrorLoadTime(10);
         monApi = monApiService.save(monApi);
-        MonResult result = monApiService.execute(monApi.getSeq());
+        MonResult result = monApiService.check(monApi.getSeq());
         assertEquals(MonitoringResultCodeEnum.LOAD_TIME, result.getResultCode());
     }
 
@@ -106,7 +106,7 @@ class MonApiServiceTest {
         monApi.setErrorLoadTime(10);
         monApi.setLoadTimeCheckYn(UseStatusEnum.N);
         monApi = monApiService.save(monApi);
-        MonResult result = monApiService.execute(monApi.getSeq());
+        MonResult result = monApiService.check(monApi.getSeq());
         assertEquals(MonitoringResultCodeEnum.RESPONSE, result.getResultCode());
     }
 
@@ -117,19 +117,19 @@ class MonApiServiceTest {
         monApi.setLoadTimeCheckYn(UseStatusEnum.N);
         monApi.setResponseCheckYn(UseStatusEnum.N);
         monApi = monApiService.save(monApi);
-        MonResult result = monApiService.execute(monApi.getSeq());
+        MonResult result = monApiService.check(monApi.getSeq());
         assertEquals(MonitoringResultCodeEnum.SUCCESS, result.getResultCode());
     }
 
     @Test
     void executeGetMethod() {
-        MonitoringResultVO result = monApiService.execute("https://www.daum.net", HttpMethod.GET.name(), null);
+        MonitoringResultVO result = monApiService.check("https://www.daum.net", HttpMethod.GET.name(), null);
         assertEquals(HttpStatus.OK, result.getStatus());
     }
 
     @Test
     void executePostMethod() throws JsonProcessingException {
-        MonitoringResultVO result = monApiService.execute("http://localhost:8080/result/receive", HttpMethod.POST.name(), objectMapper.writeValueAsString(getDefaultMonResult()));
+        MonitoringResultVO result = monApiService.check("http://localhost:8080/result/receive", HttpMethod.POST.name(), objectMapper.writeValueAsString(getDefaultMonResult()));
         assertEquals(HttpStatus.OK, result.getStatus());
     }
 
@@ -139,7 +139,7 @@ class MonApiServiceTest {
             MonApi monApi = getDefaultMonApi();
             monApi.setResultSendUseYn(UseStatusEnum.Y);
             monApi = monApiService.save(monApi);
-            monApiService.execute(monApi.getSeq());
+            monApiService.check(monApi.getSeq());
         });
     }
 }

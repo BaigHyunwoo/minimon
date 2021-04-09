@@ -24,13 +24,13 @@ public class MonitoringScheduler {
 
     public int urlMonitoring() {
         List<MonUrl> monUrlList = monUrlService.findScheduledList();
-        monUrlList.forEach(monUrl -> monitoringService.addTask(() -> monUrlService.execute(monUrl.getSeq())));
+        monUrlList.forEach(monUrl -> monitoringService.addTask(() -> monUrlService.check(monUrl.getSeq())));
         return monUrlList.size();
     }
 
     public int apiMonitoring() {
         List<MonApi> monApiList = monApiService.findScheduledList();
-        monApiList.forEach(monApi -> monitoringService.addTask(() -> monApiService.execute(monApi.getSeq())));
+        monApiList.forEach(monApi -> monitoringService.addTask(() -> monApiService.check(monApi.getSeq())));
         return monApiList.size();
     }
 

@@ -67,13 +67,13 @@ public class MonApiController {
     @ApiOperation(value = "API 검사 테스트 실행", response = MonitoringResultVO.class)
     @PostMapping(path = "/check")
     public CommonResponse check(@RequestBody MonApiCheckVO monApiCheckVO) {
-        return new CommonResponse(monApiService.execute(monApiCheckVO.getUrl(), monApiCheckVO.getMethod(), monApiCheckVO.getData()));
+        return new CommonResponse(monApiService.check(monApiCheckVO.getUrl(), monApiCheckVO.getMethod(), monApiCheckVO.getData()));
     }
 
     @ApiOperation(value = "API 검사 실행", response = MonResult.class)
     @GetMapping(path = "/{seq}/execute")
     public CommonResponse execute(@PathVariable("seq") int seq) {
-        MonResult monResult = monApiService.execute(seq);
+        MonResult monResult = monApiService.check(seq);
         if (monResult == null) {
             return CommonResponse.notExistResponse();
         }

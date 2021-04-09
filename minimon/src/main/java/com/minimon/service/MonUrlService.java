@@ -64,26 +64,26 @@ public class MonUrlService {
     public List<MonResult> checkList(List<MonUrl> monUrls) {
         List<MonResult> monResults = new ArrayList<>();
         monUrls.forEach(monUrl -> {
-            MonitoringResultVO monitoringResultVO = execute(monUrl.getUrl(), monUrl.getTimeout());
+            MonitoringResultVO monitoringResultVO = check(monUrl.getUrl(), monUrl.getTimeout());
             monResults.add(errorCheck(monUrl, monitoringResultVO));
         });
         return monResults;
     }
 
     @Transactional
-    public MonResult execute(int seq) {
+    public MonResult check(int seq) {
         MonResult monResult = null;
 
         Optional<MonUrl> optionalMonUrl = get(seq);
         if (optionalMonUrl.isPresent()) {
             MonUrl monUrl = optionalMonUrl.get();
-            monResult = resultService.save(errorCheck(monUrl, execute(monUrl.getUrl(), monUrl.getTimeout())));
+            monResult = resultService.save(errorCheck(monUrl, check(monUrl.getUrl(), monUrl.getTimeout())));
             resultService.sendResultByProperties(monResult);
         }
         return monResult;
     }
 
-    public MonitoringResultVO execute(String url, int timeout) {
+    public MonitoringResultVO check(String url, int timeout) {
         EventFiringWebDriver driver = commonSelenium.setUp();
         MonitoringResultVO monitoringResultVO;
 

@@ -65,30 +65,30 @@ public class MonApiService {
     public List<MonResult> checkList(List<MonApi> monApis) {
         List<MonResult> monResults = new ArrayList<>();
         monApis.forEach(monApi -> {
-            MonitoringResultVO monitoringResultVO = execute(monApi);
+            MonitoringResultVO monitoringResultVO = check(monApi);
             monResults.add(errorCheck(monApi, monitoringResultVO));
         });
         return monResults;
     }
 
     @Transactional
-    public MonResult execute(int seq) {
+    public MonResult check(int seq) {
         MonResult monResult = null;
 
         Optional<MonApi> optionalMonApi = monApiRepository.findById(seq);
         if (optionalMonApi.isPresent()) {
             MonApi monApi = optionalMonApi.get();
-            monResult = resultService.save(errorCheck(monApi, execute(monApi)));
+            monResult = resultService.save(errorCheck(monApi, check(monApi)));
             resultService.sendResultByProperties(monResult);
         }
         return monResult;
     }
 
-    public MonitoringResultVO execute(String url, String method, String data) {
+    public MonitoringResultVO check(String url, String method, String data) {
         return request(url, HttpMethod.valueOf(method), data);
     }
 
-    private MonitoringResultVO execute(MonApi api) {
+    private MonitoringResultVO check(MonApi api) {
         return request(api.getUrl(), api.getMethod(), api.getData());
     }
 

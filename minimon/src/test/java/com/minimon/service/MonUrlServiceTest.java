@@ -65,7 +65,7 @@ public class MonUrlServiceTest {
     @Test
     void executeSuccess() {
         MonUrl monUrl = monUrlService.save(getDefaultMonUrl());
-        MonResult monResult = monUrlService.execute(monUrl.getSeq());
+        MonResult monResult = monUrlService.check(monUrl.getSeq());
         assertEquals(MonitoringResultCodeEnum.SUCCESS, monResult.getResultCode());
     }
 
@@ -75,7 +75,7 @@ public class MonUrlServiceTest {
         monUrl.setErrorLoadTime(10);
         monUrl.setLoadTimeCheckYn(UseStatusEnum.N);
         monUrl = monUrlService.save(monUrl);
-        MonResult monResult = monUrlService.execute(monUrl.getSeq());
+        MonResult monResult = monUrlService.check(monUrl.getSeq());
         assertEquals(MonitoringResultCodeEnum.SUCCESS, monResult.getResultCode());
     }
 
@@ -84,7 +84,7 @@ public class MonUrlServiceTest {
         MonUrl monUrl = getDefaultMonUrl();
         monUrl.setErrorLoadTime(1000);
         monUrl = monUrlService.save(monUrl);
-        MonResult monResult = monUrlService.execute(monUrl.getSeq());
+        MonResult monResult = monUrlService.check(monUrl.getSeq());
         assertNotEquals(MonitoringResultCodeEnum.SUCCESS, monResult.getResultCode());
     }
 
@@ -94,18 +94,18 @@ public class MonUrlServiceTest {
             MonUrl monUrl = getDefaultMonUrl();
             monUrl.setResultSendUseYn(UseStatusEnum.Y);
             monUrl = monUrlService.save(monUrl);
-            monUrlService.execute(monUrl.getSeq());
+            monUrlService.check(monUrl.getSeq());
         });
     }
 
     @Test
     void check() {
-        assertEquals(HttpStatus.OK, monUrlService.execute("https://www.daum.net", 3).getStatus());
-        assertEquals(HttpStatus.OK, monUrlService.execute("https://www.naver.com", 1).getStatus());
+        assertEquals(HttpStatus.OK, monUrlService.check("https://www.daum.net", 3).getStatus());
+        assertEquals(HttpStatus.OK, monUrlService.check("https://www.naver.com", 1).getStatus());
     }
 
     @Test
     void checkFail() {
-        assertNotEquals(HttpStatus.OK, monUrlService.execute("http://localhost:8080/result", 3).getStatus());
+        assertNotEquals(HttpStatus.OK, monUrlService.check("http://localhost:8080/result", 3).getStatus());
     }
 }

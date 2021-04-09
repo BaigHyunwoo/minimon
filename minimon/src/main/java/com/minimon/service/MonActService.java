@@ -74,7 +74,7 @@ public class MonActService {
     public List<MonResult> checkList(List<MonAct> monActs) {
         List<MonResult> monResults = new ArrayList<>();
         monActs.forEach(monAct -> {
-            MonitoringResultVO monitoringResultVO = executeCodeList(monAct.getCodeDataList());
+            MonitoringResultVO monitoringResultVO = checkFile(monAct.getCodeDataList());
             monResults.add(errorCheck(monAct, monitoringResultVO));
         });
         return monResults;
@@ -87,19 +87,19 @@ public class MonActService {
         Optional<MonAct> optionalMonAct = get(seq);
         if (optionalMonAct.isPresent()) {
             MonAct monAct = optionalMonAct.get();
-            monResult = resultService.save(errorCheck(monAct, executeCodeList(monAct.getCodeDataList())));
+            monResult = resultService.save(errorCheck(monAct, checkFile(monAct.getCodeDataList())));
             resultService.sendResultByProperties(monResult);
         }
         return monResult;
     }
 
-    public MonitoringResultVO executeCodeList(MultipartFile monActFile) {
+    public MonitoringResultVO checkFile(MultipartFile monActFile) {
         Optional<List> isExistSource = Optional.ofNullable(getTestSource(monActFile));
-        if (isExistSource.isPresent()) return executeCodeList(isExistSource.get());
+        if (isExistSource.isPresent()) return checkFile(isExistSource.get());
         return null;
     }
 
-    private MonitoringResultVO executeCodeList(List<MonCodeData> codeDataList) {
+    private MonitoringResultVO checkFile(List<MonCodeData> codeDataList) {
         List<MonActCodeResultVO> monActCodeResultVOList;
         long loadTime = 0;
         HttpStatus status;

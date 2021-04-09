@@ -98,7 +98,7 @@ public class MonActServiceTest {
 
     @Test
     void executeCodeList() {
-        MonitoringResultVO result = monActService.executeCodeList(getTestFile());
+        MonitoringResultVO result = monActService.checkFile(getTestFile());
         assertEquals(HttpStatus.OK, result.getStatus());
     }
 
