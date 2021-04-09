@@ -5,7 +5,9 @@ import com.minimon.enums.MonitoringTypeEnum;
 import com.minimon.enums.UseStatusEnum;
 import com.sun.istack.NotNull;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -83,5 +85,10 @@ public class MonResult {
         this.status = status;
         this.resultSendUseYn = resultSendUseYn;
         this.response = response;
+    }
+
+    @Override
+    public String toString() {
+        return monitoringType + " " + title + " " + loadTime + "ms " + resultCode.getCode() + " " + status;
     }
 }

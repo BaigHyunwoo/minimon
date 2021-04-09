@@ -70,16 +70,15 @@ public class MonUrlService {
 
     @Transactional
     public MonResult execute(int seq) {
-        MonResult monResult = null;
-
         Optional<MonUrl> optionalMonUrl = get(seq);
         if (optionalMonUrl.isPresent()) {
             MonUrl monUrl = optionalMonUrl.get();
             MonitoringResultVO monitoringResultVO = check(monUrl.getUrl(), monUrl.getTimeout());
-            monResult = errorCheck(monUrl, monitoringResultVO);
-            log.info(monUrl.getTitle() + " 실행 : " + monResult.toString());
+            MonResult monResult = errorCheck(monUrl, monitoringResultVO);
+            log.info(monResult.toString());
+            return monResult;
         }
-        return monResult;
+        return null;
     }
 
     public MonitoringResultVO check(String url, int timeout) {

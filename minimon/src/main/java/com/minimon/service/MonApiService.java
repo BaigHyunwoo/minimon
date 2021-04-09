@@ -45,14 +45,14 @@ public class MonApiService {
 
     @Transactional
     public boolean edit(MonApi monApiVO) {
-        Optional<MonApi> optionalMonApi = monApiRepository.findById(monApiVO.getSeq());
+        Optional<MonApi> optionalMonApi = get(monApiVO.getSeq());
         optionalMonApi.ifPresent(monUrl -> monApiRepository.save(monApiVO));
         return optionalMonApi.isPresent();
     }
 
     @Transactional
     public boolean remove(int seq) {
-        Optional<MonApi> optionalMonApi = monApiRepository.findById(seq);
+        Optional<MonApi> optionalMonApi = get(seq);
         optionalMonApi.ifPresent(monApiRepository::delete);
         return optionalMonApi.isPresent();
     }
@@ -71,18 +71,15 @@ public class MonApiService {
 
     @Transactional
     public MonResult execute(int seq) {
-        MonResult monResult = null;
-
-        Optional<MonApi> optionalMonApi = monApiRepository.findById(seq);
+        Optional<MonApi> optionalMonApi = get(seq);
         if (optionalMonApi.isPresent()) {
             MonApi monApi = optionalMonApi.get();
             MonitoringResultVO monitoringResultVO = check(monApi);
-            log.info(monApi.getTitle() + " 실행 : " + monitoringResultVO.toString());
-
-            monResult = resultService.save(errorCheck(monApi, monitoringResultVO));
-            resultService.sendResultByProperties(monResult);
+            MonResult monResult = errorCheck(monApi, monitoringResultVO);
+            log.info(monResult.toString());
+            return monResult;
         }
-        return monResult;
+        return null;
     }
 
     private MonitoringResultVO check(MonApi api) {

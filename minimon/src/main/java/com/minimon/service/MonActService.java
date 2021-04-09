@@ -81,18 +81,15 @@ public class MonActService {
 
     @Transactional
     public MonResult execute(int seq) {
-        MonResult monResult = null;
-
         Optional<MonAct> optionalMonAct = get(seq);
         if (optionalMonAct.isPresent()) {
             MonAct monAct = optionalMonAct.get();
             MonitoringResultVO monitoringResultVO = checkFile(monAct.getCodeDataList());
-            log.info(monAct.getTitle() + " 실행 : " + monitoringResultVO.toString());
-
-            monResult = resultService.save(errorCheck(monAct, monitoringResultVO));
-            resultService.sendResultByProperties(monResult);
+            MonResult monResult = errorCheck(monAct, monitoringResultVO);
+            log.info(monResult.toString());
+            return monResult;
         }
-        return monResult;
+        return null;
     }
 
     public MonitoringResultVO checkFile(MultipartFile monActFile) {
