@@ -5,6 +5,7 @@ import com.minimon.common.CommonSearchSpec;
 import com.minimon.entity.MonAct;
 import com.minimon.entity.MonResult;
 import com.minimon.service.MonActService;
+import com.minimon.service.MonitoringService;
 import com.minimon.vo.MonitoringResultVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -22,8 +23,8 @@ import java.util.Optional;
 @RequestMapping("/monAct")
 @Api(tags = {"Monitoring Act Controller"})
 public class MonActController {
-
     private final MonActService monActService;
+    private final MonitoringService monitoringService;
 
 
     @ApiOperation(value = "목록 조회", response = MonAct.class)
@@ -79,10 +80,11 @@ public class MonActController {
     @ApiOperation(value = "검사 실행", response = MonResult.class)
     @GetMapping(path = "/{seq}/execute")
     public CommonResponse execute(@PathVariable("seq") int seq) {
-        MonResult monResult = monActService.execute(seq);
-        if (monResult == null) {
+        if (!monActService.get(seq).isPresent()) {
             return CommonResponse.notExistResponse();
         }
-        return new CommonResponse(monResult);
+
+        monitoringService.addTask(monActService.executeTask(seq));
+        return new CommonResponse();
     }
 }

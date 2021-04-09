@@ -71,6 +71,14 @@ public class MonActService {
         return monActRepository.findByMonitoringUseYnOrderByRegDateDesc(UseStatusEnum.Y);
     }
 
+    public Runnable executeTask(int seq) {
+        return () -> {
+            MonResult monResult = execute(seq);
+            resultService.save(monResult);
+            resultService.sendResultByProperties(monResult);
+        };
+    }
+
     @Transactional
     public MonResult execute(int seq) {
         MonResult monResult = null;
@@ -79,7 +87,7 @@ public class MonActService {
         if (optionalMonAct.isPresent()) {
             MonAct monAct = optionalMonAct.get();
             MonitoringResultVO monitoringResultVO = checkFile(monAct.getCodeDataList());
-            log.info(monAct.getTitle()+" 실행 : "+monitoringResultVO.toString());
+            log.info(monAct.getTitle() + " 실행 : " + monitoringResultVO.toString());
 
             monResult = resultService.save(errorCheck(monAct, monitoringResultVO));
             resultService.sendResultByProperties(monResult);

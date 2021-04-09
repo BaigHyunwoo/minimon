@@ -61,7 +61,7 @@ public class MonApiService {
         return monApiRepository.findByMonitoringUseYnOrderByRegDateDesc(UseStatusEnum.Y);
     }
 
-    public Runnable executeTask(int seq){
+    public Runnable executeTask(int seq) {
         return () -> {
             MonResult monResult = execute(seq);
             resultService.save(monResult);
@@ -77,7 +77,7 @@ public class MonApiService {
         if (optionalMonApi.isPresent()) {
             MonApi monApi = optionalMonApi.get();
             MonitoringResultVO monitoringResultVO = check(monApi);
-            log.info(monApi.getTitle()+" 실행 : "+monitoringResultVO.toString());
+            log.info(monApi.getTitle() + " 실행 : " + monitoringResultVO.toString());
 
             monResult = resultService.save(errorCheck(monApi, monitoringResultVO));
             resultService.sendResultByProperties(monResult);
