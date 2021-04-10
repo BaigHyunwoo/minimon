@@ -3,6 +3,7 @@ package com.minimon.controller;
 import com.minimon.common.CommonResponse;
 import com.minimon.enums.SchedulerTypeEnum;
 import com.minimon.scheduler.CustomScheduler;
+import com.minimon.service.MonitoringService;
 import com.minimon.vo.RunningSchedulerVO;
 import com.minimon.vo.SchedulerTaskVO;
 import com.minimon.vo.SchedulerVO;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @Api(tags = {"Scheduler Controller"})
 public class SchedulerController {
     private final CustomScheduler customScheduler;
+    private final MonitoringService monitoringService;
 
 
     @PostMapping(path = "/execute")
@@ -53,5 +55,19 @@ public class SchedulerController {
     @ApiOperation(value = "모든 스케줄 작업 중지")
     public CommonResponse stopAllTasks() {
         return new CommonResponse(customScheduler.stopAllTasks());
+    }
+
+    @PostMapping(path = "/monitoring/on")
+    @ApiOperation(value = "모니터링 가동")
+    public CommonResponse runMonitoring() {
+        monitoringService.on();
+        return new CommonResponse();
+    }
+
+    @PostMapping(path = "/monitoring/off")
+    @ApiOperation(value = "모니터링 중지")
+    public CommonResponse stopMonitoring() {
+        monitoringService.off();
+        return new CommonResponse();
     }
 }

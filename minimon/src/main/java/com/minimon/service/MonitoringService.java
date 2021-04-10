@@ -36,4 +36,12 @@ public class MonitoringService {
 
         MONITORING_QUEUE.add(task);
     }
+
+    public void on(){
+        QUEUE_SWITCH = SwitchEnum.ON;
+    }
+
+    public void off(){
+        QUEUE_SWITCH = SwitchEnum.OFF;
+    }
 }

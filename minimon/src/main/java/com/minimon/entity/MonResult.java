@@ -89,6 +89,6 @@ public class MonResult {
 
     @Override
     public String toString() {
-        return monitoringType + " " + title + " " + loadTime + "ms " + resultCode.getCode() + " " + status;
+        return monitoringType + " " + title + " " + loadTime + "ms " + resultCode.getCode() + " " + status.value();
     }
 }
