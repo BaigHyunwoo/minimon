@@ -8,6 +8,7 @@ import com.minimon.entity.MonAct;
 import com.minimon.entity.MonCodeData;
 import com.minimon.entity.MonResult;
 import com.minimon.enums.*;
+import com.minimon.exception.ActFileConvertException;
 import com.minimon.exception.ResponseParsingException;
 import com.minimon.repository.MonActRepository;
 import com.minimon.vo.MonActCodeResultVO;
@@ -179,7 +180,7 @@ public class MonActService {
     }
 
     public List<MonCodeData> getTestSource(MultipartFile monActFile) {
-        List<MonCodeData> codeDataList = null;
+        List<MonCodeData> codeDataList;
         try (BufferedReader br = new BufferedReader(new InputStreamReader(monActFile.getInputStream()))) {
             codeDataList = new ArrayList<>();
 
@@ -195,8 +196,7 @@ public class MonActService {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            log.debug(e.getMessage());
+            throw new ActFileConvertException(e);
         }
         return codeDataList;
     }

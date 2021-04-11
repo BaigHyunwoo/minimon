@@ -89,5 +89,12 @@ public class ExceptionAdviceConfig {
         log.error(CommonMessage.getMessage("monitoringExecutionError.code"), CommonMessage.getMessage("monitoringExecutionError.msg"));
         log.error(e.getMessage());
     }
+
+    @ExceptionHandler(ActFileConvertException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected void actFileConvertException(HttpServletRequest request, Exception e) {
+        log.error(CommonMessage.getMessage("actFileConvertError.code"), CommonMessage.getMessage("actFileConvertError.msg"));
+        log.error(e.getMessage());
+    }
 }
 

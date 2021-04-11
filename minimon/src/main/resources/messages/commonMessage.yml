@@ -38,6 +38,10 @@ monitoringExecutionError:
   code: "500"
   msg: "모니터링 동작 중 오류가 발생했습니다."
 
+actFileConvertError:
+  code: "500"
+  msg: "ACT 모니터링 파일을 읽는 중 오류가 발생했습니다."
+
 preparingFunction:
   code: "-2"
   msg: "아직 준비중인 기능입니다."
