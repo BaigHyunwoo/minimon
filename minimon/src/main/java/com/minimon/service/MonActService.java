@@ -180,14 +180,15 @@ public class MonActService {
     }
 
     public List<MonCodeData> getTestSource(MultipartFile monActFile) {
-        List<MonCodeData> codeDataList;
+        List<MonCodeData> codeDataList = null;
         try (BufferedReader br = new BufferedReader(new InputStreamReader(monActFile.getInputStream()))) {
-            codeDataList = new ArrayList<>();
-
             String line;
             boolean check = false;
             while ((line = br.readLine()) != null) {
-                if (line.indexOf("@Test") > 0) check = true;
+                if (line.indexOf("@Test") > 0) {
+                    codeDataList = new ArrayList<>();
+                    check = true;
+                }
                 if (check) {
                     MonCodeData monCodeData = getCodeData(line);
                     if (monCodeData != null) {
