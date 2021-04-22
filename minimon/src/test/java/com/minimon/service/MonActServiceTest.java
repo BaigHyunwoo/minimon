@@ -5,18 +5,17 @@ import com.minimon.entity.MonAct;
 import com.minimon.entity.MonCodeData;
 import com.minimon.entity.MonResult;
 import com.minimon.enums.MonitoringResultCodeEnum;
-import com.minimon.enums.ResponseEnum;
 import com.minimon.enums.UseStatusEnum;
 import com.minimon.exception.UndefinedResultReceiveException;
 import com.minimon.vo.MonitoringResultVO;
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,14 +24,9 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 public class MonActServiceTest {
 
@@ -109,7 +103,7 @@ public class MonActServiceTest {
     }
 
     @Test
-    void checkFail()  {
+    void checkFail() {
         MonitoringResultVO result = monActService.checkFile(new MockMultipartFile("fail", "fail.java", ContentType.TEXT_PLAIN.getMimeType(), "fail".getBytes()));
         assertEquals(null, result);
     }
