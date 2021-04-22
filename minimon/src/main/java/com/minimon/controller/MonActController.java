@@ -30,6 +30,8 @@ import java.util.Optional;
 @RequestMapping("/monAct")
 @Api(tags = {"Monitoring Act Controller"})
 public class MonActController {
+
+
     private final MonActService monActService;
     private final MonitoringService monitoringService;
 
@@ -97,13 +99,18 @@ public class MonActController {
 
     @ApiOperation(value = "테스트 검사 파일 다운로드")
     @GetMapping(path = "/download/test")
-    public ResponseEntity downloadTestFile() throws FileNotFoundException {
-        File file = new File("src/main/resources/testFiles/FindTest.java");
-        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + "FindTest.java" + "\"")
-                .contentLength(file.length())
-                .contentType(MediaType.parseMediaType("application/octet-stream"))
-                .body(resource);
+    public ResponseEntity downloadTestFile() {
+        File testFile = monActService.getTestFile();
+        try {
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + testFile.getName() + "\"")
+                    .contentLength(testFile.length())
+                    .contentType(MediaType.parseMediaType("application/octet-stream"))
+                    .body(new InputStreamResource(new FileInputStream(testFile)));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return ResponseEntity.noContent().build();
     }
 }

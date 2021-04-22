@@ -17,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +38,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class MonActService {
+
+    @Value("${act.testFileName}")
+    private String testFileName;
+
+    @Value("${act.testFilePath}")
+    private String testFilePath;
 
     private final ObjectMapper objectMapper;
     private final CommonSelenium commonSelenium;
@@ -78,6 +88,10 @@ public class MonActService {
             resultService.save(monResult);
             resultService.sendResultByProperties(monResult);
         };
+    }
+
+    public File getTestFile() {
+        return new File(testFilePath + testFileName);
     }
 
     @Transactional
