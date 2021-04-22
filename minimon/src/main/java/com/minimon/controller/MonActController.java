@@ -1,5 +1,6 @@
 package com.minimon.controller;
 
+import com.google.common.net.HttpHeaders;
 import com.minimon.common.CommonResponse;
 import com.minimon.common.CommonSearchSpec;
 import com.minimon.entity.MonAct;
@@ -11,9 +12,15 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.Optional;
 
 
@@ -86,5 +93,17 @@ public class MonActController {
 
         monitoringService.addTask(monActService.executeTask(seq));
         return new CommonResponse();
+    }
+
+    @ApiOperation(value = "테스트 검사 파일 다운로드")
+    @GetMapping(path = "/download/test")
+    public ResponseEntity downloadTestFile() throws FileNotFoundException {
+        File file = new File("src/main/resources/testFiles/FindTest.java");
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + "FindTest.java" + "\"")
+                .contentLength(file.length())
+                .contentType(MediaType.parseMediaType("application/octet-stream"))
+                .body(resource);
     }
 }
