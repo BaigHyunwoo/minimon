@@ -5,6 +5,7 @@ import com.minimon.common.CommonResponse;
 import com.minimon.common.CommonSearchSpec;
 import com.minimon.entity.MonAct;
 import com.minimon.entity.MonResult;
+import com.minimon.exception.ActTestFileDownLoadException;
 import com.minimon.service.MonActService;
 import com.minimon.service.MonitoringService;
 import com.minimon.vo.MonitoringResultVO;
@@ -100,17 +101,15 @@ public class MonActController {
     @ApiOperation(value = "테스트 검사 파일 다운로드")
     @GetMapping(path = "/download/test")
     public ResponseEntity downloadTestFile() {
-        File testFile = monActService.getTestFile();
         try {
+            File testFile = monActService.getTestFile();
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + testFile.getName() + "\"")
                     .contentLength(testFile.length())
                     .contentType(MediaType.parseMediaType("application/octet-stream"))
                     .body(new InputStreamResource(new FileInputStream(testFile)));
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            throw new ActTestFileDownLoadException(e);
         }
-
-        return ResponseEntity.noContent().build();
     }
 }

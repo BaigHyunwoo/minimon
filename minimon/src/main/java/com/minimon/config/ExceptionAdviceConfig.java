@@ -96,5 +96,12 @@ public class ExceptionAdviceConfig {
         log.error(CommonMessage.getMessage("actFileConvertError.code"), CommonMessage.getMessage("actFileConvertError.msg"));
         log.error(e.getMessage());
     }
+
+    @ExceptionHandler(ActTestFileDownLoadException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    protected void actTestFileDownLoadException(HttpServletRequest request, Exception e) {
+        log.error(CommonMessage.getMessage("actTestFileDownLoadError.code"), CommonMessage.getMessage("actTestFileDownLoadError.msg"));
+        log.error(e.getMessage());
+    }
 }
 
