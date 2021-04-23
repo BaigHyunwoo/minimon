@@ -422,6 +422,11 @@ function monInit() {
     });
 
 
+    $('body').on('click', '#downloadTestFileBtn', function () {
+        window.location="/monAct/download/test";
+    });
+
+
     $('body').on('click', '#saveAct', function () {
         let method = 'POST';
         if ($("#saveActForm [name='seq']").val() != '') {
