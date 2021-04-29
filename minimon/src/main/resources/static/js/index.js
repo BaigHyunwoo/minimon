@@ -639,7 +639,6 @@ function monInit() {
         });
     });
 
-
     function getMonResultList(){
         $.ajax({
             type: 'GET',
@@ -664,6 +663,30 @@ function monInit() {
                         '                    </td>\n' +
                         '                </tr>').hide();
                     $('.resultList').append($(resultHtml));
+                    $(resultHtml).fadeIn("slow");
+                });
+            }
+        });
+    }
+
+    function getMonQueueList(){
+        $.ajax({
+            type: 'GET',
+            url: '/scheduler/monitoring/list',
+            dataType: 'json',
+            error: function(e){
+                alert(e.responseJSON.meta.message);
+            },
+            success: function (result) {
+                $(".queueList > tr").hide();
+                $(".queueList > tr").remove();
+                $.each(result.data, function(i, task){
+                    let resultHtml = $('<tr>\n' +
+                        '                    <td>'+task.monitoringType+'</td>\n' +
+                        '                    <td>'+task.seq+'</td>\n' +
+                        '                    <td>대기</td>\n' +
+                        '                </tr>').hide();
+                    $('.queueList').append($(resultHtml));
                     $(resultHtml).fadeIn("slow");
                 });
             }
@@ -697,6 +720,7 @@ function monInit() {
     function loadingNewResult() {
         getMonResultList();
         setTimeout(loadingNewResult, 5000);
+        setTimeout(getMonQueueList, 1000);
     }
 
     loadingNewResult();

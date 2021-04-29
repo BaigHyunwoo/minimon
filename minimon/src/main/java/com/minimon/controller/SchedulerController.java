@@ -4,6 +4,7 @@ import com.minimon.common.CommonResponse;
 import com.minimon.enums.SchedulerTypeEnum;
 import com.minimon.scheduler.CustomScheduler;
 import com.minimon.service.MonitoringService;
+import com.minimon.vo.MonitoringTaskVO;
 import com.minimon.vo.RunningSchedulerVO;
 import com.minimon.vo.SchedulerTaskVO;
 import com.minimon.vo.SchedulerVO;
@@ -11,6 +12,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/scheduler")
@@ -69,5 +74,11 @@ public class SchedulerController {
     public CommonResponse stopMonitoring() {
         monitoringService.off();
         return new CommonResponse();
+    }
+
+    @GetMapping(path = "/monitoring/list")
+    @ApiOperation(value = "모니터링 대기 목록")
+    public CommonResponse monitoringList() {
+        return new CommonResponse(monitoringService.getList());
     }
 }
