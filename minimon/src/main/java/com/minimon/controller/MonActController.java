@@ -5,10 +5,12 @@ import com.minimon.common.CommonResponse;
 import com.minimon.common.CommonSearchSpec;
 import com.minimon.entity.MonAct;
 import com.minimon.entity.MonResult;
+import com.minimon.enums.MonitoringTypeEnum;
 import com.minimon.exception.ActTestFileDownLoadException;
 import com.minimon.service.MonActService;
 import com.minimon.service.MonitoringService;
 import com.minimon.vo.MonitoringResultVO;
+import com.minimon.vo.MonitoringTaskVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -94,7 +96,11 @@ public class MonActController {
             return CommonResponse.notExistResponse();
         }
 
-        monitoringService.addTask(monActService.executeTask(seq));
+        monitoringService.addTask(MonitoringTaskVO.builder()
+                .monitoringType(MonitoringTypeEnum.ACT)
+                .seq(seq)
+                .task(monActService.executeTask(seq))
+                .build());
         return new CommonResponse();
     }
 

@@ -4,10 +4,12 @@ import com.minimon.common.CommonResponse;
 import com.minimon.common.CommonSearchSpec;
 import com.minimon.entity.MonApi;
 import com.minimon.entity.MonResult;
+import com.minimon.enums.MonitoringTypeEnum;
 import com.minimon.service.MonApiService;
 import com.minimon.service.MonitoringService;
 import com.minimon.vo.MonApiCheckVO;
 import com.minimon.vo.MonitoringResultVO;
+import com.minimon.vo.MonitoringTaskVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -79,7 +81,11 @@ public class MonApiController {
             return CommonResponse.notExistResponse();
         }
 
-        monitoringService.addTask(monApiService.executeTask(seq));
+        monitoringService.addTask(MonitoringTaskVO.builder()
+                .monitoringType(MonitoringTypeEnum.API)
+                .seq(seq)
+                .task(monApiService.executeTask(seq))
+                .build());
         return new CommonResponse();
     }
 }

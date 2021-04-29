@@ -4,10 +4,12 @@ import com.minimon.common.CommonResponse;
 import com.minimon.common.CommonSearchSpec;
 import com.minimon.entity.MonResult;
 import com.minimon.entity.MonUrl;
+import com.minimon.enums.MonitoringTypeEnum;
 import com.minimon.service.MonUrlService;
 import com.minimon.service.MonitoringService;
 import com.minimon.vo.MonUrlCheckVO;
 import com.minimon.vo.MonitoringResultVO;
+import com.minimon.vo.MonitoringTaskVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -79,7 +81,11 @@ public class MonUrlController {
             return CommonResponse.notExistResponse();
         }
 
-        monitoringService.addTask(monUrlService.executeTask(seq));
+        monitoringService.addTask(MonitoringTaskVO.builder()
+                .monitoringType(MonitoringTypeEnum.URL)
+                .seq(seq)
+                .task(monUrlService.executeTask(seq))
+                .build());
         return new CommonResponse();
     }
 }
