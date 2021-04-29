@@ -5,6 +5,7 @@ import com.minimon.enums.SchedulerStatusEnum;
 import com.minimon.enums.SchedulerTypeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,9 +22,13 @@ public class MonitoringTaskVO {
     @ApiModelProperty(value = "시퀀스")
     private int seq;
 
-    @ApiModelProperty(value = "제목")
-    private String title;
-
     @ApiModelProperty(value = "실행 작업")
     private Runnable task;
+
+    @Builder
+    public MonitoringTaskVO(MonitoringTypeEnum monitoringType, int seq, Runnable task) {
+        this.monitoringType = monitoringType;
+        this.seq = seq;
+        this.task = task;
+    }
 }
