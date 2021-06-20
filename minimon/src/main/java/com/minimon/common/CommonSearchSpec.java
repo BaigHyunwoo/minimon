@@ -54,14 +54,14 @@ public class CommonSearchSpec {
     }
 
 
-    public String getValueByKey(String input) {
+    public String getValue(String input) {
         for (int i = 0; i < this.keys.length; i++) {
             if (input.equals(keys[i])) return values[i];
         }
         return null;
     }
 
-    public String getTypeByKey(String input) {
+    public String getType(String input) {
         for (int i = 0; i < this.keys.length; i++) {
             if (input.equals(keys[i])) return types[i];
         }

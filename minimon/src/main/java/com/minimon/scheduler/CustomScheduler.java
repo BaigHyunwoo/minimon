@@ -1,7 +1,6 @@
 package com.minimon.scheduler;
 
 import com.minimon.entity.SchedulerHistory;
-import com.minimon.enums.MonitoringTypeEnum;
 import com.minimon.enums.SchedulerActiveTypeEnum;
 import com.minimon.enums.SchedulerStatusEnum;
 import com.minimon.enums.SchedulerTypeEnum;
@@ -69,7 +68,7 @@ public class CustomScheduler implements InitializingBean {
 
     public boolean run(SchedulerTypeEnum schedulerTypeEnum) {
         if (runningSchedulerVO.getScheduledTasks().get(schedulerTypeEnum).getStatus().equals(SchedulerStatusEnum.STOP)) {
-            Optional.ofNullable(getTaskBySchedulerType(schedulerTypeEnum)).ifPresent(task -> {
+            Optional.ofNullable(getTask(schedulerTypeEnum)).ifPresent(task -> {
                 run(task, schedulerTypeEnum, schedulerTypeEnum.getActiveType(), schedulerTypeEnum.getTime());
             });
             return true;
@@ -79,7 +78,7 @@ public class CustomScheduler implements InitializingBean {
 
     private boolean run(SchedulerVO customExecutorVO) {
         if (runningSchedulerVO.getScheduledTasks().get(customExecutorVO.getSchedulerType()).getStatus().equals(SchedulerStatusEnum.STOP)) {
-            Optional.ofNullable(getTaskBySchedulerType(customExecutorVO.getSchedulerType())).ifPresent(task -> {
+            Optional.ofNullable(getTask(customExecutorVO.getSchedulerType())).ifPresent(task -> {
                 run(task, customExecutorVO.getSchedulerType(), customExecutorVO.getActiveType(), customExecutorVO.getTime());
             });
             return true;
@@ -135,7 +134,7 @@ public class CustomScheduler implements InitializingBean {
         return true;
     }
 
-    private Runnable getTaskBySchedulerType(SchedulerTypeEnum schedulerType) {
+    private Runnable getTask(SchedulerTypeEnum schedulerType) {
         return () -> {
             int progressCount = 0;
             StopWatch stopWatch = new StopWatch();
@@ -163,7 +162,7 @@ public class CustomScheduler implements InitializingBean {
     }
 
     public boolean execute(SchedulerTypeEnum schedulerType) {
-        Optional.ofNullable(getTaskBySchedulerType(schedulerType)).ifPresent(task -> task.run());
+        Optional.ofNullable(getTask(schedulerType)).ifPresent(task -> task.run());
         return true;
     }
 }

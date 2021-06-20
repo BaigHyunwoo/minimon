@@ -64,7 +64,7 @@ public class MonUrlService {
         return () -> {
             MonResult monResult = execute(seq);
             resultService.save(monResult);
-            resultService.sendResultByProperties(monResult);
+            resultService.sendResult(monResult);
         };
     }
 

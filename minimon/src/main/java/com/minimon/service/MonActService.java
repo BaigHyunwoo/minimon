@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -27,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.transaction.Transactional;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -86,7 +84,7 @@ public class MonActService {
         return () -> {
             MonResult monResult = execute(seq);
             resultService.save(monResult);
-            resultService.sendResultByProperties(monResult);
+            resultService.sendResult(monResult);
         };
     }
 
@@ -253,7 +251,7 @@ public class MonActService {
         return null;
     }
 
-    private String getValueByObject(ValueSubStringTypeEnum subStringTypeEnum, String line, String stObj, String edObj) {
+    private String getValue(ValueSubStringTypeEnum subStringTypeEnum, String line, String stObj, String edObj) {
         int stObjLen = stObj.length();
         switch (subStringTypeEnum) {
             case FRONT:
@@ -272,7 +270,7 @@ public class MonActService {
             case SWITCH:
             case SUBMIT:
             case SEND:
-                return getValueByObject(ValueSubStringTypeEnum.FRONT, line, "(\"", "\")");
+                return getValue(ValueSubStringTypeEnum.FRONT, line, "(\"", "\")");
             default:
                 return null;
         }
@@ -281,18 +279,18 @@ public class MonActService {
     private String getCodeValue(String line, CodeActionEnum codeAction) {
         switch (codeAction) {
             case GET:
-                return getValueByObject(ValueSubStringTypeEnum.BACK, line, "(\"", "\")");
+                return getValue(ValueSubStringTypeEnum.BACK, line, "(\"", "\")");
             case WAIT:
-                return getValueByObject(ValueSubStringTypeEnum.FRONT, line, "(\"", "\",");
+                return getValue(ValueSubStringTypeEnum.FRONT, line, "(\"", "\",");
             case SWITCH:
-                return getValueByObject(ValueSubStringTypeEnum.FRONT, line, "(\"", "\")");
+                return getValue(ValueSubStringTypeEnum.FRONT, line, "(\"", "\")");
             case SEND:
                 for (CodeSendKeyTypeEnum codeSendKeyTypeEnum : CodeSendKeyTypeEnum.values()) {
                     if (line.indexOf(codeSendKeyTypeEnum.getCode()) > 0) {
                         return codeSendKeyTypeEnum.getCode();
                     }
                 }
-                return getValueByObject(ValueSubStringTypeEnum.FRONT, line, "sendKeys(\"", "\");");
+                return getValue(ValueSubStringTypeEnum.FRONT, line, "sendKeys(\"", "\");");
             default:
                 return null;
         }

@@ -38,7 +38,7 @@ public class ResultService {
         return monResult;
     }
 
-    public String sendResultByProperties(MonResult monResult) {
+    public String sendResult(MonResult monResult) {
         String response = null;
 
         try {

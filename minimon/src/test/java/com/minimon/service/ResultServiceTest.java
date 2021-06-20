@@ -37,13 +37,13 @@ public class ResultServiceTest {
 
     @Test
     public void resultSendErrorTest() {
-        assertThrows(UndefinedResultReceiveException.class, () -> resultService.sendResultByProperties(getDefaultMonResult()));
+        assertThrows(UndefinedResultReceiveException.class, () -> resultService.sendResult(getDefaultMonResult()));
     }
 
     @Test
     public void resultSendIgnoreTest() {
         MonResult monResult = getDefaultMonResult();
         monResult.setResultSendUseYn(UseStatusEnum.N);
-        assertNull(resultService.sendResultByProperties(monResult));
+        assertNull(resultService.sendResult(monResult));
     }
 }

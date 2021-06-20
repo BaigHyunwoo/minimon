@@ -50,7 +50,7 @@ public class CommonUtil {
     /**
      * create new url with params
      */
-    public static String createUrlWithParams(HashMap<String, Object> param, String url) {
+    public static String createUrl(HashMap<String, Object> param, String url) {
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromHttpUrl(url);
         param.entrySet().forEach(entry -> {
             uriComponentsBuilder.queryParam(entry.getKey(), entry.getValue());
